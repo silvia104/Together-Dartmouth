@@ -1,0 +1,25 @@
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_pressed="true">
+        <layer-list>
+            <!-- Pressed Button color -->
+            <item>
+                <shape android:shape="oval">
+                    <solid android:color="#4DB6AC"/>
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+
+    <item android:state_enabled="true">
+            <!-- Default Button color -->
+    <layer-list>
+            <item>
+                <shape android:shape="oval">
+                    <solid android:color="#aa4DB6AC"/>
+                </shape>
+            </item>
+        </layer-list>
+
+    </item>
+
+</selector> 
