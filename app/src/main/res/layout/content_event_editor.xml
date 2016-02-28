@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/category_hint"
+        android:id="@+id/categoryText"
+        android:layout_gravity="center_horizontal"
+        android:layout_alignParentTop="true"
+        android:textSize="25dp"
+        android:layout_centerHorizontal="true"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        android:gravity="center_horizontal" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/locationHint"
+        android:id="@+id/locationText"
+        android:layout_gravity="center_horizontal"
+        android:layout_below="@+id/categoryRecView"
+        android:textSize="25dp"
+        android:layout_centerHorizontal="true"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        android:gravity="center_horizontal"
+        android:layout_alignParentStart="true" />
+
+
+
+    <android.support.v7.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/categoryRecView"
+        android:paddingStart="25dp"
+        android:paddingEnd="10dp"
+        android:layout_marginBottom="10dp"
+        android:background="#E0F2F1"
+        android:layout_below="@+id/categoryText"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp">
+
+    </android.support.v7.widget.RecyclerView>
+</RelativeLayout>
