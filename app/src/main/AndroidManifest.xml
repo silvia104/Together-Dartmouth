@@ -30,7 +30,7 @@
 
         <activity
             android:name=".MapsActivity"
-            android:label="@string/title_activity_maps"></activity>
+            android:label="@string/title_activity_maps" />
         <activity
             android:name=".MainActivity"
             android:label="@string/title_activity_main"
@@ -41,10 +41,18 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".EventEditorActivity"
+        <activity
+            android:name=".EventEditorActivity"
             android:parentActivityName=".MainActivity"
-            android:theme="@style/AppTheme" >
-            </activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".EventDetailActivity"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <activity android:name=".JoinerListActivity"
+            android:parentActivityName=".EventEditorActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
     </application>
 
 </manifest>
