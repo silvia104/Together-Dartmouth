@@ -12,6 +12,13 @@
     tools:context="edu.dartmouth.cs.together.MainActivity"
     tools:showIn="@layout/app_bar_main">
 
+    <LinearLayout
+        android:id="@+id/fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+    </LinearLayout>
+
     <ImageButton
         android:id="@+id/fab_image_button"
         android:layout_width="@dimen/fab_button_diameter"
@@ -24,4 +31,5 @@
         android:background="@drawable/fab_shape"
         android:src="@drawable/ic_add_white_24dp"
         android:tint="@android:color/white"/>
+
 </RelativeLayout>

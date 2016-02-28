@@ -2,6 +2,8 @@ package edu.dartmouth.cs.together;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -90,7 +92,17 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.find_event) {
             // Handle the camera action
+            EventListFragment efrag = new EventListFragment();
+            FragmentManager manager = getSupportFragmentManager();
+            FragmentTransaction transaction = manager.beginTransaction();
+            transaction.replace(R.id.fragment_container, efrag);
+            transaction.commit();
         } else if (id == R.id.nav_gallery) {
+            MapFragment efrag = new MapFragment();
+            FragmentManager manager = getSupportFragmentManager();
+            FragmentTransaction transaction = manager.beginTransaction();
+            transaction.replace(R.id.fragment_container, efrag);
+            transaction.commit();
 
         } else if (id == R.id.nav_slideshow) {
 
