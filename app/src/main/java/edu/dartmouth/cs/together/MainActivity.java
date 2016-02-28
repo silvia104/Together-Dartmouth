@@ -48,6 +48,19 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+
+        findViewById(R.id.button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startDetail();
+            }
+        });
+    }
+
+
+    private void startDetail(){
+        startActivity(new Intent(getApplicationContext(),EventDetailActivity.class));
     }
 
     @Override
