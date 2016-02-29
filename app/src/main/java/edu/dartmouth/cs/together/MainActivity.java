@@ -1,10 +1,11 @@
 package edu.dartmouth.cs.together;
 
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
+
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -14,11 +15,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.BaseAdapter;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
-import com.google.android.gms.maps.MapFragment;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -45,9 +44,9 @@ public class MainActivity extends AppCompatActivity
         */
         isListFragment=true;
         EventListFragment efrag = new EventListFragment();
-        FragmentManager manager = getSupportFragmentManager();
-        FragmentTransaction transaction = manager.beginTransaction();
-        transaction.replace(R.id.fragment_container, efrag);
+        android.support.v4.app.FragmentManager manager = getSupportFragmentManager();
+        android.support.v4.app.FragmentTransaction transaction = manager.beginTransaction();
+        transaction.replace(R.id.main_content_frame, efrag);
         transaction.commit();
         ImageButton addFab = (ImageButton) findViewById(R.id.fab_image_button);
         ImageButton addFabswitch = (ImageButton) findViewById(R.id.fab_image_button2);
@@ -64,17 +63,17 @@ public class MainActivity extends AppCompatActivity
             public void onClick(View v) {
                 if(isListFragment){
                     EventMapFragment efrag = new EventMapFragment();
-                    FragmentManager manager = getSupportFragmentManager();
-                    FragmentTransaction transaction = manager.beginTransaction();
-                    transaction.replace(R.id.fragment_container, efrag);
+                    android.support.v4.app.FragmentManager manager = getSupportFragmentManager();
+                    android.support.v4.app.FragmentTransaction transaction = manager.beginTransaction();
+                    transaction.replace(R.id.main_content_frame, efrag);
                     transaction.commit();
                     isListFragment=!isListFragment;
                 }
                 else{
                     EventListFragment efrag = new EventListFragment();
-                    FragmentManager manager = getSupportFragmentManager();
-                    FragmentTransaction transaction = manager.beginTransaction();
-                    transaction.replace(R.id.fragment_container, efrag);
+                    android.support.v4.app.FragmentManager manager = getSupportFragmentManager();
+                    android.support.v4.app.FragmentTransaction transaction = manager.beginTransaction();
+                    transaction.replace(R.id.main_content_frame, efrag);
                     transaction.commit();
                     isListFragment=!isListFragment;
                 }
@@ -145,15 +144,10 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation edu.dartmouth.cs.together.view item clicks here.
         int id = item.getItemId();
+        android.support.v4.app.FragmentManager managerV4 = getSupportFragmentManager();
+        FragmentManager fragmentManager = getFragmentManager();
         Fragment fragment = null;
         switch (id){
-            case R.id.nav_recommended_events:
-                EventListFragment efrag = new EventListFragment();
-                FragmentManager manager = getSupportFragmentManager();
-                FragmentTransaction transaction = manager.beginTransaction();
-                transaction.replace(R.id.fragment_container, efrag);
-                transaction.commit();
-                break;
             case R.id.nav_my_events:
                 fragment = new MyEventsFragment();
                 break;
@@ -164,13 +158,29 @@ public class MainActivity extends AppCompatActivity
             case R.id.nav_settings:
                 fragment = new SettingsFragment();
                 break;
+
+            case R.id.nav_recommended_events:
+                EventListFragment efrag = new EventListFragment();
+                android.support.v4.app.FragmentTransaction transactionV4 = managerV4.beginTransaction();
+                transactionV4.replace(R.id.main_content_frame, efrag, "EVENT_LIST_FRAG");
+                transactionV4.commit();
+                Fragment fragmentApp = fragmentManager.findFragmentByTag("OTHER_FRAGS");
+                if (fragmentApp!=null){
+                    fragmentManager.beginTransaction().hide(fragmentApp).commit();
+                }
+                break;
         }
+        if (id != R.id.nav_recommended_events){
+            android.support.v4.app.FragmentTransaction transactionV4 = managerV4.beginTransaction();
 
-        FragmentManager fragmentManager = getFragmentManager();
-        fragmentManager.beginTransaction().replace(
-                R.id.main_content_frame, fragment
-        ).commit();
-
+            android.support.v4.app.Fragment fragmentV4 = managerV4.findFragmentByTag("EVENT_LIST_FRAG");
+            if (fragmentV4!=null){
+                transactionV4.hide(fragmentV4).commit();
+            }
+            fragmentManager.beginTransaction().replace(
+                    R.id.main_content_frame, fragment,"OTHER_FRAGS"
+            ).commit();
+        }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;

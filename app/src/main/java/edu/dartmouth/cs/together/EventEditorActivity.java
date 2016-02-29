@@ -1,10 +1,7 @@
 package edu.dartmouth.cs.together;
 
-<<<<<<< HEAD
 import android.support.v4.app.NavUtils;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-=======
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -14,40 +11,25 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.location.Location;
-import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Menu;
->>>>>>> Silvia-EventEditor-Branch
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TimePicker;
 
-<<<<<<< HEAD
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
-=======
 import butterknife.OnClick;
 import edu.dartmouth.cs.together.data.Event;
 import edu.dartmouth.cs.together.utils.Globals;
 import edu.dartmouth.cs.together.utils.Helper;
-import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.places.Place;
-import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
->>>>>>> Silvia-EventEditor-Branch
 import com.google.android.gms.location.places.ui.PlacePicker;
-import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
 
 
-<<<<<<< HEAD
-public class EventEditorActivity extends AppCompatActivity {
-
-=======
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -57,32 +39,34 @@ public class EventEditorActivity extends BaseEventActivity implements DatePicker
     private int PLACE_PICKER_REQUEST = 1;
     private Event mEvent = Globals.event;
     private Calendar mNow = Calendar.getInstance();
->>>>>>> Silvia-EventEditor-Branch
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_event_editor);
-        // set <- button in action bar to go back to Main Activity
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
+        setHomeButton("Event Editor");
+        setCategories();
+        setQa();
     }
 
     @Override
-<<<<<<< HEAD
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             // Respond to the action bar's Up/Home button
             case android.R.id.home:
                 NavUtils.navigateUpFromSameTask(this);
                 return true;
+            //noinspection SimplifiableIfStatement
+            case R.id.action_cancelevent:
+                showConfirmDialog();
+                return true;
         }
+
         return super.onOptionsItemSelected(item);
     }
 
+    @OnClick(R.id.locationText)
     public void onLocationClick(View view) {
         int PLACE_PICKER_REQUEST = 1;
         PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
-
         try {
             startActivityForResult(builder.build(this), PLACE_PICKER_REQUEST);
         } catch (GooglePlayServicesRepairableException e) {
@@ -91,23 +75,9 @@ public class EventEditorActivity extends BaseEventActivity implements DatePicker
             e.printStackTrace();
         }
     }
-=======
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.cancelevent, menu);
         return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_cancelevent) {
-            showConfirmDialog();
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 
     @OnClick(R.id.categoryText)
@@ -126,11 +96,6 @@ public class EventEditorActivity extends BaseEventActivity implements DatePicker
 
     }
 
-    @OnClick(R.id.locationText)
-    public void onLocationClick(View view){
-        Intent i = new Intent(getApplicationContext(), PlacePicker.class);
-        startActivityForResult(i,PLACE_PICKER_REQUEST);
-    }
     @OnClick(R.id.dateText)
     public void onDateTextClick(){
         new DatePickerDialog(this,this,mNow.get(Calendar.YEAR),
@@ -163,7 +128,13 @@ public class EventEditorActivity extends BaseEventActivity implements DatePicker
 
     @OnClick(R.id.postBtn)
     public void onPostClick(){
-
+        //TODO:
+        finish();
+    }
+    @OnClick(R.id.cancelBtn)
+    public void onCancleClick(){
+        //TODO:
+        finish();
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -190,6 +161,15 @@ public class EventEditorActivity extends BaseEventActivity implements DatePicker
         setBottonRecView(mQaAdapter);
     }
 
+    private void setCategories(){
+        mCategoryRecView.setLayoutManager(new GridLayoutManager(this, 5));
+        mCategoryRecView.setHasFixedSize(true);
+        List<Integer> categoryIconList = new ArrayList<>();
+        for (int i = 0; i < 10; i++){
+            categoryIconList.add(R.drawable.movie);
+        }
+        mCategoryRecView.setAdapter(new CategoryAdapter(this,categoryIconList, R.layout.item_imagecard));
+    }
 
 
     @Override
@@ -200,7 +180,7 @@ public class EventEditorActivity extends BaseEventActivity implements DatePicker
 
     @Override
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-        mEvent.setTime(hourOfDay,minute);
+        mEvent.setTime(hourOfDay, minute);
         mTimeText.setText(mEvent.getTime());
     }
 
@@ -286,5 +266,4 @@ public class EventEditorActivity extends BaseEventActivity implements DatePicker
        // Create the AlertDialog object and return it
        builder.create().show();
     }
->>>>>>> Silvia-EventEditor-Branch
 }
