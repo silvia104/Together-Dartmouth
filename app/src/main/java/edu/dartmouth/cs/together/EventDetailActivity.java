@@ -1,11 +1,7 @@
 package edu.dartmouth.cs.together;
 
-import android.app.Fragment;
-import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.view.View;
-
-import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 
 import butterknife.OnClick;
 import edu.dartmouth.cs.together.utils.Globals;
@@ -22,7 +18,6 @@ public class EventDetailActivity extends BaseEventActivity {
         mLocationTv.setText(Globals.event.getLocation());
         mPostButton.setVisibility(View.GONE);
         mCancelButton.setVisibility(View.GONE);
-        mPinInMap.setVisibility(View.GONE);
     }
     @OnClick(R.id.fab)
     public void onFabClick(){
