@@ -16,9 +16,11 @@ import android.view.MenuItem;
 import android.widget.BaseAdapter;
 import android.widget.ImageButton;
 
+import com.google.android.gms.maps.MapFragment;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-
+    private boolean isListFragment;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,11 +37,39 @@ public class MainActivity extends AppCompatActivity
             }
         });
         */
+        isListFragment=true;
+        EventListFragment efrag = new EventListFragment();
+        FragmentManager manager = getSupportFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        transaction.replace(R.id.fragment_container, efrag);
+        transaction.commit();
         ImageButton addFab = (ImageButton) findViewById(R.id.fab_image_button);
+        ImageButton addFabswitch = (ImageButton) findViewById(R.id.fab_image_button2);
         addFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(getApplicationContext(), EventEditorActivity.class));
+            }
+        });
+        addFabswitch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(isListFragment){
+                    EventMapFragment efrag = new EventMapFragment();
+                    FragmentManager manager = getSupportFragmentManager();
+                    FragmentTransaction transaction = manager.beginTransaction();
+                    transaction.replace(R.id.fragment_container, efrag);
+                    transaction.commit();
+                    isListFragment=!isListFragment;
+                }
+                else{
+                    EventListFragment efrag = new EventListFragment();
+                    FragmentManager manager = getSupportFragmentManager();
+                    FragmentTransaction transaction = manager.beginTransaction();
+                    transaction.replace(R.id.fragment_container, efrag);
+                    transaction.commit();
+                    isListFragment=!isListFragment;
+                }
             }
         });
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -111,11 +141,6 @@ public class MainActivity extends AppCompatActivity
             transaction.replace(R.id.fragment_container, efrag);
             transaction.commit();
         } else if (id == R.id.nav_gallery) {
-            MapFragment efrag = new MapFragment();
-            FragmentManager manager = getSupportFragmentManager();
-            FragmentTransaction transaction = manager.beginTransaction();
-            transaction.replace(R.id.fragment_container, efrag);
-            transaction.commit();
 
         } else if (id == R.id.nav_slideshow) {
 

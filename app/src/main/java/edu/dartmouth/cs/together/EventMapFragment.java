@@ -1,15 +1,16 @@
 package edu.dartmouth.cs.together;
 
+import android.app.FragmentManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
@@ -18,7 +19,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 /**
  * Created by di on 2/28/2016.
  */
-public class MapFragment extends Fragment implements OnMapReadyCallback {
+public class EventMapFragment extends Fragment implements OnMapReadyCallback {
 
     private GoogleMap mMap;
 
@@ -31,9 +32,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     }
 
     private void setMap(){
-        if (mMap == null && getActivity() != null && getActivity().getSupportFragmentManager()!= null) {
-            FragmentManager manager = getActivity().getSupportFragmentManager();
-            SupportMapFragment smf = SupportMapFragment.newInstance();
+        if (mMap == null && getActivity() != null && getActivity().getFragmentManager()!= null) {
+            FragmentManager manager = getActivity().getFragmentManager();
+            MapFragment smf = MapFragment.newInstance();
             smf.setRetainInstance(false);
             manager.beginTransaction().replace(R.id.eventmap, smf).commit();
             smf.getMapAsync(this);

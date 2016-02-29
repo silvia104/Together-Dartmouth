@@ -39,4 +39,9 @@ public class Event {
     public String getCategotyName() {
         return Globals.categories.get(mCategory);
     }
+
+    public String getShortdesc(){
+        return mShortDesc;
+
+    }
 }

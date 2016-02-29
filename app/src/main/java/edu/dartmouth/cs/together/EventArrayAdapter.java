@@ -63,10 +63,10 @@ public android.view.View getView(
         T t = (T)getItem(position);
         lineOneView.setText(lineOneText(t));
         lineTwoView.setText(lineTwoText(t));
-        lineOneView.setText(lineTreText(t));
-        lineTwoView.setText(lineFouText(t));
-        lineOneView.setText(lineFivText(t));
-        lineTwoView.setText(lineSixText(t));
+        lineTreView.setText(lineTreText(t));
+        lineFouView.setText(lineFouText(t));
+        lineFivView.setText(lineFivText(t));
+        lineSixView.setText(lineSixText(t));
 
         return listItemView;
         }
