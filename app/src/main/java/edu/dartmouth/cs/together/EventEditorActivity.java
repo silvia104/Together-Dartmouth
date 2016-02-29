@@ -15,6 +15,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -51,9 +52,7 @@ public class EventEditorActivity extends BaseEventActivity implements DatePicker
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_editor);
-        // set <- button in action bar to go back to Main Activity
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
+        setHomeButton("Event Editor");
     }
 
     @Override
