@@ -7,7 +7,6 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
-<<<<<<< HEAD
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
@@ -31,7 +30,6 @@
         <item> In 2 Weeks </item>
     </string-array>
 
-=======
     <string name="locationHint"><i>Search or Pin event location</i></string>
     <string name="category_hint"><u>Pick A Category</u></string>
     <string name="title_item_list">Items</string>
@@ -48,5 +46,4 @@
     <string name="OK">ok</string>
     <string name="cancelevent">DELETE</string>
     <string name="wronglocation">Please refine the location wtihin 50 miles from Dartmouth!</string>
->>>>>>> Silvia-EventEditor-Branch
 </resources>
