@@ -12,8 +12,15 @@
     tools:context="edu.dartmouth.cs.together.MainActivity"
     tools:showIn="@layout/app_bar_main">
 
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/main_content_frame">
+
+
+    </FrameLayout>
     <ImageButton
-        android:id="@+id/fab_image_button"
+        android:id="@+id/fab_image_button2"
         android:layout_width="@dimen/fab_button_diameter"
         android:layout_height="@dimen/fab_button_diameter"
         android:layout_alignParentRight="true"
@@ -25,9 +32,22 @@
         android:src="@drawable/ic_add_white_24dp"
         android:tint="@android:color/white"/>
 
+    <ImageButton
+        android:id="@+id/fab_image_button"
+        android:layout_width="@dimen/fab_button_diameter"
+        android:layout_height="@dimen/fab_button_diameter"
+        android:layout_marginRight="@dimen/fab_margin"
+        android:background="@drawable/fab_shape"
+        android:src="@drawable/ic_add_white_24dp"
+        android:tint="@android:color/white"
+        android:layout_marginBottom="44dp"
+        android:layout_above="@+id/fab_image_button2"
+        android:layout_alignStart="@+id/fab_image_button2" />
+
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="New Button"
         android:id="@+id/button" />
+
 </RelativeLayout>

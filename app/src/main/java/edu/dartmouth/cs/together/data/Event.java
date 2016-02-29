@@ -44,6 +44,11 @@ public class Event {
         return Globals.categories.get(mCategory);
     }
 
+<<<<<<< HEAD
+    public String getShortdesc(){
+        return mShortDesc;
+
+=======
     public void setLongDesc(String s) {
         mLongDesc = s;
     }
@@ -84,5 +89,6 @@ public class Event {
 
     public void setLatLng(LatLng latLng) {
         mLatLng = latLng;
+>>>>>>> Silvia-EventEditor-Branch
     }
 }
