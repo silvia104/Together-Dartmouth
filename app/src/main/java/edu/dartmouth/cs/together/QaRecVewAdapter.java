@@ -58,8 +58,13 @@ public class QaRecVewAdapter extends RecyclerView.Adapter<QaRecVewAdapter.QaView
         public QaViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+            mControl.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onControlClick();
+                }
+            });
         }
-
         @OnClick(R.id.questionText)
         public void onControlClick(){
             if (mControl.getTag().toString().equals("closed")){
@@ -78,6 +83,8 @@ public class QaRecVewAdapter extends RecyclerView.Adapter<QaRecVewAdapter.QaView
                 mEditAnswer.setVisibility(View.GONE);
             }
         }
+
+
 
         @OnClick(R.id.editAnswer)
         public void onEidtClick(){

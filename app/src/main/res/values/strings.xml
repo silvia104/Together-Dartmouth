@@ -7,9 +7,20 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
-    <string name="locationHint"><u>Location</u></string>
-    <string name="category_hint"><u>Event Category</u></string>
+    <string name="locationHint"><i>Search or Pin event location</i></string>
+    <string name="category_hint"><u>Pick A Category</u></string>
     <string name="title_item_list">Items</string>
     <string name="title_item_detail">Item Detail</string>
     <string name="qa_title"><![CDATA[Q&A]]></string>
+    <string name="date">Event Date</string>
+    <string name="eventTime">Start Time</string>
+    <string name="durationTitle">Duration:</string>
+    <string name="hour">Hour(s)</string>
+    <string name="shortDescHint"><u><![CDATA[Short Description (< 30 characters)]]></u></string>
+    <string name="longDescHint"><u>Long Description for The Event</u></string>
+    <string name="confirmDeleteEvent">Are you sure you want to cancel the event?</string>
+    <string name="cancel">cancel</string>
+    <string name="OK">ok</string>
+    <string name="cancelevent">DELETE</string>
+    <string name="wronglocation">Please refine the location wtihin 50 miles from Dartmouth!</string>
 </resources>
