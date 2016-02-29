@@ -1,6 +1,8 @@
 package edu.dartmouth.cs.together.utils;
 
 
+import com.google.android.gms.maps.model.LatLng;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,7 +13,7 @@ import edu.dartmouth.cs.together.data.Event;
  */
 public class Globals {
     public static String[] sports = {"Soccer","Skiing","Cycling","Jogging","Hiking",
-            "Tennis","Skating","Dancing","Gym","Basketball","Bowling","Billiard"};
+            "Tennis","Skating","Dancing","Gym","Basketball","Swimming","Billiard"};
     public static String[] life = {"Movie","Party","Shopping","Dining", "Travel", "Study"};
     public static List<String> categories = new ArrayList<>();
     static{
@@ -23,4 +25,6 @@ public class Globals {
         }
     }
     public static Event event = new Event();
+    public static LatLng DARTMOUTH_GPS = new LatLng(43.726034, -72.142917);
+    public static double RADIUS_50MILES = 80467.2;
 }

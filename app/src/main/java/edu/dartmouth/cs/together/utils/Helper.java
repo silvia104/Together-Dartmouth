@@ -8,6 +8,10 @@ import android.graphics.Rect;
 import android.text.SpannableString;
 import android.text.style.UnderlineSpan;
 
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.maps.android.SphericalUtil;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -67,5 +71,10 @@ public class Helper {
             return null;
         }
         return bitmap;
+    }
+    public static LatLngBounds convertCenterAndRadiusToBounds(LatLng center, double radius) {
+        LatLng southwest = SphericalUtil.computeOffset(center, radius * Math.sqrt(2.0), 225);
+        LatLng northeast = SphericalUtil.computeOffset(center, radius * Math.sqrt(2.0), 45);
+        return new LatLngBounds(southwest, northeast);
     }
 }
