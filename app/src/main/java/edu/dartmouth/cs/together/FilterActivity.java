@@ -119,8 +119,10 @@ public class FilterActivity extends AppCompatActivity
         mTimeRangeSpinner.setSelection(time);
         mDistanceTextView.setText("In " + distance + " Miles");
         mDistanceRangeSeekBar.setProgress(distance);
-        for (String str : interest) {
-            mInterestList.setItemChecked(Integer.valueOf(str),true);
+        if(interest.length>0 && interest[0] != "") {
+            for (String str : interest) {
+                mInterestList.setItemChecked(Integer.valueOf(str), true);
+            }
         }
 
     }
