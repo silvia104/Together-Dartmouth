@@ -119,8 +119,10 @@ public class FilterActivity extends AppCompatActivity
         mTimeRangeSpinner.setSelection(time);
         mDistanceTextView.setText("In " + distance + " Miles");
         mDistanceRangeSeekBar.setProgress(distance);
-        for (String str : interest) {
-            mInterestList.setItemChecked(Integer.valueOf(str),true);
+        if(interest.length>0 && interest[0] != "") {
+            for (String str : interest) {
+                mInterestList.setItemChecked(Integer.valueOf(str), true);
+            }
         }
 
     }
@@ -140,8 +142,12 @@ public class FilterActivity extends AppCompatActivity
         //when read shared pref
         //use split(" ") to get the int array again
         String interest = "";
-        for (Integer i : selectedInterest) {
-            interest = interest + i + " ";
+        SparseBooleanArray checkedItemPositions = mInterestList.getCheckedItemPositions();
+        int itemCount = mInterestList.getCount();
+        for(int i=0; i<itemCount; i++){
+            if(checkedItemPositions.get(i)){
+                interest = interest + i + " ";
+            }
         }
         extras.putString(Globals.KEY_INTEREST_CATEGORY,
                 interest);
