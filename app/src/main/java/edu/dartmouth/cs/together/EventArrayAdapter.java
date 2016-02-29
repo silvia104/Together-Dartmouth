@@ -1,10 +1,13 @@
 package edu.dartmouth.cs.together;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
@@ -14,7 +17,8 @@ import java.util.List;
  */
 public abstract class EventArrayAdapter<T> extends ArrayAdapter<T> {
 private int mListItemLayoutResId;
-
+        Context context;
+        ImageView imgView;
 public EventArrayAdapter(Context context, List<T> ts) {
         this(context, R.layout.event_list, ts);
         }
@@ -24,6 +28,7 @@ public EventArrayAdapter(
         int listItemLayoutResourceId,
         List<T> ts) {
         super(context, listItemLayoutResourceId, ts);
+        this.context=context;
         mListItemLayoutResId = listItemLayoutResourceId;
         }
 
@@ -58,6 +63,21 @@ public android.view.View getView(
         R.id.etext5);
         TextView lineSixView = (TextView)listItemView.findViewById(
         R.id.etext6);
+
+        imgView=(ImageView)listItemView.findViewById(
+                R.id.imageView2);
+        imgView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                        // you just put your Logic here And use this custom adapter to
+                        // load your Data By using this particular custom adapter to
+                        // your listview
+                        Intent i=new Intent(getContext(),EventDetailActivity.class);
+                        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        v.getContext().startActivity(i);
+
+                }
+        });
 
 
         T t = (T)getItem(position);
