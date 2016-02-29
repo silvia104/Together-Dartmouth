@@ -51,6 +51,7 @@
             android:name=".EventDetailActivity"
             android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme.NoActionBar" >
+
         </activity>
 
         <activity android:name=".JoinerListActivity"

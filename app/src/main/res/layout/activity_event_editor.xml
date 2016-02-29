@@ -7,7 +7,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:fab="http://schemas.android.com/tools"
     android:id="@+id/coordinatorLayout"
-    tools:context=".EventEditorActivity">
+    tools:context=".EventEditorActivity"
+    android:focusable="false">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/app_bar_layout"

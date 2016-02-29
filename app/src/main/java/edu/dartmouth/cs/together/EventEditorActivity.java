@@ -1,7 +1,6 @@
 package edu.dartmouth.cs.together;
 
 import android.support.v4.app.NavUtils;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
@@ -12,11 +11,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.location.Location;
-import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -30,13 +25,9 @@ import butterknife.OnClick;
 import edu.dartmouth.cs.together.data.Event;
 import edu.dartmouth.cs.together.utils.Globals;
 import edu.dartmouth.cs.together.utils.Helper;
-import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.places.Place;
-import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlacePicker;
-import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
 
 
 import java.util.ArrayList;
@@ -51,8 +42,9 @@ public class EventEditorActivity extends BaseEventActivity implements DatePicker
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_event_editor);
         setHomeButton("Event Editor");
+        setCategories();
+        setQa();
     }
 
     @Override
@@ -71,10 +63,10 @@ public class EventEditorActivity extends BaseEventActivity implements DatePicker
         return super.onOptionsItemSelected(item);
     }
 
+    @OnClick(R.id.locationText)
     public void onLocationClick(View view) {
         int PLACE_PICKER_REQUEST = 1;
         PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
-
         try {
             startActivityForResult(builder.build(this), PLACE_PICKER_REQUEST);
         } catch (GooglePlayServicesRepairableException e) {
@@ -136,7 +128,13 @@ public class EventEditorActivity extends BaseEventActivity implements DatePicker
 
     @OnClick(R.id.postBtn)
     public void onPostClick(){
-
+        //TODO:
+        finish();
+    }
+    @OnClick(R.id.cancelBtn)
+    public void onCancleClick(){
+        //TODO:
+        finish();
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -163,6 +161,15 @@ public class EventEditorActivity extends BaseEventActivity implements DatePicker
         setBottonRecView(mQaAdapter);
     }
 
+    private void setCategories(){
+        mCategoryRecView.setLayoutManager(new GridLayoutManager(this, 5));
+        mCategoryRecView.setHasFixedSize(true);
+        List<Integer> categoryIconList = new ArrayList<>();
+        for (int i = 0; i < 10; i++){
+            categoryIconList.add(R.drawable.movie);
+        }
+        mCategoryRecView.setAdapter(new CategoryAdapter(this,categoryIconList, R.layout.item_imagecard));
+    }
 
 
     @Override
@@ -173,7 +180,7 @@ public class EventEditorActivity extends BaseEventActivity implements DatePicker
 
     @Override
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-        mEvent.setTime(hourOfDay,minute);
+        mEvent.setTime(hourOfDay, minute);
         mTimeText.setText(mEvent.getTime());
     }
 

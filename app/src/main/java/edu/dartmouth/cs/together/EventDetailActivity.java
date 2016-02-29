@@ -3,6 +3,8 @@ package edu.dartmouth.cs.together;
 import android.os.Bundle;
 import android.view.View;
 
+import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
+
 import butterknife.OnClick;
 import edu.dartmouth.cs.together.utils.Globals;
 
