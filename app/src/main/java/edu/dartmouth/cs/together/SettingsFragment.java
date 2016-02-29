@@ -5,10 +5,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.Preference;
-import android.preference.PreferenceFragment;
-import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.support.v7.preference.Preference;
+import android.support.v7.preference.PreferenceFragmentCompat;
+import android.support.v7.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,7 +19,7 @@ import java.util.ArrayList;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class SettingsFragment extends PreferenceFragment {
+public class SettingsFragment extends PreferenceFragmentCompat {
 
     private Context mContext;
     private final int REQUEST_DEFAULT_FILTER = 0;
@@ -46,6 +46,9 @@ public class SettingsFragment extends PreferenceFragment {
         });
     }
 
+    @Override
+    public void onCreatePreferences(Bundle bundle, String s) {
+    }
 
 
     @Override
@@ -77,9 +80,7 @@ public class SettingsFragment extends PreferenceFragment {
         editor.putInt(Globals.KEY_TIME_RANGE, time);
         editor.putInt(Globals.KEY_DISTANCE_RANGE, distance);
         editor.putString(Globals.KEY_INTEREST_CATEGORY, interests);
-
         editor.commit();
-
 
     }
 
