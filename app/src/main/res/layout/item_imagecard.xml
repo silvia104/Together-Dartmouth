@@ -15,12 +15,6 @@
         android:layout_gravity="center"
         android:gravity="center"
         android:background="#ffffffff">
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:clickable="true"
-            android:foreground="#88ffffff"
-            android:id="@+id/imageShield">
         <ImageView
             android:layout_width="38dp"
             android:layout_height="38dp"
@@ -31,7 +25,6 @@
             android:scaleType="fitCenter"
             android:focusableInTouchMode="false"
             android:cropToPadding="true" />
-        </FrameLayout>
     </LinearLayout>
 
 </android.support.v7.widget.CardView>

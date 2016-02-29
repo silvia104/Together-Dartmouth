@@ -1,8 +1,12 @@
 package edu.dartmouth.cs.together.data;
 
+import android.widget.TextView;
+
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.maps.model.LatLng;
 
+import java.text.SimpleDateFormat;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -40,8 +44,51 @@ public class Event {
         return Globals.categories.get(mCategory);
     }
 
+<<<<<<< HEAD
     public String getShortdesc(){
         return mShortDesc;
 
+=======
+    public void setLongDesc(String s) {
+        mLongDesc = s;
+    }
+
+    public String getLongDesc() {
+        return mLongDesc;
+    }
+
+    public void setShortDesc(String s) {
+        mShortDesc = s;
+    }
+    public String getShortDesc(){
+        return mShortDesc;
+    }
+
+    public void setDate(int year, int mOfY, int dOfM){
+        mTime.set(year, mOfY, dOfM);
+    }
+    public void setTime(int hour, int min){
+        mTime.set(Calendar.HOUR_OF_DAY,hour);
+        mTime.set(Calendar.MINUTE, min);
+    }
+
+    public String getDate() {
+        return  new SimpleDateFormat("MM/dd/yy").format(mTime.getTime());
+    }
+
+    public String getTime() {
+        return  new SimpleDateFormat("HH:mm").format(mTime.getTime());
+    }
+
+    public void setDuration(int duration) {
+        mDuration = duration;
+    }
+    public int getDuration() {
+        return mDuration;
+    }
+
+    public void setLatLng(LatLng latLng) {
+        mLatLng = latLng;
+>>>>>>> Silvia-EventEditor-Branch
     }
 }
