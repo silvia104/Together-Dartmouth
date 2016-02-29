@@ -81,7 +81,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         editor.putInt(Globals.KEY_DISTANCE_RANGE, distance);
         editor.putString(Globals.KEY_INTEREST_CATEGORY, interests);
         editor.commit();
-        
+
     }
 
 
