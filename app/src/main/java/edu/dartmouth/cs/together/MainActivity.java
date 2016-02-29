@@ -2,6 +2,7 @@ package edu.dartmouth.cs.together;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.view.View;
@@ -15,13 +16,18 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.BaseAdapter;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
+
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -29,8 +35,8 @@ public class MainActivity extends AppCompatActivity
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+            public void onClick(View edu.dartmouth.cs.together.view) {
+                Snackbar.make(edu.dartmouth.cs.together.view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
         });
@@ -42,27 +48,33 @@ public class MainActivity extends AppCompatActivity
                 startActivity(new Intent(getApplicationContext(), EventEditorActivity.class));
             }
         });
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+
+
+        final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close){
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+                LinearLayout profile = (LinearLayout) drawerView.findViewById(R.id.nav_header);
+                profile.setOnClickListener(new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View v) {
+                        drawer.closeDrawers();
+                        Fragment profileFragment = new ProfileFragment();
+                        FragmentTransaction newTransaction = getFragmentManager().beginTransaction();
+                        newTransaction.replace(R.id.main_content_frame, profileFragment);
+                        newTransaction.addToBackStack(null);
+                        newTransaction.commit();
+                    }
+                });
+            }
+        };
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
-
-        findViewById(R.id.button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startDetail();
-            }
-        });
-    }
-
-
-    private void startDetail(){
-        startActivity(new Intent(getApplicationContext(),EventDetailActivity.class));
     }
 
     @Override
@@ -91,6 +103,8 @@ public class MainActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            Intent intent = new Intent(this, FilterActivity.class);
+            startActivity(intent);
             return true;
         }
 
@@ -100,32 +114,29 @@ public class MainActivity extends AppCompatActivity
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
+        // Handle navigation edu.dartmouth.cs.together.view item clicks here.
         int id = item.getItemId();
+        Fragment fragment = null;
+        switch (id){
+            case R.id.nav_recommended_events:
+                break;
+            case R.id.nav_my_events:
+                fragment = new MyEventsFragment();
+                break;
 
-        if (id == R.id.find_event) {
-            // Handle the camera action
-            EventListFragment efrag = new EventListFragment();
-            FragmentManager manager = getSupportFragmentManager();
-            FragmentTransaction transaction = manager.beginTransaction();
-            transaction.replace(R.id.fragment_container, efrag);
-            transaction.commit();
-        } else if (id == R.id.nav_gallery) {
-            MapFragment efrag = new MapFragment();
-            FragmentManager manager = getSupportFragmentManager();
-            FragmentTransaction transaction = manager.beginTransaction();
-            transaction.replace(R.id.fragment_container, efrag);
-            transaction.commit();
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
+            case R.id.nav_message:
+                fragment = new MessageCenterFragment();
+                break;
+            case R.id.nav_settings:
+                fragment = new SettingsFragment();
+                break;
 
         }
+
+        FragmentManager fragmentManager = getFragmentManager();
+        fragmentManager.beginTransaction().replace(
+                R.id.main_content_frame, fragment
+        ).commit();
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);

@@ -7,9 +7,27 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
-    <string name="locationHint"><u>Location</u></string>
-    <string name="category_hint"><u>Event Category</u></string>
-    <string name="title_item_list">Items</string>
-    <string name="title_item_detail">Item Detail</string>
-    <string name="qa_title"><![CDATA[Q&A]]></string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_filter">FilterActivity</string>
+
+    <!--spinner resource-->
+    <string-array name="location_ranges">
+        <item> Any Distance </item>
+        <item> &lt; 0.5 Mile </item>
+        <item> &lt; 1 Mile </item>
+        <item> &lt; 2 Miles </item>
+
+    </string-array>
+
+    <!--spinner resource-->
+    <string-array name="time_ranges">
+        <item> Any Time </item>
+        <item> Today </item>
+        <item> In 3 Days </item>
+        <item> In 1 Week</item>
+        <item> In 2 Weeks </item>
+    </string-array>
+
 </resources>
