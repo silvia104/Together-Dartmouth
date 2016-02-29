@@ -1,8 +1,8 @@
 package edu.dartmouth.cs.together;
 
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -44,9 +44,9 @@ public class MainActivity extends AppCompatActivity
         */
         isListFragment=true;
         EventListFragment efrag = new EventListFragment();
-        android.support.v4.app.FragmentManager manager = getSupportFragmentManager();
-        android.support.v4.app.FragmentTransaction transaction = manager.beginTransaction();
-        transaction.replace(R.id.main_content_frame, efrag);
+        FragmentManager manager = getSupportFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        transaction.replace(R.id.main_content_frame, efrag, "EVENT_LIST_FRAG");
         transaction.commit();
         ImageButton addFab = (ImageButton) findViewById(R.id.fab_image_button);
         ImageButton addFabswitch = (ImageButton) findViewById(R.id.fab_image_button2);
@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity
                     public void onClick(View v) {
                         drawer.closeDrawers();
                         Fragment profileFragment = new ProfileFragment();
-                        FragmentTransaction newTransaction = getFragmentManager().beginTransaction();
+                        FragmentTransaction newTransaction = getSupportFragmentManager().beginTransaction();
                         newTransaction.replace(R.id.main_content_frame, profileFragment);
                         newTransaction.addToBackStack(null);
                         newTransaction.commit();
@@ -144,43 +144,45 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation edu.dartmouth.cs.together.view item clicks here.
         int id = item.getItemId();
-        android.support.v4.app.FragmentManager managerV4 = getSupportFragmentManager();
-        FragmentManager fragmentManager = getFragmentManager();
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
         Fragment fragment = null;
         switch (id){
             case R.id.nav_my_events:
                 fragment = new MyEventsFragment();
+                transaction.replace(
+                        R.id.main_content_frame, fragment, "OTHER_FRAGS"
+                );
                 break;
 
             case R.id.nav_message:
                 fragment = new MessageCenterFragment();
+                transaction.replace(
+                        R.id.main_content_frame, fragment, "OTHER_FRAGS"
+                );
                 break;
             case R.id.nav_settings:
                 fragment = new SettingsFragment();
+                transaction.replace(
+                        R.id.main_content_frame, fragment, "OTHER_FRAGS"
+                );
                 break;
 
             case R.id.nav_recommended_events:
-                EventListFragment efrag = new EventListFragment();
-                android.support.v4.app.FragmentTransaction transactionV4 = managerV4.beginTransaction();
-                transactionV4.replace(R.id.main_content_frame, efrag, "EVENT_LIST_FRAG");
-                transactionV4.commit();
-                Fragment fragmentApp = fragmentManager.findFragmentByTag("OTHER_FRAGS");
-                if (fragmentApp!=null){
-                    fragmentManager.beginTransaction().hide(fragmentApp).commit();
-                }
+                fragment  = new EventListFragment();
+
+                transaction.replace(
+                        R.id.main_content_frame, fragment, "EVENT_LIST_FRAG"
+                );
+
                 break;
         }
-        if (id != R.id.nav_recommended_events){
-            android.support.v4.app.FragmentTransaction transactionV4 = managerV4.beginTransaction();
-
-            android.support.v4.app.Fragment fragmentV4 = managerV4.findFragmentByTag("EVENT_LIST_FRAG");
-            if (fragmentV4!=null){
-                transactionV4.hide(fragmentV4).commit();
-            }
-            fragmentManager.beginTransaction().replace(
-                    R.id.main_content_frame, fragment,"OTHER_FRAGS"
-            ).commit();
+        Fragment oldFragment = fragmentManager.findFragmentById(R.id.main_content_frame);
+        if (oldFragment != null){
+            transaction.hide(oldFragment);
         }
+        transaction.commit();
+
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;

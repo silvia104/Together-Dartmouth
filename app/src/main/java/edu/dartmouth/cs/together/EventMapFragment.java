@@ -1,6 +1,6 @@
 package edu.dartmouth.cs.together;
 
-import android.app.FragmentManager;
+import android.support.v4.app.FragmentManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -34,8 +34,8 @@ public class EventMapFragment extends Fragment implements OnMapReadyCallback {
 
     private void setMap(){
         if (mMap == null && getActivity() != null && getActivity().getFragmentManager()!= null) {
-            FragmentManager manager = getActivity().getFragmentManager();
-            MapFragment smf = MapFragment.newInstance();
+            FragmentManager manager = getActivity().getSupportFragmentManager();
+            SupportMapFragment smf = SupportMapFragment.newInstance();
             smf.setRetainInstance(false);
             manager.beginTransaction().replace(R.id.eventmap, smf).commit();
             smf.getMapAsync(this);
