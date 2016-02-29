@@ -22,9 +22,6 @@ public class EventDetailActivity extends BaseEventActivity {
         mLocationTv.setText(Globals.event.getLocation());
         mPostButton.setVisibility(View.GONE);
         mCancelButton.setVisibility(View.GONE);
-        Fragment fragment =
-                getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
-        getFragmentManager().beginTransaction().hide(fragment).commit();
         mPinInMap.setVisibility(View.GONE);
     }
     @OnClick(R.id.fab)
