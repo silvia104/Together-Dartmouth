@@ -1,24 +1,26 @@
 package edu.dartmouth.cs.together;
 
+import android.app.FragmentManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 /**
  * Created by di on 2/28/2016.
  */
-public class MapFragment extends Fragment implements OnMapReadyCallback {
+public class EventMapFragment extends Fragment implements OnMapReadyCallback {
 
     private GoogleMap mMap;
 
@@ -31,9 +33,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     }
 
     private void setMap(){
-        if (mMap == null && getActivity() != null && getActivity().getSupportFragmentManager()!= null) {
-            FragmentManager manager = getActivity().getSupportFragmentManager();
-            SupportMapFragment smf = SupportMapFragment.newInstance();
+        if (mMap == null && getActivity() != null && getActivity().getFragmentManager()!= null) {
+            FragmentManager manager = getActivity().getFragmentManager();
+            MapFragment smf = MapFragment.newInstance();
             smf.setRetainInstance(false);
             manager.beginTransaction().replace(R.id.eventmap, smf).commit();
             smf.getMapAsync(this);
@@ -43,6 +45,35 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+
+        googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+
+            @Override
+            public void onMapClick(LatLng latLng) {
+
+                // Creating a marker
+                MarkerOptions markerOptions = new MarkerOptions();
+
+                // Setting the position for the marker
+                markerOptions.position(latLng);
+
+                // Setting the title for the marker.
+                // This will be displayed on taping the marker
+                markerOptions.title(latLng.latitude + " : " + latLng.longitude);
+
+                markerOptions.icon(BitmapDescriptorFactory.defaultMarker(
+                        BitmapDescriptorFactory.HUE_GREEN));
+
+                // Clears the previously touched position
+//                mMap.clear();
+
+                // Animating to the touched position
+                mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
+
+                // Placing a marker on the touched position
+                mMap.addMarker(markerOptions);
+            }
+        });
 
         LatLng destination1 = new LatLng(42.352311, -71.055304);
         mMap.addMarker(new MarkerOptions().position(destination1).title("South Station, Boston"));
@@ -61,4 +92,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         LatLng destination4 = new LatLng(40.7508, -73.9755);
         mMap.addMarker(new MarkerOptions().position(destination4).title("New York City"));
     }
+
+
 }

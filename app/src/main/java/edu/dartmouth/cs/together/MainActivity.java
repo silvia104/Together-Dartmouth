@@ -18,9 +18,11 @@ import android.widget.BaseAdapter;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
+import com.google.android.gms.maps.MapFragment;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-
+    private boolean isListFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +43,14 @@ public class MainActivity extends AppCompatActivity
             }
         });
         */
+        isListFragment=true;
+        EventListFragment efrag = new EventListFragment();
+        FragmentManager manager = getSupportFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        transaction.replace(R.id.fragment_container, efrag);
+        transaction.commit();
         ImageButton addFab = (ImageButton) findViewById(R.id.fab_image_button);
+        ImageButton addFabswitch = (ImageButton) findViewById(R.id.fab_image_button2);
         addFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -49,8 +58,28 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-
         final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        addFabswitch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(isListFragment){
+                    EventMapFragment efrag = new EventMapFragment();
+                    FragmentManager manager = getSupportFragmentManager();
+                    FragmentTransaction transaction = manager.beginTransaction();
+                    transaction.replace(R.id.fragment_container, efrag);
+                    transaction.commit();
+                    isListFragment=!isListFragment;
+                }
+                else{
+                    EventListFragment efrag = new EventListFragment();
+                    FragmentManager manager = getSupportFragmentManager();
+                    FragmentTransaction transaction = manager.beginTransaction();
+                    transaction.replace(R.id.fragment_container, efrag);
+                    transaction.commit();
+                    isListFragment=!isListFragment;
+                }
+            }
+        });
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close){
             public void onDrawerOpened(View drawerView) {
@@ -119,6 +148,11 @@ public class MainActivity extends AppCompatActivity
         Fragment fragment = null;
         switch (id){
             case R.id.nav_recommended_events:
+                EventListFragment efrag = new EventListFragment();
+                FragmentManager manager = getSupportFragmentManager();
+                FragmentTransaction transaction = manager.beginTransaction();
+                transaction.replace(R.id.fragment_container, efrag);
+                transaction.commit();
                 break;
             case R.id.nav_my_events:
                 fragment = new MyEventsFragment();
@@ -130,7 +164,6 @@ public class MainActivity extends AppCompatActivity
             case R.id.nav_settings:
                 fragment = new SettingsFragment();
                 break;
-
         }
 
         FragmentManager fragmentManager = getFragmentManager();
