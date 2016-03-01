@@ -27,13 +27,13 @@ public class Event {
     private List<Qa> mQandA = new ArrayList<>();
     private LatLng mLatLng = null;
     private String mLocation = "";
+    private int mLimit;
     public void setCategory(int i) {
         mCategory = i;
     }
 
-    public void setLocation(Place place) {
-        mLatLng = place.getLatLng();
-        mLocation = place.getName() + "\n" + place.getAddress();
+    public void setLocation(String str) {
+        mLocation = str;
     }
 
     public String getLocation() {
@@ -62,14 +62,6 @@ public class Event {
         return mShortDesc;
     }
 
-    public void setDate(int year, int mOfY, int dOfM){
-        mTime.set(year, mOfY, dOfM);
-    }
-    public void setTime(int hour, int min){
-        mTime.set(Calendar.HOUR_OF_DAY,hour);
-        mTime.set(Calendar.MINUTE, min);
-    }
-
     public String getDate() {
         return  new SimpleDateFormat("MM/dd/yy").format(mTime.getTime());
     }
@@ -81,11 +73,31 @@ public class Event {
     public void setDuration(int duration) {
         mDuration = duration;
     }
-    public int getDuration() {
-        return mDuration;
+    public String getDuration() {
+        return mDuration + "";
     }
 
     public void setLatLng(LatLng latLng) {
         mLatLng = latLng;
+    }
+
+    public int getLimit() {
+        return mLimit;
+    }
+
+    public void setDateTime(Calendar time) {
+        mTime = time;
+    }
+
+    public void setLimit(int n) {
+        mLimit = n;
+    }
+
+    public int getCategoryIdx() {
+        return mCategory;
+    }
+
+    public LatLng getLatLng() {
+        return mLatLng;
     }
 }

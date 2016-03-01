@@ -16,6 +16,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 /**
  * Created by TuanMacAir on 2/27/16.
@@ -76,5 +78,12 @@ public class Helper {
         LatLng southwest = SphericalUtil.computeOffset(center, radius * Math.sqrt(2.0), 225);
         LatLng northeast = SphericalUtil.computeOffset(center, radius * Math.sqrt(2.0), 45);
         return new LatLngBounds(southwest, northeast);
+    }
+
+    public static String dateToString(Calendar cal){
+       return new SimpleDateFormat("MM/dd/yy").format(cal.getTime());
+    }
+    public static String timeToString(Calendar cal){
+        return new SimpleDateFormat("HH:mm").format(cal.getTime());
     }
 }

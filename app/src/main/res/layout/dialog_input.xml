@@ -6,19 +6,44 @@
         android:layout_height="wrap_content">
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <EditText
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/editLongDesc"
-                android:textAlignment="center" />
-            <EditText
-                android:layout_width="match_parent"
+                android:id="@+id/editLayout">
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/editLongDesc"
+                    android:textAlignment="center" />
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/editShortDesc"
+                    android:maxLength="30"
+                    android:textSize="17dp"
+                    android:singleLine="true"
+                    android:textAlignment="center" />
+            </RelativeLayout>
+            <Button
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/editShortDesc"
-                android:maxLength="30"
-                android:textSize="17dp"
-                android:textAlignment="center" />
+                android:background="@null"
+                android:id="@+id/saveBtn"
+                android:layout_below="@+id/editLayout"
+                android:layout_marginEnd="30dp"
+                android:layout_alignParentEnd="true"
+                android:text="@string/save"/>
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:layout_below="@+id/editLayout"
+                android:layout_toLeftOf="@id/saveBtn"
+                android:id="@+id/cancelBtn"
+                android:layout_marginEnd="30dp"
+                android:text="@string/cancel"/>
         </RelativeLayout>
     </ScrollView>
 </RelativeLayout>
