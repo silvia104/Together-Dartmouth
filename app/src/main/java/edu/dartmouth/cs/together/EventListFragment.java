@@ -116,6 +116,8 @@ public class EventListFragment extends Fragment implements LoaderManager.LoaderC
             current = position;
             Intent intent;
             // display detail information of selected event
+            Intent i = new Intent(getActivity(),EventDetailActivity.class);
+            startActivity(i);
         }
 
     }
