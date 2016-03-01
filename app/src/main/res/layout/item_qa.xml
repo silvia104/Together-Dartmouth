@@ -19,6 +19,7 @@
         android:background="@null"
         android:src="@drawable/ic_expand_more"
         android:tag="closed"
+        android:scaleType="fitCenter"
         android:layout_alignTop="@+id/questionText"
         android:layout_marginTop="3dp"
         android:layout_marginRight="3dp" />

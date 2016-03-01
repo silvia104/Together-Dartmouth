@@ -2,6 +2,7 @@ package edu.dartmouth.cs.together;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
@@ -9,6 +10,7 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -135,5 +137,19 @@ public class BaseEventActivity extends BasePopoutActivity {
         mLatLng = event.getLatLng();
     }
 
+    protected void disableLimitSeekbar(){
+        Drawable thumb = mLimit.getThumb();
+        thumb.setTint(0x664E342E);
+        thumb.mutate();
+        Drawable progress = mLimit.getProgressDrawable();
+        progress.setTint(0x664E342E);
+        progress.mutate();
+        mLimit.setOnTouchListener(new View.OnTouchListener(){
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                return true;
+            }
+        });
+    }
 
 }

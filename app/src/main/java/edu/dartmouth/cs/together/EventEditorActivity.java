@@ -78,18 +78,7 @@ public class EventEditorActivity extends BaseEventActivity implements DatePicker
         Intent i = getIntent();
         mEventIdx = i.getIntExtra(Globals.EVENT_INDEX_KEY, 0);
         if (mEventIdx > -1) {
-            Drawable thumb = mLimit.getThumb();
-            thumb.setTint(0x664E342E);
-            thumb.mutate();
-            Drawable progress = mLimit.getProgressDrawable();
-            progress.setTint(0x664E342E);
-            progress.mutate();
-            mLimit.setOnTouchListener(new View.OnTouchListener(){
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    return true;
-                }
-            });
+            disableLimitSeekbar();
             //TODO: Hook mEvent with mEventIdx
             displayEventValues(mEvent);
         }

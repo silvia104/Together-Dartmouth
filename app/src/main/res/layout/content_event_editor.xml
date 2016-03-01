@@ -202,7 +202,7 @@
             android:id="@+id/seekBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingEnd="3dp"
+            android:paddingEnd="10dp"
             android:max="40"/>
 
         <TextView
@@ -246,7 +246,7 @@
             android:layout_marginEnd="50dp"
             android:background="@null"
             android:text="Cancel"
-            android:textColor="#00695C"/>
+            android:textColor="?attr/colorPrimary"/>
 
         <Button
             android:id="@+id/postBtn"
@@ -254,6 +254,6 @@
             android:layout_height="wrap_content"
             android:background="@null"
             android:text="post"
-            android:textColor="#00695C"/>
+            android:textColor="?attr/colorPrimary"/>
     </LinearLayout>
 </RelativeLayout>

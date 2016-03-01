@@ -27,6 +27,7 @@ public class EventDetailActivity extends BaseEventActivity {
         mAddDuration.setVisibility(View.GONE);
         mDecreaseDuration.setVisibility(View.GONE);
         displayEventValues(mEvent);
+        disableLimitSeekbar();
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -37,7 +38,6 @@ public class EventDetailActivity extends BaseEventActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
         switch (item.getItemId()) {
-            //noinspection SimplifiableIfStatement
             case R.id.action_refresh:
                 //TODO:
                 return true;
