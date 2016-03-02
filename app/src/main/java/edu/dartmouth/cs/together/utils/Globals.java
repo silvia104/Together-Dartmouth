@@ -8,11 +8,14 @@ import java.util.Calendar;
 import java.util.List;
 
 import edu.dartmouth.cs.together.data.Event;
+import edu.dartmouth.cs.together.data.User;
 
 /**
  * Created by TuanMacAir on 2/27/16.
  */
 public class Globals {
+    public static final String DEVICE_ID_PREF_KEY = "REG_ID_KEY";
+    public static final String REGISTRATION_COMPLETE = "edu.dartmouth.cs.together.registration_complete_action";
     public static String[] sports = {"Soccer","Skiing","Cycling","Jogging","Hiking",
             "Tennis","Skating","Dancing","Gym","Basketball","Swimming","Billiard"};
     public static String[] life = {"Movie","Party","Shopping","Dining", "Travel", "Study"};
@@ -20,6 +23,13 @@ public class Globals {
     public static LatLng DARTMOUTH_GPS = new LatLng(43.726034, -72.142917);
     public static double RADIUS_50MILES = 80467.2;
     public static String EVENT_INDEX_KEY="EVENT_INDEX_KEY";
+    public static String SERVER_ADDR = "http://10.0.0.30:8080";
+    public static String DEVICE_ID;
+    public static User currentUser;
+    public static final String ACTION_ADD = "add";
+    public static final String ACTION_UPDATE = "update";
+    public static final String ACTION_DELETE= "delete";
+
     static{
         for (String s : sports){
             categories.add(s);

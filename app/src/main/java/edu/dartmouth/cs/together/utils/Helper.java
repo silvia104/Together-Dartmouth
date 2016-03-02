@@ -86,4 +86,8 @@ public class Helper {
     public static String timeToString(Calendar cal){
         return new SimpleDateFormat("HH:mm").format(cal.getTime());
     }
+
+    public static long intToUnsignedLong(int i){
+      return   0x00000000FFFFFFFFl & (long) i;
+    }
 }

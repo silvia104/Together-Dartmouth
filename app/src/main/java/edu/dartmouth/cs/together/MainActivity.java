@@ -18,6 +18,9 @@ import android.view.MenuItem;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
+import edu.dartmouth.cs.together.cloud.GcmRegisterIntentService;
+import edu.dartmouth.cs.together.utils.Globals;
+
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -26,9 +29,12 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
-
+       /* if((Globals.DEVICE_ID =
+                getSharedPreferences(getPackageName(),MODE_PRIVATE)
+                        .getString(Globals.DEVICE_ID_PREF_KEY,null))==null) {*/
+            registerDevice();
+        //}
+        startActivity(new Intent(getApplicationContext(),LoginActivity.class));
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -186,5 +192,10 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void registerDevice(){
+        Intent i = new Intent(getApplicationContext(), GcmRegisterIntentService.class);
+        startService(i);
     }
 }

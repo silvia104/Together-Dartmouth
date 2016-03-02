@@ -126,7 +126,7 @@ public class BaseEventActivity extends BasePopoutActivity {
         mLongDesc.setText(event.getLongDesc());
         mLocationTv.setText(event.getLocation());
         mLocationTv.setTag("");
-        mDuration.setText(event.getDuration());
+        mDuration.setText(""+event.getDuration());
         mDateText.setText(event.getDate());
         mDateText.setTag("");
         mTimeText.setText(event.getTime());
