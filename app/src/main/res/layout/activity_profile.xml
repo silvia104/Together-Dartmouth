@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context="edu.dartmouth.cs.together.ProfileActivity">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        android:id="@+id/profile_image_group">
+
+        <ImageView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:id="@+id/profile_image"
+            android:layout_marginLeft="135dp"
+            android:layout_gravity="center"/>
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/profile_image_group"
+        android:id="@+id/profile_text_group"
+        android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="70dp"
+                android:layout_height="match_parent"
+                android:id="@+id/profile_name"
+                android:text="Name"
+                android:textSize="8pt"
+                android:gravity="center_vertical"
+                android:layout_gravity="start"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="40dp"
+                />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="end"
+                android:inputType="text"
+                android:layout_marginRight="20dp"
+                />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="70dp"
+                android:layout_height="match_parent"
+                android:id="@+id/profile_email_title"
+                android:text = "Email"
+                android:textSize="8pt"
+                android:gravity="center_vertical"
+                android:layout_gravity="start"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="40dp"
+                />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/profile_email"
+                android:layout_gravity="end"
+                android:inputType="textEmailAddress"
+                android:layout_marginRight="20dp"
+                />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="70dp"
+                android:layout_height="match_parent"
+                android:id="@+id/profile_phone"
+                android:text = "Phone"
+                android:textSize="8pt"
+                android:gravity="center_vertical"
+                android:layout_gravity="start"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="40dp"
+                />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="end"
+                android:inputType="phone"
+                android:layout_marginRight="20dp"
+                />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="70dp"
+                android:layout_height="match_parent"
+                android:id="@+id/profile_class"
+                android:text = "Class"
+                android:textSize="8pt"
+                android:gravity="center_vertical"
+                android:layout_gravity="start"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="40dp"
+                />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="end"
+                android:layout_marginRight="20dp"
+                />
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="70dp"
+                android:layout_height="match_parent"
+                android:id="@+id/profile_major"
+                android:text = "Major"
+                android:textSize="8pt"
+                android:gravity="center_vertical"
+                android:layout_gravity="start"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="40dp"
+                />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="end"
+                android:layout_marginRight="20dp"
+                />
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:orientation="horizontal"
+        android:layout_below="@+id/profile_text_group">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_weight="0.5"
+            android:text="Cancel"
+            android:id="@+id/profile_save_button"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="20dp"
+            android:text="Save"
+            android:layout_weight="0.5"
+            android:id="@+id/profile_cancel_button"/>
+    </LinearLayout>
+
+
+</RelativeLayout>

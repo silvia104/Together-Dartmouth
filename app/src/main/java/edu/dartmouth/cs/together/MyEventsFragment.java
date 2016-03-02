@@ -21,6 +21,7 @@ public class MyEventsFragment extends Fragment {
     private SlidingTabLayout mSlidingTabLayout;
     private ViewPager mViewPager;
     private ActionTabsViewPagerAdapter mViewPageAdapter;
+    private final int SCREEN_PAGE_LIMIT = 1;
 
 
     public static MyEventsFragment newInstance() {
@@ -43,17 +44,18 @@ public class MyEventsFragment extends Fragment {
 
         mSlidingTabLayout = (SlidingTabLayout) view.findViewById(R.id.sliding_tab);
         mViewPager = (ViewPager) view.findViewById(R.id.view_pager);
+        mViewPager.setOffscreenPageLimit(SCREEN_PAGE_LIMIT);
 
 
         //Set up fragments of each tab
         fragmentList = new ArrayList<Fragment>();
-        asStarterFragment = new MyEventsAsStarter();
+        asStarterFragment = new MyEventsAsInitiator();
         asJoinerFragment = new MyEventsAsJoiner();
         fragmentList.add(asStarterFragment);
         fragmentList.add(asJoinerFragment);
 
 
-        mViewPageAdapter =new ActionTabsViewPagerAdapter(getFragmentManager(),
+        mViewPageAdapter =new ActionTabsViewPagerAdapter(getChildFragmentManager(),
                 fragmentList);
         mViewPager.setAdapter(mViewPageAdapter);
         mSlidingTabLayout.setDistributeEvenly(true);

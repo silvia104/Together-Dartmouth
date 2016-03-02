@@ -46,4 +46,5 @@
     <string name="OK">ok</string>
     <string name="cancelevent">DELETE</string>
     <string name="wronglocation">Please refine the location wtihin 50 miles from Dartmouth!</string>
+    <string name="title_activity_profile">ProfileActivity</string>
 </resources>

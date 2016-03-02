@@ -81,22 +81,22 @@ public class MainActivity extends AppCompatActivity
         });
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close){
-            public void onDrawerOpened(View drawerView) {
-                super.onDrawerOpened(drawerView);
-                LinearLayout profile = (LinearLayout) drawerView.findViewById(R.id.nav_header);
-                profile.setOnClickListener(new View.OnClickListener() {
-
-                    @Override
-                    public void onClick(View v) {
-                        drawer.closeDrawers();
-                        Fragment profileFragment = new ProfileFragment();
-                        FragmentTransaction newTransaction = getFragmentManager().beginTransaction();
-                        newTransaction.replace(R.id.main_content_frame, profileFragment);
-                        newTransaction.addToBackStack(null);
-                        newTransaction.commit();
-                    }
-                });
-            }
+//            public void onDrawerOpened(View drawerView) {
+//                super.onDrawerOpened(drawerView);
+//                LinearLayout profile = (LinearLayout) drawerView.findViewById(R.id.nav_header);
+//                profile.setOnClickListener(new View.OnClickListener() {
+//
+//                    @Override
+//                    public void onClick(View v) {
+//                        drawer.closeDrawers();
+//                        Fragment profileFragment = new ProfileFragment();
+//                        FragmentTransaction newTransaction = getFragmentManager().beginTransaction();
+//                        newTransaction.replace(R.id.main_content_frame, profileFragment);
+//                        newTransaction.addToBackStack(null);
+//                        newTransaction.commit();
+//                    }
+//                });
+//            }
         };
         drawer.setDrawerListener(toggle);
         toggle.syncState();

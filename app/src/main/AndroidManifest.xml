@@ -44,26 +44,23 @@
         <activity
             android:name=".EventEditorActivity"
             android:parentActivityName=".MainActivity"
-            android:theme="@style/AppTheme.NoActionBar">
-
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".EventDetailActivity"
             android:parentActivityName=".MainActivity"
-            android:theme="@style/AppTheme.NoActionBar" >
-
-        </activity>
-
-        <activity android:name=".JoinerListActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".JoinerListActivity"
             android:parentActivityName=".EventEditorActivity"
-            android:theme="@style/AppTheme.NoActionBar">
-
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".FilterActivity"
             android:label="@string/title_activity_filter"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ProfileActivity"
+            android:label="@string/title_activity_profile"
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>
