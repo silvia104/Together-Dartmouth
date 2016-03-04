@@ -408,7 +408,6 @@ public class BaseEventActivity extends BasePopoutActivity implements
             }
             return event;
         }
-
         @Override
         protected void onPostExecute(Event event) {
             super.onPostExecute(event);

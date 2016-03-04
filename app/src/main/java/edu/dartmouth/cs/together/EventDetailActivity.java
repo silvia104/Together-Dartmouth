@@ -43,20 +43,13 @@ public class EventDetailActivity extends BaseEventActivity {
         mEditLocBtn.setVisibility(View.GONE);
 
         Intent i = getIntent();
-        mEventId = i.getLongExtra(Globals.EVENT_INDEX_KEY, -1);
-        mEventType = i.getIntExtra(Globals.EVENT_TYPE_KEY, EventDataSource.ALL_EVENT);
-
-
-        //TODO: to remove
-        mEventId = getSharedPreferences(getPackageName(), MODE_PRIVATE).getLong(
-                Event.ID_KEY, -1);
-        mEventType = EventDataSource.ALL_EVENT;
-
-
-        if (mEventId!=-1) {
+        mEventId = i.getLongExtra(Event.ID_KEY, -1);
+        mEventType = i.getIntExtra("TAG", EventDataSource.ALL_EVENT);
+        if (mEventId != -1){
             new LoadEventAsyncTask(mEventType).execute(mEventId);
+        } else {
+            finish();
         }
-
         if (mEventType == EventDataSource.JOINED_EVENT){
            mJoinBtn.setVisibility(View.GONE);
         }

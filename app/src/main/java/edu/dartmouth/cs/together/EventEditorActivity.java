@@ -76,8 +76,10 @@ public class EventEditorActivity extends BaseEventActivity implements DatePicker
         mJoinBtn.setVisibility(View.GONE);
 
         Intent i = getIntent();
-        mEventId = i.getLongExtra(Globals.EVENT_INDEX_KEY, -1);
-
+        mEventId = i.getLongExtra(Event.ID_KEY, -1);
+        if (mEventId != -1){
+            new LoadEventAsyncTask(EventDataSource.MY_OWN_EVENT).execute(mEventId);
+        }
         double lat = i.getDoubleExtra(Globals.MAP_LONGITUDE,0);
         double lng = i.getDoubleExtra(Globals.MAP_LATITUDE,0);
         if (lat!=0 && lng != 0){
@@ -85,15 +87,9 @@ public class EventEditorActivity extends BaseEventActivity implements DatePicker
             mLocationTv.setText(mLatLng.toString());
             mLocationTv.setTag("");
         }
-
-
         //TODO: to remove
         if (savedInstanceState == null) {
-            mEventId  = getSharedPreferences(getPackageName(),MODE_PRIVATE).getLong(
-                    Event.ID_KEY,-1);
         }else {
-          //TODO: to remove
-            mEventId = -1;
             restoreValues(savedInstanceState);
         }
 
@@ -225,7 +221,7 @@ public class EventEditorActivity extends BaseEventActivity implements DatePicker
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (!action.equals(Globals.ACTION_ADD)) {
+        if (Globals.currentUser.getId()==mEvent.getOwner()) {
             getMenuInflater().inflate(R.menu.cancelevent, menu);
             super.onCreateOptionsMenu(menu);
         }
@@ -471,10 +467,6 @@ public class EventEditorActivity extends BaseEventActivity implements DatePicker
                     (mEvent.getOwner() + "" + System.currentTimeMillis()).hashCode()));
         }
         new EventOperationAsyncTask().execute(mEvent);
-        //TODO: to remove
-        getSharedPreferences(getPackageName(),MODE_PRIVATE).edit().putLong(
-                Event.ID_KEY,mEvent.getEventId()).commit();
-
         return true;
     }
 
