@@ -9,17 +9,20 @@ import java.util.Calendar;
 public class Message {
 
 
-    private int msgId;
+    private long msgId;
     private long eventId;
     private int msgType;
     private long msgTime;
-    private String msgDescription;
     private boolean isRead;
     //for quesiton, maybe there should be this question id?
-    private int qaId;
+    private long qaId;
 
 
-    public Message(Long eventId, int type, long time, String description ,boolean isRead, int qaId) {
+    public Message(){
+
+    }
+
+    public Message(Long eventId, int type, long time, String description ,boolean isRead, long qaId) {
         this.eventId = eventId;
         this.msgType = type;
         this.msgTime = time;
@@ -40,7 +43,7 @@ public class Message {
         return msgDescription;
     }
 
-    public Integer getQaId() {
+    public long getQaId() {
         return qaId;
     }
 
@@ -48,7 +51,11 @@ public class Message {
         return msgTime;
     }
 
-    public int getMsgId() {
+    public void setMsgId(long msgId) {
+        this.msgId = msgId;
+    }
+
+    public long getMsgId() {
         return msgId;
     }
 
@@ -56,16 +63,9 @@ public class Message {
         this.msgId = msgId;
     }
 
-    public void setEventId(Long eventId) {
-        this.eventId = eventId;
-    }
 
     public void setMsgType(int msgType) {
         this.msgType = msgType;
-    }
-
-    public void setMsgContent(String msgContent) {
-        this.msgDescription = msgContent;
     }
 
     public void setQuestion(int qaId) {
@@ -84,6 +84,28 @@ public class Message {
     public boolean getIsRead() {
 
         return isRead;
+    }
+
+    public String getMsgDescription() {
+        return msgDescription;
+    }
+
+    public boolean isRead() {
+        return isRead;
+    }
+
+    private String msgDescription;
+
+    public void setEventId(long eventId) {
+        this.eventId = eventId;
+    }
+
+    public void setMsgDescription(String msgDescription) {
+        this.msgDescription = msgDescription;
+    }
+
+    public void setQaId(long qaId) {
+        this.qaId = qaId;
     }
 
     public String getDateTimeString (String dateFormat)
