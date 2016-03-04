@@ -108,7 +108,8 @@ public class EventListFragment extends Fragment implements LoaderManager.LoaderC
                 edu.dartmouth.cs.together.utils.Globals.KEY_SHARED_PREFERENCE_FILE, Context.MODE_PRIVATE);
         int time=sharedPref.getInt(edu.dartmouth.cs.together.utils.Globals.KEY_TIME_RANGE, 3);
         int dist=sharedPref.getInt(edu.dartmouth.cs.together.utils.Globals.KEY_DISTANCE_RANGE,50);
-        String insterests=sharedPref.getString(edu.dartmouth.cs.together.utils.Globals.KEY_INTEREST_CATEGORY,null);
+        String insterests=sharedPref.getString(edu.dartmouth.cs.together.utils.Globals.KEY_INTEREST_CATEGORY, null);
+        List<Integer> filtint=null;
         List<Event> filter=null;
         for(int i=0;i<values.size();i++){
             Event tmp=values.get(i);
@@ -122,10 +123,13 @@ public class EventListFragment extends Fragment implements LoaderManager.LoaderC
             if(eventlocat.distanceTo(dartmouth)<dist){
                 long curtime=Calendar.getInstance().get(Calendar.MILLISECOND);
                 if(tmp.getTimeMillis()-curtime<time*24*60*60*1000){
-
+                    if(filtint.contains(tmp.getEventId())){
+                        filter.add(tmp);
+                    }
                 }
             }
         }
+        updateListfromvalues();
     }
 
 
@@ -206,6 +210,11 @@ public class EventListFragment extends Fragment implements LoaderManager.LoaderC
         list.setAdapter(new eventarrayAdapter(getActivity().getApplicationContext(), values) {
         });
         datasource.close();
+    }
+
+    public void updateListfromvalues(){
+        list.setAdapter(new eventarrayAdapter(getActivity().getApplicationContext(), values) {
+        });
     }
 
     @Override

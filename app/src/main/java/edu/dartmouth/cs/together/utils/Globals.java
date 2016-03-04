@@ -24,6 +24,7 @@ public class Globals {
     public static final String UPDATE_EVENT_DETAIL = "update_event_detail";
     public static final String MAP_LATITUDE = "latitude";
     public static final String MAP_LONGITUDE = "longitude";
+    public static final int SETTING_FILTER = 0;
     public static String[] sports = {"Soccer","Skiing","Cycling","Jogging","Hiking",
             "Tennis","Skating","Dancing","Gym","Basketball","Swimming","Billiard"};
     public static String[] life = {"Movie","Party","Shopping","Dining", "Travel", "Study"};
