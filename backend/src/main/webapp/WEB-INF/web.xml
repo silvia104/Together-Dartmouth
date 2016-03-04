@@ -44,6 +44,16 @@
         <servlet-name>getjoiner</servlet-name>
         <url-pattern>/getjoiner.do</url-pattern>
     </servlet-mapping>
+
+    <servlet>
+        <servlet-name>update</servlet-name>
+        <servlet-class>edu.dartmouth.cs.together.backend.UpdateServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>update</servlet-name>
+        <url-pattern>/update.do</url-pattern>
+    </servlet-mapping>
+
     <servlet>
         <servlet-name>qa</servlet-name>
         <servlet-class>edu.dartmouth.cs.together.backend.QaServlet</servlet-class>

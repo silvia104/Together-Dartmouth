@@ -74,7 +74,7 @@ public class EventListFragment extends Fragment implements LoaderManager.LoaderC
         @Override
         public String lineOneText(Event e) {
 //            return e.getShortdesc();
-            return "Location";
+            return e.getLocation();
         }
 
         @Override
@@ -85,7 +85,7 @@ public class EventListFragment extends Fragment implements LoaderManager.LoaderC
 
         @Override
         public String lineTreText(Event e) {
-            return "Event duration";
+            return "Duration:  "+e.getDuration();
         }
 
         @Override
@@ -120,7 +120,9 @@ public class EventListFragment extends Fragment implements LoaderManager.LoaderC
             dartmouth.setLatitude(edu.dartmouth.cs.together.utils.Globals.DARTMOUTH_GPS.latitude);
             dartmouth.setLongitude(Globals.DARTMOUTH_GPS.longitude);
             if(eventlocat.distanceTo(dartmouth)<dist){
-                filter.add(tmp);
+                if(true){
+
+                }
             }
         }
     }
@@ -159,15 +161,19 @@ public class EventListFragment extends Fragment implements LoaderManager.LoaderC
                             String lng = jobj.getString("lng");
                             String shotDesc=jobj.getString("shortdesc");
                             String location=jobj.getString("location");
+                            String longDesc=jobj.getString("longdesc");
+                            long owner = Long.parseLong(jobj.getString("owner"));
                             long etime = Long.parseLong(jobj.getString("time"));
                             int joinnum = Integer.parseInt(jobj.getString("joincount"));
                             int limit = Integer.parseInt(jobj.getString("limit"));
                             Event eobj = new Event();
                             eobj.setEventId(id);
                             eobj.setJoinerCount(joinnum);
+                            eobj.setOwnerId(owner);
                             eobj.setLimit(limit);
                             eobj.setLocation(location);
                             eobj.setShortDesc(shotDesc);
+                            eobj.setLongDesc(longDesc);
                             eobj.setCategory(Integer.parseInt(cate));
                             eobj.setDuration(Integer.parseInt(duration));
                             LatLng ll = new LatLng(Double.parseDouble(lat), Double.parseDouble(lng));

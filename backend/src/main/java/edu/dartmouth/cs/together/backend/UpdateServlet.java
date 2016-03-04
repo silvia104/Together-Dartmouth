@@ -36,6 +36,8 @@ public class UpdateServlet extends HttpServlet {
                 eventJSON.put("duration", event.getDuration());
                 eventJSON.put("shortdesc", event.getShortdesc());
                 eventJSON.put("time", event.getTimeMillis());
+                eventJSON.put("longdesc", event.getLongDesc());
+                eventJSON.put("owner", event.getOwner());
                 eventJSON.put("joincount", event.getJoinerCount());
                 eventJSON.put("limit", event.getLimit());
                 eventJSON.put("location", event.getLocation());
