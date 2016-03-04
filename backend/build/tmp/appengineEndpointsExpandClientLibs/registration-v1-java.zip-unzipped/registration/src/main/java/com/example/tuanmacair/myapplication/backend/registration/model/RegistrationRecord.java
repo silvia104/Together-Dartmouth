@@ -14,6 +14,7 @@
  * (build: 2016-02-18 22:11:37 UTC)
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
  * on 2016-03-04 at 04:55:28 UTC 
 =======
  * on 2016-03-04 at 15:45:50 UTC 
@@ -21,6 +22,9 @@
 =======
  * on 2016-03-04 at 17:11:09 UTC 
 >>>>>>> jing-third-branch
+=======
+ * on 2016-03-04 at 17:47:58 UTC 
+>>>>>>> origin/master
  * Modify at your own risk.
  */
 

@@ -8,7 +8,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.content.Loader;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -34,8 +33,6 @@ import android.widget.TextView;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -167,9 +164,6 @@ public class BaseEventActivity extends BasePopoutActivity implements
     }
 
     @OnClick(R.id.fab)
-
-    public void onFabClick(){
-        startActivity(new Intent(getApplicationContext(), JoinerListActivity.class));
     public void onFabClick() {
         Intent i = new Intent(this, JoinerListActivity.class);
         i.putExtra(Event.ID_KEY, mEvent.getEventId());
@@ -465,6 +459,7 @@ public class BaseEventActivity extends BasePopoutActivity implements
             } else {
                 mList.addAll(list);
             }
+
             notifyDataSetChanged();
         }
         public class QaViewHolder extends RecyclerView.ViewHolder {

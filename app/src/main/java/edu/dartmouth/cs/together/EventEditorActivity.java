@@ -64,8 +64,6 @@ public class EventEditorActivity extends BaseEventActivity implements DatePicker
     private Calendar mNow = Calendar.getInstance();
     private Calendar mTime = Calendar.getInstance();
     private long mEventId;
-    private String action = Globals.ACTION_ADD;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -151,10 +149,6 @@ public class EventEditorActivity extends BaseEventActivity implements DatePicker
             startService(i);
         }else {
             mQaAdapter.updateData(data);
-        }
-
-        if (savedInstanceState != null) {
-            restoreValues(savedInstanceState);
         }
 
     }

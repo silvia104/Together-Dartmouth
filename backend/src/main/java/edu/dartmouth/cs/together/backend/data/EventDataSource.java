@@ -9,10 +9,6 @@ import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 
 import java.util.ArrayList;
-<<<<<<< HEAD
-import java.util.List;
-=======
->>>>>>> origin/master
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -128,8 +124,6 @@ public class EventDataSource {
         event.setJoinerCount(((Long) entity.getProperty(Event.JOINER_COUNT_KEY)).intValue());
         return event;
     }
-<<<<<<< HEAD
-=======
 
     private static void setEntityFromEvent(Entity entity, Event event){
         entity.setProperty(Event.ID_KEY, event.getEventId());
@@ -164,6 +158,4 @@ public class EventDataSource {
         }
         return resultList;
     }
-
->>>>>>> origin/master
 }

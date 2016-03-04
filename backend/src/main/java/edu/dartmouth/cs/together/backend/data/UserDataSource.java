@@ -34,10 +34,6 @@ public class UserDataSource  {
     // add activity record to datastore
     public static boolean add(User user) {
         // don't add record if it exists already
-
-        if (queryByAccount(user.getAccount(),user.getDevice()).size()>0) {
-            mLogger.log(Level.INFO, "user exists");
-            return false;
         Entity found = queryByAccount(user.getAccount());
         if (found !=null) {
             String deviceId = (String)found.getProperty(User.DEVICE_KEY);
@@ -104,30 +100,6 @@ public class UserDataSource  {
         return ret;
     }
 
-    // query all activity records from datastore.
-    // All records of each device will have a separate list
-    public static List<Entity> queryByAccount(String account, String deviceId) {
-            List<Entity> result = new ArrayList<>();
-            Query query = new Query(User.USER_ENTITY_NAME);
-            // get every record from datastore, no filter
-            query.setFilter(new Query.FilterPredicate(User.ACCOUNT_KEY,
-                    Query.FilterOperator.EQUAL,
-                    account));
-            // set query's ancestor to get strong consistency
-            query.setAncestor(getKey());
-
-            PreparedQuery pq = mDatastore.prepare(query);
-
-            for (Entity entity : pq.asIterable()) {
-
-                if (entity!=null){
-                    if (!entity.getProperty(User.DEVICE_KEY).equals(deviceId)){
-                        entity.setProperty(User.DEVICE_KEY, deviceId);
-                        mDatastore.put(entity);
-                    }
-                    result.add(entity);
-                }
-            }
     public static Entity queryByAccount(String account) {
         Query query = new Query(User.USER_ENTITY_NAME);
         Entity entity = null;

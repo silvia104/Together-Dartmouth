@@ -18,7 +18,6 @@ import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.GZIPOutputStream;
-
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import edu.dartmouth.cs.together.data.Event;
@@ -43,9 +42,6 @@ public class EventDetailActivity extends BaseEventActivity {
         mCancelButton.setVisibility(View.GONE);
         mAddDuration.setVisibility(View.GONE);
         mDecreaseDuration.setVisibility(View.GONE);
-
-        displayEventValues(mEvent);
-        disableLimitSeekbar();
         mAddQuestion.setVisibility(View.VISIBLE);
         disableLimitSeekbar();
 
@@ -68,7 +64,6 @@ public class EventDetailActivity extends BaseEventActivity {
         if (mEventType == EventDataSource.JOINED_EVENT){
            mJoinBtn.setVisibility(View.GONE);
         }
-
         mDateReloadReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -101,8 +96,7 @@ public class EventDetailActivity extends BaseEventActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.refresh, menu);
-        return true;
+
         if (mEventType==EventDataSource.JOINED_EVENT) {
             getMenuInflater().inflate(R.menu.quit, menu);
             return true;
@@ -121,10 +115,6 @@ public class EventDetailActivity extends BaseEventActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    @OnClick(R.id.fab)
-    public void onFabClick(){
-        finish();
-    }
     @OnClick(R.id.addQuestion)
     public void onAddQuestionClick(){
         ShowInputDialog(QUESTION_DIALOG);
@@ -137,6 +127,10 @@ public class EventDetailActivity extends BaseEventActivity {
         i.putExtra(User.ID_KEY, Globals.currentUser.getId());
         i.putExtra(Globals.ACTION_KEY,Globals.ACTION_JOIN);
         getApplication().startService(i);
+    }
+    @OnClick(R.id.addQuestion)
+    public void onAddQuestionClick(){
+        ShowInputDialog(QUESTION_DIALOG);
     }
 
     @Override

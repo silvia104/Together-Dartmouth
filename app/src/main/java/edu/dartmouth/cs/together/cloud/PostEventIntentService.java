@@ -32,7 +32,6 @@ public class PostEventIntentService extends BaseIntentSerice {
         Log.d(this.getClass().getName(), "Service started");
         String action = intent.getStringExtra(ACTION_KEY);
         long eventId = intent.getLongExtra(Event.ID_KEY, -1);
-        Event event = new EventDataSource(getApplicationContext()).queryMyOwnEventById(eventId);
         String uploadState = "";
         Map<String, String> params = new HashMap<>();
         params.put("action", action);
@@ -58,13 +57,6 @@ public class PostEventIntentService extends BaseIntentSerice {
                 json.put(Event.LIMIT_KEY, event.getLimit());
                 json.put(Event.LONG_DESC_KEY, event.getLongDesc());
                 params.put("json", json.toString());
-                params.put("action",action);
-                // post add request
-                ServerUtilities.post(Globals.SERVER_ADDR + "/addevent.do", params);
-                ContentValues values = new ContentValues();
-                values.put(MyOwnEventTable.COLUMNS.STATUS.colName(), Event.STATUS_POSTED);
-                new EventDataSource(getApplicationContext()).updateMyOwnEvent(event.getEventId(),
-                        values);
             }
             try{
                 String result = ServerUtilities.post(Globals.SERVER_ADDR + "/eventops.do", params);
@@ -96,7 +88,6 @@ public class PostEventIntentService extends BaseIntentSerice {
         } catch (JSONException e) {
             Log.e(this.getClass().getName(), e.getCause().toString());
         }
-
     }
 
 

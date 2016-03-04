@@ -54,6 +54,24 @@
         <servlet-name>qa</servlet-name>
         <url-pattern>/qa.do</url-pattern>
     </servlet-mapping>
+
+    <servlet>
+        <servlet-name>update</servlet-name>
+        <servlet-class>edu.dartmouth.cs.together.backend.UpdateServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>update</servlet-name>
+        <url-pattern>/update.do</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>qa</servlet-name>
+        <servlet-class>edu.dartmouth.cs.together.backend.QaServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>qa</servlet-name>
+        <url-pattern>/qa.do</url-pattern>
+    </servlet-mapping>
     <welcome-file-list>
         <welcome-file>index.html</welcome-file>
     </welcome-file-list>

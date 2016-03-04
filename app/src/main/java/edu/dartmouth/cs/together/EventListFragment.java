@@ -121,8 +121,6 @@ public class EventListFragment extends Fragment implements LoaderManager.LoaderC
             dartmouth.setLatitude(edu.dartmouth.cs.together.utils.Globals.DARTMOUTH_GPS.latitude);
             dartmouth.setLongitude(Globals.DARTMOUTH_GPS.longitude);
             if(eventlocat.distanceTo(dartmouth)<dist){
-                long curtime=Calendar.getInstance().get(Calendar.MILLISECOND);
-                if(tmp.getTimeMillis()-curtime<time*24*60*60*1000){
                     if(filtint.contains(tmp.getEventId())){
                         filter.add(tmp);
                     }
@@ -187,7 +185,6 @@ public class EventListFragment extends Fragment implements LoaderManager.LoaderC
                             LatLng ll = new LatLng(Double.parseDouble(lat), Double.parseDouble(lng));
                             eobj.setLatLng(ll);
                             values.add(eobj);
-                            datasource.insertEvent(2, eobj);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -206,7 +203,6 @@ public class EventListFragment extends Fragment implements LoaderManager.LoaderC
     public void updateList(){
 
         datasource.open();
-        values = datasource.queryEvents(2);
         list.setAdapter(new eventarrayAdapter(getActivity().getApplicationContext(), values) {
         });
         datasource.close();
