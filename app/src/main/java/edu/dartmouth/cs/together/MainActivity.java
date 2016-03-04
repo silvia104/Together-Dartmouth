@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity
         addFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getApplicationContext(), EventEditorActivity.class));
+                startActivity(new Intent(MainActivity.this, EventEditorActivity.class));
             }
         });
 

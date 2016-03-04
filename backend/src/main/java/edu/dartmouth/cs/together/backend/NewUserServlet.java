@@ -6,6 +6,8 @@ import com.google.appengine.labs.repackaged.org.json.JSONException;
 import com.google.appengine.labs.repackaged.org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -29,7 +31,9 @@ public class NewUserServlet extends HttpServlet{
             boolean ret = UserDataSource.add(user);
             // tell client how many records were actually added.
             MessagingEndpoint msg = new MessagingEndpoint();
-            msg.sendMessage("id="+user.getDevice() + ";;" +"New User Added:" + ret);
+            List<String> deviceList = new ArrayList<>();
+            deviceList.add(user.getDevice());
+            msg.sendMessage(deviceList,"New User Added:" + ret);
 
         } catch (JSONException e) {
             e.printStackTrace();

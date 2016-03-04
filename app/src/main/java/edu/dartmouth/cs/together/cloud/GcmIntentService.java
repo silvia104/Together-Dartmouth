@@ -9,7 +9,7 @@ import com.google.android.gms.gcm.GoogleCloudMessaging;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import edu.dartmouth.cs.together.utils.Globals;
+import edu.dartmouth.cs.together.data.EventDataSource;
 
 
 /**
@@ -36,8 +36,10 @@ public class GcmIntentService extends BaseIntentSerice {
             if (GoogleCloudMessaging.MESSAGE_TYPE_MESSAGE.equals(messageType)) {
                 Logger.getLogger("GCM_RECEIVED").log(Level.INFO, extras.toString());
                 String message = extras.getString("message");
-                if (message == null) return;
-
+                if (message.startsWith("Event Delete")) {
+                } else if (message.startsWith("Event Joined:")){
+                } else if (message.startsWith("Event Quited:")) {
+                }
                 showToast(message);
             }
         }

@@ -65,4 +65,5 @@
         completions."
     </string>
     <string name="re_post">repost</string>
+    <string name="quit">QUIT</string>
 </resources>

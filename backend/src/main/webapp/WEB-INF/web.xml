@@ -29,12 +29,20 @@
         <url-pattern>/adduser.do</url-pattern>
     </servlet-mapping>
     <servlet>
-        <servlet-name>addevent</servlet-name>
+        <servlet-name>eventops</servlet-name>
         <servlet-class>edu.dartmouth.cs.together.backend.EventServlet</servlet-class>
     </servlet>
     <servlet-mapping>
-        <servlet-name>addevent</servlet-name>
-        <url-pattern>/addevent.do</url-pattern>
+        <servlet-name>eventops</servlet-name>
+        <url-pattern>/eventops.do</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>getjoiner</servlet-name>
+        <servlet-class>edu.dartmouth.cs.together.backend.GetJoinerServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>getjoiner</servlet-name>
+        <url-pattern>/getjoiner.do</url-pattern>
     </servlet-mapping>
     <welcome-file-list>
         <welcome-file>index.html</welcome-file>

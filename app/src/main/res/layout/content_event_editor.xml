@@ -3,7 +3,17 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical">
-
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/loading_progress"
+        android:layout_centerInParent="true"
+        android:visibility="gone"/>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/event_content_layout"
+        android:visibility="gone">
     <LinearLayout
         android:id="@+id/categoryLayout"
         android:layout_width="match_parent"
@@ -256,4 +266,5 @@
             android:text="post"
             android:textColor="?attr/colorPrimary"/>
     </LinearLayout>
+    </RelativeLayout>
 </RelativeLayout>

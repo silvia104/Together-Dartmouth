@@ -84,6 +84,8 @@
         <service android:name=".cloud.PostEventIntentService" />
         <service android:name=".cloud.DeleteServerRecordIntentService" />
         <service android:name=".cloud.GcmRegisterIntentService"/>
+        <service android:name=".cloud.JoinQuitEventIntentService"/>
+        <service android:name=".cloud.GetJoinerIntentService"/>
     </application>
 
 </manifest>

@@ -12,7 +12,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.location.Location;
 import android.support.v7.widget.GridLayoutManager;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -62,12 +61,9 @@ public class EventEditorActivity extends BaseEventActivity implements DatePicker
     private static final String LIMIT_PREFIX = "Max Participants Number: ";
 
     private int PLACE_PICKER_REQUEST = 1;
-    private Event mEvent;
     private Calendar mNow = Calendar.getInstance();
     private Calendar mTime = Calendar.getInstance();
     private long mEventId;
-    private String action = Globals.ACTION_ADD;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,26 +74,25 @@ public class EventEditorActivity extends BaseEventActivity implements DatePicker
         setLimit();
         Intent i = getIntent();
         mEventId = i.getLongExtra(Globals.EVENT_INDEX_KEY, -1);
-        if (mEventId > -1) {
-            disableLimitSeekbar();
-            //TODO: Hook mEvent with mEventId
-            EventDataSource db = new EventDataSource(getApplicationContext());
-            mPostButton.setText(getString(R.string.re_post));
-            mEvent = db.queryMyOwnEventById(mEventId);
-            if (mEvent!= null) {
-                action = Globals.ACTION_UPDATE;
-                displayEventValues(mEvent);
-            } else {
-                Toast.makeText(getApplicationContext(),"Can't find the event in local DB!",
-                        Toast.LENGTH_SHORT);
-                finish();
-            }
-        } else {
-            mEvent = new Event();
+        //TODO: to remove
+        if (savedInstanceState == null) {
+            mEventId  = getSharedPreferences(getPackageName(),MODE_PRIVATE).getLong(
+                    Event.ID_KEY,-1);
+        }else {
+            mEventId = -1;
+            restoreValues(savedInstanceState);
         }
 
-        if (savedInstanceState != null) {
-            restoreValues(savedInstanceState);
+        if (mEventId != -1) {
+            disableLimitSeekbar();
+            findViewById(R.id.categoryLayout).setOnClickListener(null);
+            mPostButton.setText(getString(R.string.re_post));
+            new LoadEventAsyncTask(EventDataSource.MY_OWN_EVENT).execute(mEventId);
+        } else {
+            action=Globals.ACTION_ADD;
+            mProgress.setVisibility(View.GONE);
+            mContentlayout.setVisibility(View.VISIBLE);
+            mEvent = new Event();
         }
 
     }
@@ -132,7 +127,6 @@ public class EventEditorActivity extends BaseEventActivity implements DatePicker
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            //noinspection SimplifiableIfStatement
             case R.id.action_cancelevent:
                 showConfirmDialog();
                 return true;
@@ -161,9 +155,9 @@ public class EventEditorActivity extends BaseEventActivity implements DatePicker
     public boolean onCreateOptionsMenu(Menu menu) {
         if (!action.equals(Globals.ACTION_ADD)) {
             getMenuInflater().inflate(R.menu.cancelevent, menu);
-            return true;
+            super.onCreateOptionsMenu(menu);
         }
-        return false;
+        return true;
     }
 
     @OnClick(R.id.categoryLayout)
@@ -218,7 +212,7 @@ public class EventEditorActivity extends BaseEventActivity implements DatePicker
     @OnClick(R.id.postBtn)
     public void onPostClick() {
         //TODO:
-        if (saveEvent(true)) {
+        if (saveEvent()) {
             finish();
         }
     }
@@ -377,7 +371,7 @@ public class EventEditorActivity extends BaseEventActivity implements DatePicker
         return tag.equalsIgnoreCase(getString(R.string.empty_tag));
     }
 
-    private boolean saveEvent(boolean isNewEvent) {
+    private boolean saveEvent() {
         if (isTextViewEmpty(mCategoryTv)) {
             showToast("Please select a category");
             return false;
@@ -408,11 +402,14 @@ public class EventEditorActivity extends BaseEventActivity implements DatePicker
         mEvent.setLimit(mLimitNum);
         mEvent.setLatLng(mLatLng);
         mEvent.setOwnerId(Globals.currentUser.getId());
-        if(isNewEvent){
+        if(action.equals(Globals.ACTION_ADD)){
             mEvent.setEventId(Helper.intToUnsignedLong(
                     (mEvent.getOwner() + "" + System.currentTimeMillis()).hashCode()));
         }
         new EventOperationAsyncTask().execute(mEvent);
+        //TODO: to remove
+        getSharedPreferences(getPackageName(),MODE_PRIVATE).edit().putLong(
+                Event.ID_KEY,mEvent.getEventId()).commit();
 
         return true;
     }
@@ -548,21 +545,17 @@ public class EventEditorActivity extends BaseEventActivity implements DatePicker
             Event event = events[0];
             long local_id= -1;
             if (action.equals(Globals.ACTION_ADD)) {
-                local_id = db.insertMyOwnEvent(event);
+                local_id = db.insertEvent(EventDataSource.MY_OWN_EVENT, event);
+            } else if (action.equals(Globals.ACTION_UPDATE)){
+                local_id = db.updateEvent(EventDataSource.MY_OWN_EVENT,event.getEventId(), event);
             }
-            if (action.equals(Globals.ACTION_UPDATE)){
-                local_id = db.updateMyOwnEvent(event.getEventId(),mEvent);
-            }
-            if (action.equals(Globals.ACTION_DELETE)){
-                local_id = db.deleteMyOwnEvent(event.getEventId());
-            }
-            if (local_id != -1) {
+            if (local_id != -1 || action.equals(Globals.ACTION_DELETE)) {
                 Intent i = new Intent(getApplicationContext(), PostEventIntentService.class);
-                i.putExtra(PostEventIntentService.ACTION_KEY, action);
+                i.putExtra(Globals.ACTION_KEY, action);
                 i.putExtra(Event.ID_KEY,event.getEventId());
-                getApplicationContext().startService(i);
+                getApplication().startService(i);
             }/*
-            List<Event> list = db.queryMyOwnEvents();
+            List<Event> list = db.queryEvents();
             for (Event e: list){
                 Log.d(this.getClass().getName(), e.getLongDesc());
             }*/
