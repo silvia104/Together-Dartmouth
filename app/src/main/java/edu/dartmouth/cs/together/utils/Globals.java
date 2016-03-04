@@ -18,12 +18,17 @@ public class Globals {
     public static final String REGISTRATION_COMPLETE = "edu.dartmouth.cs.together.registration_complete_action";
     public static String[] sports = {"Soccer","Skiing","Cycling","Jogging","Hiking",
             "Tennis","Skating","Dancing","Gym","Basketball","Swimming","Billiard"};
+    //temporary content, provided by user preference
+    public static String[] interestList = {
+            "Sport", "Movie", "Music", "Food", "Pet", "Party", "Other"
+    };
+
     public static String[] life = {"Movie","Party","Shopping","Dining", "Travel", "Study"};
     public static List<String> categories = new ArrayList<>();
     public static LatLng DARTMOUTH_GPS = new LatLng(43.726034, -72.142917);
     public static double RADIUS_50MILES = 80467.2;
     public static String EVENT_INDEX_KEY="EVENT_INDEX_KEY";
-    public static String SERVER_ADDR = "http://192.168.1.143:8080";
+    public static String SERVER_ADDR = "http://10.0.0.30:8080";
     public static String DEVICE_ID;
     public static User currentUser;
     public static final String ACTION_ADD = "add";
@@ -37,21 +42,20 @@ public class Globals {
         for (String s: life){
             categories.add(s);
         }
+        for (String s:interestList){
+            categories.add(s);
+        }
     }
     public static Event event = new Event();
 
 
-
-    public static String[] locationRanges = new String[]{
-            "Any Distance", "< 0.5 Mile", "< 1 Mile", "< 2 Miles"};
     public static String[] timeRanges = new String[]{
             "Any Time", "Today", "In 3 Days", "In 1 Week", "In 2 Weeks"
     };
-
-    //temporary content, provided by user preference
-    public static String[] interestList = {
-            "Sport", "Movie", "Music", "Food", "Pet", "Party", "Other"
+    public static int[] timeRangesInteger = new int[]{
+            14, 0, 3, 7, 14
     };
+
 
     //name of shared preference file
     public static String KEY_SHARED_PREFERENCE_FILE = "shared preference file";
@@ -78,6 +82,5 @@ public class Globals {
         event.setDateTime(cal);
         event.setLimit(15);
     }
-
 
 }

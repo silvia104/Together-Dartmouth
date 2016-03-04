@@ -90,4 +90,8 @@ public class Helper {
     public static long intToUnsignedLong(int i){
       return   0x00000000FFFFFFFFl & (long) i;
     }
+
+    public static int MileToMeters(int miles){
+        return (int) (miles * 1609.344);
+    }
 }

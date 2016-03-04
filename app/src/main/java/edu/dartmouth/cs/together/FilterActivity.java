@@ -19,6 +19,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 import edu.dartmouth.cs.together.utils.Globals;
+import edu.dartmouth.cs.together.utils.Helper;
 
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
@@ -133,25 +134,23 @@ public class FilterActivity extends AppCompatActivity
         Intent intent = new Intent();
         Bundle extras = new Bundle();
 
-        extras.putInt(Globals.KEY_TIME_RANGE,
-                mSelectedTimeRange);
-        extras.putInt(Globals.KEY_DISTANCE_RANGE,
-                mSelectedDistanceRange);
 
-        //in convenience of write shared preference
-        //change integer arraylist into string
-        //when read shared pref
-        //use split(" ") to get the int array again
-        String interest = "";
+        //send parameters to calling activity
+        // int for days, int for distance in meters
+        // integer arraylist for interest category
+        extras.putInt(Globals.KEY_TIME_RANGE,
+                Globals.timeRangesInteger[mSelectedTimeRange]);
+        extras.putInt(Globals.KEY_DISTANCE_RANGE,
+                Helper.MileToMeters(mSelectedDistanceRange));
+        ArrayList<Integer> interest = new ArrayList<>();
         SparseBooleanArray checkedItemPositions = mInterestList.getCheckedItemPositions();
         int itemCount = mInterestList.getCount();
         for(int i=0; i<itemCount; i++){
             if(checkedItemPositions.get(i)){
-                interest = interest + i + " ";
+                interest.add(i);
             }
         }
-        extras.putString(Globals.KEY_INTEREST_CATEGORY,
-                interest);
+        extras.putIntegerArrayList(Globals.KEY_INTEREST_CATEGORY, interest);
         intent.putExtras(extras);
 
         FilterActivity.this.setResult(RESULT_OK, intent);

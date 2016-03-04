@@ -10,6 +10,7 @@ import com.google.android.gms.gcm.GoogleCloudMessaging;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+
 import edu.dartmouth.cs.together.data.Message;
 import edu.dartmouth.cs.together.data.MessageDataSource;
 import edu.dartmouth.cs.together.utils.Globals;
@@ -53,12 +54,9 @@ public class GcmIntentService extends BaseIntentSerice {
                 newMessageIntent.setAction(Globals.ACTION_NEW_MESSAGE_FROM_SERVER);
                 sendBroadcast(newMessageIntent);
 
-
                 showToast(message);
             }
         }
         GcmBroadcastReceiver.completeWakefulIntent(intent);
     }
-
-
 }

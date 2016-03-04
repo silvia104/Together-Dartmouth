@@ -29,6 +29,7 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL(UserTable.TABLE_CREATE_COMMAND);
         db.execSQL(QaTable.TABLE_CREATE_COMMAND);
         db.execSQL(MessageTable.TABLE_CREATE_COMMAND);
+
     }
 
     @Override

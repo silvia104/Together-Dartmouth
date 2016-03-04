@@ -91,8 +91,6 @@
                 <category android:name="edu.dartmouth.cs.together" />
             </intent-filter>
         </receiver>
-
-
         <service android:name=".cloud.GcmIntentService" />
         <service android:name=".cloud.PostEventIntentService" />
         <service android:name=".cloud.DeleteServerRecordIntentService" />
