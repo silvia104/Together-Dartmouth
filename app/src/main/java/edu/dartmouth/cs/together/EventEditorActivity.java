@@ -13,8 +13,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.SeekBar;
@@ -75,12 +77,14 @@ public class EventEditorActivity extends BaseEventActivity implements DatePicker
 
         Intent i = getIntent();
         mEventId = i.getLongExtra(Globals.EVENT_INDEX_KEY, -1);
-        /*
-        double lat = i.getDoubleExtra(,0);
-        double lng = i.getDoubleExtra(,0);
+
+        double lat = i.getDoubleExtra(Globals.MAP_LONGITUDE,0);
+        double lng = i.getDoubleExtra(Globals.MAP_LATITUDE,0);
         if (lat!=0 && lng != 0){
             mLatLng = new LatLng(lat,lng);
-        }*/
+            mLocationTv.setText(mLatLng.toString());
+            mLocationTv.setTag("");
+        }
 
 
         //TODO: to remove
@@ -375,7 +379,7 @@ public class EventEditorActivity extends BaseEventActivity implements DatePicker
         mCategoryRecView.setLayoutManager(new GridLayoutManager(this, 5));
         mCategoryRecView.setHasFixedSize(true);
         List<Integer> categoryIconList = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < Globals.categories.size(); i++) {
             categoryIconList.add(R.drawable.movie);
         }
         mCategoryRecView.setAdapter(new CategoryAdapter(this, categoryIconList, R.layout.item_imagecard));

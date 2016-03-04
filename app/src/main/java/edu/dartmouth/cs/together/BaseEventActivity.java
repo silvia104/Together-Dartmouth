@@ -32,11 +32,9 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 
 import com.google.android.gms.maps.model.LatLng;
-import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -221,6 +219,7 @@ public class BaseEventActivity extends BasePopoutActivity implements
         switch (type) {
             case SHORT_DESCRIPTION_DIALOG:
                 longDesc.setVisibility(View.GONE);
+                longDesc.setEnabled(false);
                 title = "Input Short Description";
                 if (mShortDesc.getText().length() > 0) {
                     shortDesc.setText(mShortDesc.getText());
@@ -229,6 +228,7 @@ public class BaseEventActivity extends BasePopoutActivity implements
                 break;
             case LONG_DESCRIPTION_DIALOG:
                 shortDesc.setVisibility(View.GONE);
+                shortDesc.setEnabled(false);
                 title = "Input Long Description";
                 if (mLongDesc.getText().length() > 0) {
                     longDesc.setText(mLongDesc.getText());
@@ -237,6 +237,7 @@ public class BaseEventActivity extends BasePopoutActivity implements
                 break;
             case LOCATION_DIALOG:
                 shortDesc.setVisibility(View.GONE);
+                shortDesc.setEnabled(false);
                 title = "Input Location Description";
                 if (mLocationTv.getText().length() > 0) {
                     longDesc.setText(mLocationTv.getText());
@@ -245,7 +246,13 @@ public class BaseEventActivity extends BasePopoutActivity implements
                 break;
             case QUESTION_DIALOG:
                 shortDesc.setVisibility(View.GONE);
+                shortDesc.setEnabled(false);
                 title = "Input Question";
+                break;
+            case ANSWER_DIALOG:
+                shortDesc.setVisibility(View.GONE);
+                shortDesc.setEnabled(false);
+                title = "Input Answer";
                 break;
         }
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -301,10 +308,10 @@ public class BaseEventActivity extends BasePopoutActivity implements
                                         }
                                         break;
                                     case QUESTION_DIALOG:
-                                        showQaDialog(inputDialog,QUESTION_DIALOG, -1);
+                                        setQaDialog(inputDialog, QUESTION_DIALOG, -1);
                                         break;
                                     case ANSWER_DIALOG:
-                                        showQaDialog(inputDialog,ANSWER_DIALOG,
+                                        setQaDialog(inputDialog, ANSWER_DIALOG,
                                                 Long.parseLong(args[0]));
                                         break;
                                 }
@@ -322,11 +329,9 @@ public class BaseEventActivity extends BasePopoutActivity implements
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
     }
 
-    private void showQaDialog(Dialog inputDialog, int type, long  qaId){
+    private void setQaDialog(Dialog inputDialog, int type, long qaId){
         String errorPrx ="", key ="";
         EditText editText = (EditText) inputDialog.findViewById(R.id.editLongDesc);
-        EditText editText1 = (EditText) inputDialog.findViewById(R.id.editShortDesc);
-        editText1.setVisibility(View.GONE);
         if (editText.getText().length() == 0) {
             if (type == QUESTION_DIALOG){
                 errorPrx = "Question";
@@ -409,7 +414,7 @@ public class BaseEventActivity extends BasePopoutActivity implements
             super.onPostExecute(event);
             if (event == null) {
                 Intent i = new Intent(getApplicationContext(), PostEventIntentService.class);
-                i.putExtra(Event.ID_KEY,mId);
+                i.putExtra(Event.ID_KEY, mId);
                 i.putExtra(Globals.ACTION_KEY,Globals.ACTION_POLL);
                 startService(i);
 
@@ -454,6 +459,9 @@ public class BaseEventActivity extends BasePopoutActivity implements
 
         @Override
         public void onBindViewHolder(QaViewHolder holder, int i) {
+            if (mList.get(i).getQuestion().equals("No Question Yet!")){
+                holder.mEditAnswer.setOnClickListener(null);
+            }
             holder.mQuestion.setText(mList.get(i).getQuestion());
             holder.mAnswer.setText(mList.get(i).getAnswer());
             holder.mAnswer.setVisibility(View.GONE);
