@@ -72,7 +72,6 @@ public class EventDataSource {
         if (result != null) {
             // delete
             mDatastore.delete(result.getKey());
-            //TODO: delete joiners and QA
             ret = true;
         }
 
@@ -94,24 +93,24 @@ public class EventDataSource {
     }
 
     //if the record is already in,
-    private static Event getEventFromEntity(Entity entity) {
+    public static Event getEventFromEntity(Entity entity) {
 
         if (entity == null) {
             return null;
         }
-        Event Event = new Event();
-        Event.setId(entity.getKey().getId());
-        Event.setCategory((int) entity.getProperty(Event.CATEGORY_KEY));
-        Event.setShortDesc((String) entity.getProperty(Event.SHORT_DESC_KEY));
-        Event.setLat((double) entity.getProperty(Event.LATITUDE_KEY));
-        Event.setLng((double) entity.getProperty(Event.LONGITUDE_KEY));
-        Event.setLocation((String) entity.getProperty(Event.LOCATION_KEU));
-        Event.setTimeMillis((long) entity.getProperty(Event.TIME_MILLIS_KEY));
-        Event.setDuration((int) entity.getProperty(Event.DURATION_KEY));
-        Event.setLimit((int) entity.getProperty(Event.LIMIT_KEY));
-        Event.setOwnerId((long) entity.getProperty(Event.OWNER_KEY));
-        Event.setJoinerCount((int) entity.getProperty(Event.JOINER_COUNT_KEY));
-        return Event;
+        Event event = new Event();
+        event.setId((Long) entity.getProperty(Event.ID_KEY));
+        event.setCategory(((Long) entity.getProperty(Event.CATEGORY_KEY)).intValue());
+        event.setShortDesc((String) entity.getProperty(Event.SHORT_DESC_KEY));
+        event.setLat((Double) entity.getProperty(Event.LATITUDE_KEY));
+        event.setLng((Double) entity.getProperty(Event.LONGITUDE_KEY));
+        event.setLocation((String) entity.getProperty(Event.LOCATION_KEU));
+        event.setTimeMillis((Long) entity.getProperty(Event.TIME_MILLIS_KEY));
+        event.setDuration(((Long) entity.getProperty(Event.DURATION_KEY)).intValue());
+        event.setLimit(((Long) entity.getProperty(Event.LIMIT_KEY)).intValue());
+        event.setOwnerId((Long) entity.getProperty(Event.OWNER_KEY));
+        event.setJoinerCount(((Long) entity.getProperty(Event.JOINER_COUNT_KEY)).intValue());
+        return event;
     }
 
     private static void setEntityFromEvent(Entity entity, Event event){
@@ -122,12 +121,11 @@ public class EventDataSource {
         entity.setProperty(Event.LATITUDE_KEY, event.getLat());
         entity.setProperty(Event.LONGITUDE_KEY, event.getLng());
         entity.setProperty(Event.LONG_DESC_KEY, event.getLongDesc());
-
         entity.setProperty(Event.DURATION_KEY, event.getDuration());
         entity.setProperty(Event.LIMIT_KEY, event.getLimit());
         entity.setProperty(Event.TIME_MILLIS_KEY, event.getTimeMillis());
         entity.setProperty(Event.OWNER_KEY, event.getOwner());
-        entity.setProperty(Event.JOINER_COUNT_KEY, 0);
+        entity.setProperty(Event.JOINER_COUNT_KEY, event.getJoinerCount());
     }
 
 }

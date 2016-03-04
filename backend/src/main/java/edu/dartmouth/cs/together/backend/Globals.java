@@ -10,4 +10,5 @@ public class Globals {
     public static final String ACTION_JOIN = "join";
     public static final String ACTION_QUIT = "quit";
     public static final String USERS_NAME = "users";
+    public static final String ACTION_POLL = "poll";
 }

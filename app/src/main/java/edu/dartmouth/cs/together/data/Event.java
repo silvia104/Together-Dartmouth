@@ -2,6 +2,9 @@ package edu.dartmouth.cs.together.data;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -24,6 +27,7 @@ public class Event {
     public static final String OWNER_KEY = "owner";
     public static final String LIMIT_KEY = "limit";
     public static final String LONG_DESC_KEY = "long";
+    public static final String JOINER_COUNT_KEY = "joiner_count";
 
     private long mEventId;
     private int mCategory;
@@ -42,7 +46,26 @@ public class Event {
 
     public static int STATUS_DRAFT= 0;
     public static int STATUS_POSTED= 1;
+    public Event() {}
+    public Event (JSONObject json){
+        try {
+            setEventId(json.getLong(Event.ID_KEY));
+            setCategory(json.getInt(Event.CATEGORY_KEY));
+            setShortDesc(json.getString(Event.SHORT_DESC_KEY));
+            setLongDesc(json.getString(Event.LONG_DESC_KEY));
+            setLatLng(new LatLng(json.getDouble(Event.LATITUDE_KEY),
+                    json.getDouble(Event.LONGITUDE_KEY)));
+            setLocation(json.getString(Event.LOCATION_KEU));
+            mTime.setTimeInMillis(json.getLong(Event.TIME_MILLIS_KEY));
+            setDuration(json.getInt(Event.DURATION_KEY));
+            setOwnerId(json.getLong(Event.OWNER_KEY));
+            setLimit(json.getInt(Event.LIMIT_KEY));
+            setJoinerCount(json.getInt(Event.JOINER_COUNT_KEY));
 
+        }catch (JSONException e){
+            e.printStackTrace();
+        }
+    }
 
     public void setEventId(long id){
         mEventId = id;

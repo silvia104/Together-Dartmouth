@@ -86,8 +86,8 @@ public class EventJoinerDataSource {
         return entity;
     }
 
-    public static List<Long> queryByEventId(long eventId) {
-        List<Long> result = new ArrayList<>();
+    public static List<Entity> queryByEventId(long eventId) {
+        List<Entity> result = new ArrayList<>();
         Query query = new Query(EVENT_JOINER_ENTITY_NAME);
         query.setFilter(new Query.FilterPredicate(Event.ID_KEY,
                 Query.FilterOperator.EQUAL,
@@ -96,9 +96,30 @@ public class EventJoinerDataSource {
 
         PreparedQuery pq = mDatastore.prepare(query);
         for(Entity entity : pq.asIterable()){
-            result.add((long)entity.getProperty(User.ID_KEY));
+            result.add(entity);
         }
         return result;
     }
 
+    public static List<Long> entitiesToUserId(List<Entity> entities){
+        List<Long> result = new ArrayList<>();
+        for (Entity e : entities){
+            result.add((Long)e.getProperty(User.ID_KEY));
+        }
+        return result;
+    }
+
+    public static boolean deleteByEventId(long eventId) {
+        List<Entity> result = queryByEventId(eventId);
+
+        if (result != null){
+            List<Key> keys  = new ArrayList<>();
+            for (Entity e: result){
+                keys.add(e.getKey());
+            }
+            mDatastore.delete(keys);
+            return true;
+        }
+        return false;
+    }
 }

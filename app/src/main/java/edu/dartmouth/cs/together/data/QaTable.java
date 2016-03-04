@@ -5,11 +5,12 @@ package edu.dartmouth.cs.together.data;
  */
 public class QaTable {
     public static final String TABLE_NAME = "qa";
-    enum COLUMNS{
+    public enum COLUMNS{
         ID (0,"_idx"," integer primary key autoincrement not null"),
         QUESTION(1,"question"," string not null"),
         ANSWER(2,"answer"," string not null"),
-        EVENT_ID(3,"event_id"," integer not null");
+        EVENT_ID(3,"event_id"," integer not null"),
+        QA_ID(4,"qa_id", " integer unique not null");
         private final int index;
         private final String colName;
         private final String command;
@@ -26,7 +27,8 @@ public class QaTable {
             return ID.colName + ID.command +", "
                     + QUESTION.colName + QUESTION.command +", "
                     + ANSWER.colName + ANSWER.command +", "
-                    + EVENT_ID.colName + EVENT_ID.command;
+                    + EVENT_ID.colName + EVENT_ID.command + ", "
+                    + QA_ID.colName + QA_ID.command;
         }
     }
     public static final String TABLE_CREATE_COMMAND = "create table "

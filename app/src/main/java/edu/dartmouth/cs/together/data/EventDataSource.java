@@ -22,10 +22,12 @@ public class EventDataSource  {
     public static final int ALL_EVENT = 2;
     private static SQLiteDatabase mDB = null;
     private DBHelper mDBHelper;
+    private Context mContext;
     public EventDataSource(Context context) {
         // the DBHelper is a singleton, and mDB is a static member variable
         // so it doesn't matter if user has more than one ActivityDataSource instance.
         mDBHelper = DBHelper.getInstance(context);
+        mContext = context;
     }
     public void open() {
         // don't create a new connection if the current one is open.
@@ -95,7 +97,8 @@ public class EventDataSource  {
         try {
            count = mDB.delete(getTableName(eventType),
                    BaseEventTable.COLUMNS.EVENT_ID.colName() + " = " + id, null);
-            //TODO: delete joiners and QAs
+            deleteEventJoinerRelationByEventId(id);
+            new QaDataSource(mContext).deletQaByEventId(id);
         } catch (SQLiteException e){
             e.printStackTrace();
         }
@@ -176,7 +179,6 @@ public class EventDataSource  {
             // Make sure to close the cursor
             if (cursor!=null) cursor.close();
         }
-
         return event;
     }
 
@@ -195,7 +197,22 @@ public class EventDataSource  {
             return id;
         }
     }
-    public void deleteEventJoinerRealtion(long evnetId, long userId) {
+
+    public int deleteEventJoinerRelationByEventId(long eventId){
+        open();
+        int count = 0;
+        try {
+            count = mDB.delete(EventJoinerTable.TABLE_NAME,
+                    EventJoinerTable.COLUMNS.EVENT_ID.colName() + "=" + eventId, null);
+        }catch (SQLiteException e){
+            e.printStackTrace();
+        }
+        finally {
+            return count;
+        }
+    }
+
+    public int deleteEventJoinerRelation(long evnetId, long userId) {
         open();
         int count = 0;
         try {
@@ -206,7 +223,7 @@ public class EventDataSource  {
             e.printStackTrace();
         }
         finally {
-            return;
+            return count;
         }
 
     }

@@ -56,10 +56,10 @@ public class GetJoinerIntentService extends BaseIntentSerice {
         List<User> result = new ArrayList<>();
         data = data.substring(0,data.length()-1);
         try {
-            final JSONArray geodata = new JSONArray(data);
-            final int n = geodata.length();
+            final JSONArray users = new JSONArray(data);
+            final int n = users.length();
             for (int i = 0; i < n; ++i) {
-                final JSONObject user = geodata.getJSONObject(i);
+                final JSONObject user = users.getJSONObject(i);
                 result.add(new User(user));
             }
         }catch (JSONException e){

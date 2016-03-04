@@ -57,8 +57,7 @@ public class JoinerListActivity extends BasePopoutActivity implements
             getApplicationContext().registerReceiver(mDateReloadReceiver,
                     new IntentFilter(Globals.RELOAD_JOINER_DATA));
         }
-        getLoaderManager().initLoader(0, null, this);
-        downloadJoiners();
+        getLoaderManager().initLoader(0, null, this).forceLoad();
     }
 
     @Override
@@ -78,6 +77,9 @@ public class JoinerListActivity extends BasePopoutActivity implements
         mAdapter.updateAdapter(mJoiners);
         mProgress.setVisibility(View.GONE);
         mJoinerRecVew.setVisibility(View.VISIBLE);
+        if (data.size() == 0){
+            downloadJoiners();
+        }
     }
 
     @Override

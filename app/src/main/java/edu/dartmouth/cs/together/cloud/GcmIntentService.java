@@ -37,8 +37,13 @@ public class GcmIntentService extends BaseIntentSerice {
                 Logger.getLogger("GCM_RECEIVED").log(Level.INFO, extras.toString());
                 String message = extras.getString("message");
                 if (message.startsWith("Event Delete")) {
+                    String[] parts = message.split(":");
+                    long id = Long.parseLong(parts[1].trim());
+                    EventDataSource db = new EventDataSource(getApplicationContext());
+                    db.deleteEvent(EventDataSource.ALL_EVENT, id);
+                    db.deleteEvent(EventDataSource.JOINED_EVENT,id);
                 } else if (message.startsWith("Event Joined:")){
-                } else if (message.startsWith("Event Quited:")) {
+                } else if (message.startsWith("Event Updated:")) {
                 }
                 showToast(message);
             }
