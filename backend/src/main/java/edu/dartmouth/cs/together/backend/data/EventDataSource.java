@@ -7,6 +7,8 @@ import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
+
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -126,6 +128,25 @@ public class EventDataSource {
         entity.setProperty(Event.TIME_MILLIS_KEY, event.getTimeMillis());
         entity.setProperty(Event.OWNER_KEY, event.getOwner());
         entity.setProperty(Event.JOINER_COUNT_KEY, event.getJoinerCount());
+    }
+
+    public static ArrayList<Event> query() {
+        ArrayList<Event> resultList = new ArrayList<Event>();
+        Query query = new Query(Event.Event_ENTITY_NAME);
+        // get every record from datastore, no filter
+        query.setFilter(null);
+        // set query's ancestor to get strong consistency
+        query.setAncestor(getKey());
+
+        PreparedQuery pq = mDatastore.prepare(query);
+
+        for (Entity entity : pq.asIterable()) {
+            Event entry = getEventFromEntity(entity);
+            if (entry != null) {
+                resultList.add(entry);
+            }
+        }
+        return resultList;
     }
 
 }

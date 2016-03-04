@@ -39,6 +39,14 @@ public class Globals {
     public static final String ACTION_QUIT = "quit";
     public static final String ACTION_POLL = "poll" ;
 
+    //name of shared preference file
+    public static String KEY_SHARED_PREFERENCE_FILE = "shared preference file";
+
+    //keys for extras in intent and shared preference
+    public static String KEY_TIME_RANGE = "time range";
+    public static String KEY_DISTANCE_RANGE = "distance range";
+    public static String KEY_INTEREST_CATEGORY = "interest category";
+
     public static final String ACTION_NOTHING = "NA";
     public static final String ACTION_KEY = "action_key";
     public static long tempEvent = -1;
