@@ -80,7 +80,7 @@ public class EventListFragment extends Fragment implements LoaderManager.LoaderC
         @Override
         public String lineTwoText(Event e) {
 //            return e.getLocation();
-            return "time";
+            return e.getTime();
         }
 
         @Override
@@ -120,7 +120,8 @@ public class EventListFragment extends Fragment implements LoaderManager.LoaderC
             dartmouth.setLatitude(edu.dartmouth.cs.together.utils.Globals.DARTMOUTH_GPS.latitude);
             dartmouth.setLongitude(Globals.DARTMOUTH_GPS.longitude);
             if(eventlocat.distanceTo(dartmouth)<dist){
-                if(true){
+                long curtime=Calendar.getInstance().get(Calendar.MILLISECOND);
+                if(tmp.getTimeMillis()-curtime<time*24*60*60*1000){
 
                 }
             }
@@ -176,6 +177,9 @@ public class EventListFragment extends Fragment implements LoaderManager.LoaderC
                             eobj.setLongDesc(longDesc);
                             eobj.setCategory(Integer.parseInt(cate));
                             eobj.setDuration(Integer.parseInt(duration));
+                            Calendar cal=Calendar.getInstance();
+                            cal.setTimeInMillis(etime);
+                            eobj.setDateTime(cal);
                             LatLng ll = new LatLng(Double.parseDouble(lat), Double.parseDouble(lng));
                             eobj.setLatLng(ll);
                             values.add(eobj);
