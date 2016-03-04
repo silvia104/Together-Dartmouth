@@ -29,6 +29,11 @@ public class EventDataSource  {
         mDBHelper = DBHelper.getInstance(context);
         mContext = context;
     }
+    public void clearAllEvent(){
+        mDB.execSQL("DROP TABLE IF EXISTS " + AllEventTable.TABLE_NAME);
+        mDB.execSQL(AllEventTable.TABLE_CREATE_COMMAND);
+    }
+
     public void open() {
         // don't create a new connection if the current one is open.
         if (mDB == null || !mDB.isOpen()) {

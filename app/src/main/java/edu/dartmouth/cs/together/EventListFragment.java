@@ -60,6 +60,7 @@ public class EventListFragment extends Fragment implements LoaderManager.LoaderC
         eventAdapter = new eventarrayAdapter(getActivity().getApplicationContext(), values);
         list.setAdapter(eventAdapter);
         list.setOnItemClickListener(new ListClickHandler());
+        setRetainInstance(true);
 //        getLoaderManager().initLoader(1, null, this).forceLoad();
 
         // register receiver
@@ -144,6 +145,7 @@ public class EventListFragment extends Fragment implements LoaderManager.LoaderC
                 JSONArray jarray=null;
                 String event=null;
                 datasource.open();
+                datasource.clearAllEvent();
 //            datasource.clearAllEvent();
                 try {
                     Map<String, String> params = new HashMap<String, String>();
