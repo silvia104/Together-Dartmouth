@@ -1,8 +1,6 @@
 package edu.dartmouth.cs.together.utils;
 
 
-import android.content.IntentFilter;
-
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
@@ -18,11 +16,13 @@ import edu.dartmouth.cs.together.data.User;
 public class Globals {
     public static final String DEVICE_ID_PREF_KEY = "REG_ID_KEY";
     public static final String REGISTRATION_COMPLETE = "edu.dartmouth.cs.together.registration_complete_action";
-    public static final String UPDATE_JOINER_DATA = "update_joiner_data";
-    public static final String RELOAD_JOINER_DATA = "reload_joiner_data";
-    public static final String EVENT_TYPE_KEY = "EVENT_TYPE_KEY";
     public static String[] sports = {"Soccer","Skiing","Cycling","Jogging","Hiking",
             "Tennis","Skating","Dancing","Gym","Basketball","Swimming","Billiard"};
+    //temporary content, provided by user preference
+    public static String[] interestList = {
+            "Sport", "Movie", "Music", "Food", "Pet", "Party", "Other"
+    };
+
     public static String[] life = {"Movie","Party","Shopping","Dining", "Travel", "Study"};
     public static List<String> categories = new ArrayList<>();
     public static LatLng DARTMOUTH_GPS = new LatLng(43.726034, -72.142917);
@@ -34,11 +34,6 @@ public class Globals {
     public static final String ACTION_ADD = "add";
     public static final String ACTION_UPDATE = "update";
     public static final String ACTION_DELETE= "delete";
-    public static final String ACTION_JOIN = "join";
-    public static final String ACTION_QUIT = "quit";
-    public static final String ACTION_NOTHING = "NA";
-    public static final String ACTION_KEY = "action_key";
-    public static long tempEvent = -1;
 
     static{
         for (String s : sports){
@@ -47,8 +42,36 @@ public class Globals {
         for (String s: life){
             categories.add(s);
         }
+        for (String s:interestList){
+            categories.add(s);
+        }
     }
     public static Event event = new Event();
+
+
+    public static String[] timeRanges = new String[]{
+            "Any Time", "Today", "In 3 Days", "In 1 Week", "In 2 Weeks"
+    };
+    public static int[] timeRangesInteger = new int[]{
+            14, 0, 3, 7, 14
+    };
+
+
+    //name of shared preference file
+    public static String KEY_SHARED_PREFERENCE_FILE = "shared preference file";
+
+    //keys for extras in intent and shared preference
+    public static String KEY_TIME_RANGE = "time range";
+    public static String KEY_DISTANCE_RANGE = "distance range";
+    public static String KEY_INTEREST_CATEGORY = "interest category";
+
+    public static String KEY_MESSAGE_BUNDLE_MESSAGE = "new message";
+    public static String KEY_MESSAGE_BUNDLE_TIME = "new message";
+    public static String ACTION_NEW_MESSAGE_FROM_SERVER = "edu.dartmouth.cs.together.NEWMESSAGE";
+    public static int MESSAGE_TYPE_NEW_JOIN = 0;
+    public static int MESSAGE_TYPE_NEW_QUESTION = 1;
+    public static int MESSAGE_TYPE_EVENT_CHANGE = 2;
+
     static {
         event.setShortDesc("short");
         event.setLongDesc("long");

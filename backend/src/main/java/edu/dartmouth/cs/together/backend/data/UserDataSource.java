@@ -34,7 +34,7 @@ public class UserDataSource  {
     // add activity record to datastore
     public static boolean add(User user) {
         // don't add record if it exists already
-        if (queryByAccount(user.getAccount(),user.getDevice())!=null) {
+        if (queryByAccount(user.getAccount(),user.getDevice()).size()>0) {
             mLogger.log(Level.INFO, "user exists");
             return false;
         }
@@ -83,32 +83,30 @@ public class UserDataSource  {
         return ret;
     }
 
-    public static Entity queryByAccount(String account, String deviceId) {
-        Query query = new Query(User.USER_ENTITY_NAME);
-        Entity entity = null;
-        query.setFilter(new Query.FilterPredicate(User.ACCOUNT_KEY,
-                Query.FilterOperator.EQUAL,
-                account));
-        query.setAncestor(getKey());
+    // query all activity records from datastore.
+    // All records of each device will have a separate list
+    public static List<Entity> queryByAccount(String account, String deviceId) {
+            List<Entity> result = new ArrayList<>();
+            Query query = new Query(User.USER_ENTITY_NAME);
+            // get every record from datastore, no filter
+            query.setFilter(new Query.FilterPredicate(User.ACCOUNT_KEY,
+                    Query.FilterOperator.EQUAL,
+                    account));
+            // set query's ancestor to get strong consistency
+            query.setAncestor(getKey());
 
-        PreparedQuery pq = mDatastore.prepare(query);
-        entity = pq.asSingleEntity();
+            PreparedQuery pq = mDatastore.prepare(query);
 
-        return entity;
-    }
-    public static List<User> queryByIdList(List<Long> userIds) {
-        List<User> result = new ArrayList<>();
-        Query query = new Query(User.USER_ENTITY_NAME);
-        query.setFilter(new Query.FilterPredicate(User.ID_KEY,
-                Query.FilterOperator.IN,
-                userIds));
-        query.setAncestor(getKey());
+            for (Entity entity : pq.asIterable()) {
 
-        PreparedQuery pq = mDatastore.prepare(query);
-        for(Entity entity : pq.asIterable()){
-            result.add(getUserFromEntity(entity));
-        }
-
+                if (entity!=null){
+                    if (!entity.getProperty(User.DEVICE_KEY).equals(deviceId)){
+                        entity.setProperty(User.DEVICE_KEY, deviceId);
+                        mDatastore.put(entity);
+                    }
+                    result.add(entity);
+                }
+            }
         return result;
     }
 
@@ -119,29 +117,13 @@ public class UserDataSource  {
             return null;
         }
         User user = new User();
-        user.setId((Long) entity.getProperty(User.ID_KEY));
+        user.setId(entity.getKey().getId());
         user.setAccount((String) entity.getProperty(User.ACCOUNT_KEY));
         user.setPassword((String) entity.getProperty(User.PASSWORD_KEY));
-        user.setRate((Double) entity.getProperty(User.RATE_KEY));
+        user.setRate((int) entity.getProperty(User.RATE_KEY));
         user.setDevice((String) entity.getProperty(User.DEVICE_KEY));
+
         //TODO: add photo;
         return user;
-    }
-
-    public static List<String> queryDeviceByUserId(List<Long> userIds){
-        Query query = new Query(User.USER_ENTITY_NAME);
-        List<String> result = new ArrayList<>();
-        // get every record from datastore, no filter
-        query.setFilter(new Query.FilterPredicate(User.ID_KEY,
-                Query.FilterOperator.IN,
-                userIds));
-        // set query's ancestor to get strong consistency
-        query.setAncestor(getKey());
-
-        PreparedQuery pq = mDatastore.prepare(query);
-        for (Entity entity : pq.asIterable()){
-            result.add((String) entity.getProperty(User.DEVICE_KEY));
-        }
-        return result;
     }
 }

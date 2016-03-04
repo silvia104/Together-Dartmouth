@@ -9,7 +9,7 @@ import com.google.appengine.labs.repackaged.org.json.JSONObject;
  */
 public class Event {
 
-    public static final String ID_KEY = "event_id" ;
+    public static final String ID_KEY = "id" ;
     public static final String CATEGORY_KEY = "category" ;
     public static final String SHORT_DESC_KEY = "short";
     public static final String LATITUDE_KEY = "lat";

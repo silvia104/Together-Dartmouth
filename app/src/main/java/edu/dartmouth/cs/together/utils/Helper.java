@@ -18,8 +18,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Created by TuanMacAir on 2/27/16.
@@ -93,4 +91,7 @@ public class Helper {
       return   0x00000000FFFFFFFFl & (long) i;
     }
 
+    public static int MileToMeters(int miles){
+        return (int) (miles * 1609.344);
+    }
 }

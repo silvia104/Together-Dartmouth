@@ -1,5 +1,7 @@
 package edu.dartmouth.cs.together;
 
+import android.content.BroadcastReceiver;
+import android.content.IntentFilter;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -59,7 +61,7 @@ public class MainActivity extends AppCompatActivity
         addFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, EventEditorActivity.class));
+                startActivity(new Intent(getApplicationContext(), EventEditorActivity.class));
             }
         });
 
@@ -67,21 +69,20 @@ public class MainActivity extends AppCompatActivity
         addFabswitch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(isListFragment){
+                if (isListFragment) {
                     EventMapFragment efrag = new EventMapFragment();
                     android.support.v4.app.FragmentManager manager = getSupportFragmentManager();
                     android.support.v4.app.FragmentTransaction transaction = manager.beginTransaction();
                     transaction.replace(R.id.main_content_frame, efrag);
                     transaction.commit();
-                    isListFragment=!isListFragment;
-                }
-                else{
+                    isListFragment = !isListFragment;
+                } else {
                     EventListFragment efrag = new EventListFragment();
                     android.support.v4.app.FragmentManager manager = getSupportFragmentManager();
                     android.support.v4.app.FragmentTransaction transaction = manager.beginTransaction();
                     transaction.replace(R.id.main_content_frame, efrag);
                     transaction.commit();
-                    isListFragment=!isListFragment;
+                    isListFragment = !isListFragment;
                 }
             }
         });
@@ -109,6 +110,15 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        MessageCenterFragment msgCenterFragment = new MessageCenterFragment();
+        MessageCenterFragment.NewMessageReceiver receiver = msgCenterFragment.new NewMessageReceiver();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(Globals.ACTION_NEW_MESSAGE_FROM_SERVER);
+        registerReceiver(receiver, intentFilter );
+
+
+
     }
 
     @Override

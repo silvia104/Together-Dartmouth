@@ -104,11 +104,12 @@ public class LoginActivity extends AppCompatActivity {
         // Reset errors.
         mEmailView.setError(null);
         mPasswordView.setError(null);
+//TODO: placeholder for testing purpose
         // Store values at the time of the login attempt.
-        String email = mEmailView.getText().toString();
-        String password = mPasswordView.getText().toString();
-        //String email = "binbin@dartmouth.edu";
-        //String password = "qwert";
+       // String email = mEmailView.getText().toString();
+        //String password = mPasswordView.getText().toString();
+        String email = "binbin@dartmouth.edu";
+        String password = "qwert";
         boolean cancel = false;
         View focusView = null;
 
@@ -219,7 +220,7 @@ public class LoginActivity extends AppCompatActivity {
                 json.put(User.ID_KEY,mUser.getId());
                 json.put(User.PASSWORD_KEY, mUser.getPassword());
                 json.put(User.DEVICE_KEY, Globals.DEVICE_ID);
-                json.put(User.RATE_KEY, 0.0);
+                json.put(User.RATE_KEY, 0);
                 json.put(User.ACCOUNT_KEY, mUser.getAccount());
                 //TODO: add photo?
                 String uploadState = "";
