@@ -71,11 +71,18 @@ public class EventEditorActivity extends BaseEventActivity implements DatePicker
 
         mQaAdapter = new QaRecVewAdapter(this, new ArrayList<Qa>(), true);
         setBottonRecView(mQaAdapter);
-
         mJoinBtn.setVisibility(View.GONE);
 
         Intent i = getIntent();
         mEventId = i.getLongExtra(Globals.EVENT_INDEX_KEY, -1);
+        /*
+        double lat = i.getDoubleExtra(,0);
+        double lng = i.getDoubleExtra(,0);
+        if (lat!=0 && lng != 0){
+            mLatLng = new LatLng(lat,lng);
+        }*/
+
+
         //TODO: to remove
         if (savedInstanceState == null) {
             mEventId  = getSharedPreferences(getPackageName(),MODE_PRIVATE).getLong(
@@ -113,6 +120,11 @@ public class EventEditorActivity extends BaseEventActivity implements DatePicker
         mEventUpdateReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
+                long id = intent.getLongExtra(Event.ID_KEY, mEventId);
+                if (id == 0L) {
+                    finish();
+                    return;
+                }
                 new LoadEventAsyncTask(EventDataSource.MY_OWN_EVENT).execute(mEventId);
             }
         };
@@ -122,7 +134,12 @@ public class EventEditorActivity extends BaseEventActivity implements DatePicker
         }
     }
 
-
+    @Override
+    protected void onDestroy() {
+        unregisterReceiver(mEventUpdateReceiver);
+        unregisterReceiver(mDateReloadReceiver);
+        super.onDestroy();
+    }
 
     @Override
     public Loader<List<Qa>> onCreateLoader(int id, Bundle args) {
@@ -181,7 +198,12 @@ public class EventEditorActivity extends BaseEventActivity implements DatePicker
         return super.onOptionsItemSelected(item);
     }
 
-    @OnClick(R.id.locationLayout)
+    @OnClick(R.id.editLocationDescBtn)
+    public void onEditLocDescClick(View view){
+        ShowInputDialog(LOCATION_DIALOG);
+    }
+
+    @OnClick(R.id.locationText)
     public void onLocationClick(View view) {
         int PLACE_PICKER_REQUEST = 1;
         PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
@@ -465,6 +487,7 @@ public class EventEditorActivity extends BaseEventActivity implements DatePicker
                     public void onClick(DialogInterface dialog, int which) {
                         action = Globals.ACTION_DELETE;
                         new EventOperationAsyncTask().execute(mEvent);
+                        finish();
                     }
                 })
                 .setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {

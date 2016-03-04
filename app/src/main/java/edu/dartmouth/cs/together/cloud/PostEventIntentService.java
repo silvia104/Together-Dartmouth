@@ -68,13 +68,28 @@ public class PostEventIntentService extends BaseIntentSerice {
                 } else if (action.equals(Globals.ACTION_DELETE)) {
                     db.deleteEvent(EventDataSource.MY_OWN_EVENT, eventId);
                     db.deleteEvent(EventDataSource.ALL_EVENT,eventId);
-                } else if (action.equals(Globals.ACTION_POLL) && result.contains(":")){
-                    JSONObject json = new JSONObject(result.substring(0,result.length() -1));
-                    event = new Event(json);
-                    db.insertEvent(EventDataSource.ALL_EVENT,event);
-                    db.insertEvent(EventDataSource.JOINED_EVENT,event);
-                    db.insertEvent(EventDataSource.MY_OWN_EVENT,event);
-                    sendBroadcast(new Intent(Globals.UPDATE_EVENT_DETAIL));
+                    sendBroadcast(new Intent(Globals.DELETE_EVENT));
+                    //FOR ADPTER TO UPDATE TODO:
+                } else if (action.equals(Globals.ACTION_POLL)){
+                    if (result.contains(":")){
+                        JSONObject json = new JSONObject(result.substring(0, result.length() - 1));
+                        event = new Event(json);
+                        db.insertEvent(EventDataSource.ALL_EVENT, event);
+                        db.insertEvent(EventDataSource.JOINED_EVENT, event);
+                        db.insertEvent(EventDataSource.MY_OWN_EVENT, event);
+                        sendBroadcast(new Intent(Globals.UPDATE_EVENT_DETAIL));
+                    } else {
+                        db.deleteEvent(EventDataSource.ALL_EVENT, eventId);
+                        db.deleteEvent(EventDataSource.JOINED_EVENT, eventId);
+                        db.deleteEvent(EventDataSource.MY_OWN_EVENT, eventId);
+                        Intent i = new Intent(Globals.UPDATE_EVENT_DETAIL);
+                        i.putExtra(Event.ID_KEY, 0L);
+                        sendBroadcast(i);
+
+                        //FOR ADAPTER TO UPDATE TODO:
+                        sendBroadcast(new Intent(Globals.DELETE_EVENT));
+                        showToast("Event no longer exists!");
+                    }
                 }
             } catch (Exception e1) {
                 uploadState = "Sync failed: " + e1.getMessage();

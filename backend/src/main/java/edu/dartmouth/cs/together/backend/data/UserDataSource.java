@@ -146,8 +146,11 @@ public class UserDataSource  {
     }
 
     public static List<String> queryDeviceByUserId(List<Long> userIds){
-        Query query = new Query(User.USER_ENTITY_NAME);
         List<String> result = new ArrayList<>();
+        if (userIds.size()==0){
+            return result;
+        }
+        Query query = new Query(User.USER_ENTITY_NAME);
         // get every record from datastore, no filter
         query.setFilter(new Query.FilterPredicate(User.ID_KEY,
                 Query.FilterOperator.IN,

@@ -79,6 +79,7 @@ public class BaseEventActivity extends BasePopoutActivity implements
     @Bind(R.id.event_content_layout) RelativeLayout mContentlayout;
     @Bind(R.id.addQuestion) ImageButton mAddQuestion;
     @Bind(R.id.joinBtn) ImageButton mJoinBtn;
+    @Bind(R.id.editLocationDescBtn) ImageButton mEditLocBtn;
     protected BottomSheetBehavior mBtmShtBehavior;
     protected int mCategoryIdx = -1;
     protected LatLng mLatLng;
@@ -237,6 +238,10 @@ public class BaseEventActivity extends BasePopoutActivity implements
             case LOCATION_DIALOG:
                 shortDesc.setVisibility(View.GONE);
                 title = "Input Location Description";
+                if (mLocationTv.getText().length() > 0) {
+                    longDesc.setText(mLocationTv.getText());
+                    longDesc.setSelection(longDesc.getText().length());
+                }
                 break;
             case QUESTION_DIALOG:
                 shortDesc.setVisibility(View.GONE);
@@ -383,7 +388,7 @@ public class BaseEventActivity extends BasePopoutActivity implements
 
     protected class LoadEventAsyncTask extends AsyncTask<Long, Void, Event> {
         private int mEventType;
-
+        private long mId;
         public LoadEventAsyncTask(int eventType) {
             mEventType = eventType;
         }
@@ -392,9 +397,9 @@ public class BaseEventActivity extends BasePopoutActivity implements
         protected Event doInBackground(Long... ids) {
             EventDataSource db = new EventDataSource(getApplicationContext());
             Event event = null;
-            long id = ids[0];
-            if (id != -1) {
-                event = db.queryEventById(mEventType, id);
+            mId = ids[0];
+            if (mId != -1) {
+                event = db.queryEventById(mEventType, mId);
             }
             return event;
         }
@@ -403,8 +408,11 @@ public class BaseEventActivity extends BasePopoutActivity implements
         protected void onPostExecute(Event event) {
             super.onPostExecute(event);
             if (event == null) {
-                Toast.makeText(getApplicationContext(), "Event is deleted!", Toast.LENGTH_SHORT);
-                finish();
+                Intent i = new Intent(getApplicationContext(), PostEventIntentService.class);
+                i.putExtra(Event.ID_KEY,mId);
+                i.putExtra(Globals.ACTION_KEY,Globals.ACTION_POLL);
+                startService(i);
+
             } else {
                 mProgress.setVisibility(View.GONE);
                 mContentlayout.setVisibility(View.VISIBLE);
@@ -417,6 +425,7 @@ public class BaseEventActivity extends BasePopoutActivity implements
                 if(mEvent.getmJoinerCount()>=mEvent.getLimit()){
                     mJoinBtn.setEnabled(false);
                 }
+                getLoaderManager().initLoader(1,null,BaseEventActivity.this).forceLoad();
             }
         }
     }

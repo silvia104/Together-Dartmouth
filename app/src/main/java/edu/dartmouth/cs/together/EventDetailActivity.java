@@ -40,6 +40,7 @@ public class EventDetailActivity extends BaseEventActivity {
         mDecreaseDuration.setVisibility(View.GONE);
         mAddQuestion.setVisibility(View.VISIBLE);
         disableLimitSeekbar();
+        mEditLocBtn.setVisibility(View.GONE);
 
         Intent i = getIntent();
         mEventId = i.getLongExtra(Globals.EVENT_INDEX_KEY, -1);
@@ -54,7 +55,6 @@ public class EventDetailActivity extends BaseEventActivity {
 
         if (mEventId!=-1) {
             new LoadEventAsyncTask(mEventType).execute(mEventId);
-            getLoaderManager().initLoader(1,null,this).forceLoad();
         }
 
         if (mEventType == EventDataSource.JOINED_EVENT){
@@ -74,6 +74,11 @@ public class EventDetailActivity extends BaseEventActivity {
         mEventUpdateReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
+                long id = intent.getLongExtra(Event.ID_KEY, mEventId);
+                if (id == 0L) {
+                    finish();
+                    return;
+                }
                 new LoadEventAsyncTask(mEventType).execute(mEventId);
             }
         };
