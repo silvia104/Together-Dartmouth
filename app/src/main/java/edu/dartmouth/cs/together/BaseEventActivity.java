@@ -422,6 +422,9 @@ public class BaseEventActivity extends BasePopoutActivity implements
                 mContentlayout.setVisibility(View.VISIBLE);
                 mEvent = event;
                 action = edu.dartmouth.cs.together.utils.Globals.ACTION_UPDATE;
+                if (Globals.currentUser.getId() == mEvent.getOwner()){
+                    mJoinBtn.setVisibility(View.GONE);
+                }
                 displayEventValues(event);
                 //TODO:待删
                 mLimitCount.setText(mEvent.getmJoinerCount()+"/" + mEvent.getLimit());

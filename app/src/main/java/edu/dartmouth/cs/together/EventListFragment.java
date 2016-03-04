@@ -46,7 +46,7 @@ public class EventListFragment extends Fragment implements LoaderManager.LoaderC
     private int current;
     private List<Event> values;
     private EventDataSource datasource;
-
+    private Context mContext;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -57,7 +57,8 @@ public class EventListFragment extends Fragment implements LoaderManager.LoaderC
         values= new ArrayList<Event>();
         UpdateEvent();
         dafaultFilter();
-        eventAdapter = new eventarrayAdapter(getActivity().getApplicationContext(), values);
+        mContext = getActivity().getApplicationContext();
+        eventAdapter = new eventarrayAdapter(mContext, values);
         list.setAdapter(eventAdapter);
         list.setOnItemClickListener(new ListClickHandler());
         setRetainInstance(true);
@@ -210,7 +211,7 @@ public class EventListFragment extends Fragment implements LoaderManager.LoaderC
 
         datasource.open();
         values = datasource.queryEvents(EventDataSource.ALL_EVENT);
-        list.setAdapter(new eventarrayAdapter(getActivity().getApplicationContext(), values) {
+        list.setAdapter(new eventarrayAdapter(mContext, values) {
         });
         datasource.close();
     }
