@@ -67,11 +67,13 @@ public class PostEventIntentService extends BaseIntentSerice {
                             values);
                 } else if (action.equals(Globals.ACTION_DELETE)) {
                     db.deleteEvent(EventDataSource.MY_OWN_EVENT, eventId);
+                    db.deleteEvent(EventDataSource.ALL_EVENT,eventId);
                 } else if (action.equals(Globals.ACTION_POLL) && result.contains(":")){
                     JSONObject json = new JSONObject(result.substring(0,result.length() -1));
                     event = new Event(json);
                     db.insertEvent(EventDataSource.ALL_EVENT,event);
                     db.insertEvent(EventDataSource.JOINED_EVENT,event);
+                    db.insertEvent(EventDataSource.MY_OWN_EVENT,event);
                     sendBroadcast(new Intent(Globals.UPDATE_EVENT_DETAIL));
                 }
             } catch (Exception e1) {

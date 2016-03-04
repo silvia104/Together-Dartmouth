@@ -62,6 +62,8 @@ public class JoinQuitEventIntentService extends BaseIntentSerice {
                         ContentValues values = new ContentValues();
                         values.put(JoinedEventTable.COLUMNS.JOINER_COUNT.colName(), newCount);
                         db.updateEvent(EventDataSource.JOINED_EVENT, eventId, values);
+                        db.updateEvent(EventDataSource.ALL_EVENT, eventId, values);
+                        sendBroadcast(new Intent(Globals.UPDATE_EVENT_DETAIL));
                     } else if (action.equals(Globals.ACTION_QUIT)) {
                         db.deleteEventJoinerRelation(eventId, joinerId);
                         db.deleteEvent(EventDataSource.JOINED_EVENT, eventId);
