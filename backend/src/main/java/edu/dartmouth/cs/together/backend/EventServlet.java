@@ -39,7 +39,6 @@ public class EventServlet extends HttpServlet {
                 long userId = jsonObject.getLong(User.ID_KEY);
                 boolean ret = EventJoinerDataSource.add(eventId, userId);
                 if (ret) {
-                    userList.add(userId);
                     userList.add((long)EventDataSource.queryById(eventId)
                             .getProperty(Event.OWNER_KEY));
                     deviceList = UserDataSource.queryDeviceByUserId(userList);
@@ -49,27 +48,32 @@ public class EventServlet extends HttpServlet {
                 long eventId = jsonObject.getLong(Event.ID_KEY);
                 long userId = jsonObject.getLong(User.ID_KEY);
                 boolean ret = EventJoinerDataSource.delete(eventId, userId);
-                userList.add(userId);
                 userList.add((long)EventDataSource.queryById(eventId)
                         .getProperty(Event.OWNER_KEY));
                 deviceList = UserDataSource.queryDeviceByUserId(userList);
                 msg.sendMessage(deviceList, "Event Quited:" + eventId + ":" + userId);
             } else{
                 Event event = new Event(jsonObject);
-                userList.add(event.getOwner());
-                deviceList = UserDataSource.queryDeviceByUserId(userList);
                 if (actionString.equals(Globals.ACTION_ADD)) {
                     boolean ret = EventDataSource.add(event);
                     if(ret) {
+                        userList.add(event.getOwner());
+                        deviceList = UserDataSource.queryDeviceByUserId(userList);
                         msg.sendMessage(deviceList, "Event Added:" + event.getEventId());
                     }
                 } else if (actionString.equals(Globals.ACTION_UPDATE)) {
                     boolean ret = EventDataSource.update(event);
                     if(ret) {
+                        userList.add(event.getOwner());
+                        userList.addAll(EventJoinerDataSource.queryByEventId(event.getEventId()));
+                        deviceList = UserDataSource.queryDeviceByUserId(userList);
                         msg.sendMessage(deviceList, "Event Updated:" + event.getEventId());
                     }
                 }else if (actionString.equals(Globals.ACTION_DELETE)) {
                     boolean ret = EventDataSource.delete(event.getEventId());
+                    userList.add(event.getOwner());
+                    userList.addAll(EventJoinerDataSource.queryByEventId(event.getEventId()));
+                    deviceList = UserDataSource.queryDeviceByUserId(userList);
                     msg.sendMessage(deviceList, "Event Deleted:" + event.getEventId());
                 }
             }
