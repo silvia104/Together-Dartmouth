@@ -4,31 +4,22 @@
         android:title="Notification"
         android:key = "pref_key_notification">
         <SwitchPreference
-            android:title="New Friend Joins Me"
+            android:title="New Friend Joined"
             android:key = "notify when new people join"/>
             />
 
         <SwitchPreference
-            android:title="Event I Joined Is Changed"
+            android:title="Event Is Changed"
             android:key = "notify evens are changed"/>
         />
 
 
+
     </PreferenceCategory>
 
-
     <PreferenceCategory
-        android:key = "pref_key_filter"
-        android:title="Interest">
-        <Preference
-            android:key=" pref_key_profile"
-            android:title="Profile"
-            android:summary="Edit profile image and check the account information">
-            <intent android:action="android.intent.action.VIEW"
-                android:targetPackage="edu.dartmouth.cs.together"
-                android:targetClass="edu.dartmouth.cs.together.ProfileActivity"/>
-        </Preference>
-
+        android:key = "pref_key_preference"
+        android:title = "Preference">
         <Preference
             android:key = "default_filter"
             android:title= "Default Filter"
@@ -38,6 +29,34 @@
                 android:targetPackage="edu.dartmouth.cs.together"
                 android:targetClass="edu.dartmouth.cs.together.FilterActivity" />
         </Preference>
+
+
+    </PreferenceCategory>
+
+
+    <PreferenceCategory
+        android:key = "pref_key_account"
+        android:title="Account">
+        <Preference
+            android:key=" pref_key_profile"
+            android:title="Profile"
+            android:summary="Long click to change to profile photo">
+            <intent android:action="android.intent.action.VIEW"
+                android:targetPackage="edu.dartmouth.cs.together"
+                android:targetClass="edu.dartmouth.cs.together.ProfileActivity"/>
+        </Preference>
+
+        <Preference
+            android:key = "pref_key_reset_password"
+            android:title= "Reset Password">
+        </Preference>
+
+        <Preference
+            android:key = "pref_key_log_out"
+            android:title= "Logout">
+        </Preference>
+
+
 
 
     </PreferenceCategory>

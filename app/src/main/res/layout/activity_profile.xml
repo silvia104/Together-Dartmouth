@@ -17,6 +17,7 @@
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:id="@+id/profile_image"
+            android:longClickable="true"
             android:layout_marginLeft="135dp"
             android:layout_gravity="center"/>
 

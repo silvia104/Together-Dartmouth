@@ -15,7 +15,9 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -51,34 +53,21 @@ public class MessageCenterFragment extends ListFragment
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState){
-        super.onActivityCreated(savedInstanceState);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState){
+        //setRetainInstance(true);
+        mContext = getActivity();
         mAdapter = new msgRowAdapter();
         setListAdapter(mAdapter);
         if (savedInstanceState == null) {
             getLoaderManager().initLoader(0, null, this).forceLoad();
         }
-        mContext = getActivity();
         mDB = new MessageDataSource(mContext);
         mNewMessageReceiver = new NewMessageReceiver();
-        getActivity().registerReceiver(mNewMessageReceiver,
-                new IntentFilter(Globals.ACTION_NEW_MESSAGE_FROM_SERVER));
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState){
-        setRetainInstance(true);
         //Message(Long eventId, int type, long time, String description ,boolean isRead, int qaId) {
         //Message message1 = new Message(20L,1,89898998989898L, "is there?", false, 10L);
         //mDB.insertMessage(message1);
         return  inflater.inflate(R.layout.fragment_message_center, container, false);
-    }
-
-    @Override
-    public void onPause(){
-        super.onPause();
-        getActivity().unregisterReceiver(mNewMessageReceiver);
     }
 
     @Override
@@ -180,6 +169,39 @@ public class MessageCenterFragment extends ListFragment
     }
 
 
+//    @Override
+//    public boolean onTouchEvent(MotionEvent event) {
+//        switch (event.getAction()) {
+//            case MotionEvent.ACTION_DOWN: {
+//                int x = (int) event.getX();
+//                int y = (int) event.getY();
+//                //我们想知道当前点击了哪一行
+//                int position = pointToPosition(x, y);
+//                Log.e(TAG, "postion=" + position);
+//                if (position != INVALID_POSITION) {
+//                    //得到当前点击行的数据从而取出当前行的item。
+//                    //可能有人怀疑，为什么要这么干？为什么不用getChildAt(position)？
+//                    //因为ListView会进行缓存，如果你不这么干，有些行的view你是得不到的。
+//                    //Message msg = (Message) getItemAtPosition(position);
+//                    Message msg = (Message) mAdapter.getItem(position);
+//                    mFocusedItemView = data.slideView;
+//                    Log.e(TAG, "FocusedItemView=" + mFocusedItemView);
+//                }
+//            }
+//            default:
+//                break;
+//        }
+//
+//        //向当前点击的view发送滑动事件请求，其实就是向SlideView发请求
+//        if (mFocusedItemView != null) {
+//            mFocusedItemView.onRequireTouchEvent(event);
+//        }
+//
+//        return super.onTouchEvent(event);
+//    }
+
+
+
 
     static class RecordLoader extends AsyncTaskLoader<List<Message>> {
         private MessageDataSource mDB;
@@ -204,6 +226,7 @@ public class MessageCenterFragment extends ListFragment
             //write message in local database
             Bundle extras = intent.getExtras();
             String message = extras.getString(Globals.KEY_MESSAGE_BUNDLE_MESSAGE);
+            if (message == null) return;
             String[] msgFields = message.split(",");
             if(msgFields.length == 4) {
                 long time = extras.getLong(Globals.KEY_MESSAGE_BUNDLE_TIME);
