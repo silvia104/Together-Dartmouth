@@ -32,7 +32,7 @@ public class Globals {
     public static LatLng DARTMOUTH_GPS = new LatLng(43.726034, -72.142917);
     public static double RADIUS_50MILES = 80467.2;
     public static String EVENT_INDEX_KEY="EVENT_INDEX_KEY";
-    public static String SERVER_ADDR = "http://192.168.0.102:8080";
+    public static String SERVER_ADDR = "http://10.31.126.85:8080";
     public static String DEVICE_ID;
     public static User currentUser;
     public static final String ACTION_ADD = "add";

@@ -129,6 +129,8 @@ public class Event {
         mLatLng = latLng;
     }
 
+    public Calendar getcalender(){return mTime;}
+
     public int getLimit() {
         return mLimit;
     }

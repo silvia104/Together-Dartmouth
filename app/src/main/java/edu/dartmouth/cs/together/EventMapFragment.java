@@ -1,6 +1,10 @@
 package edu.dartmouth.cs.together;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.location.Location;
+import android.os.AsyncTask;
 import android.support.v4.app.FragmentManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -18,9 +22,18 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.appengine.labs.repackaged.org.json.JSONArray;
+import com.google.appengine.labs.repackaged.org.json.JSONException;
+import com.google.appengine.labs.repackaged.org.json.JSONObject;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import edu.dartmouth.cs.together.cloud.ServerUtilities;
 import edu.dartmouth.cs.together.data.Event;
 import edu.dartmouth.cs.together.data.EventDataSource;
 import edu.dartmouth.cs.together.utils.Globals;
@@ -32,10 +45,13 @@ public class EventMapFragment extends Fragment implements OnMapReadyCallback {
 
     private GoogleMap mMap;
     private EventDataSource datasource;
+    private List<Event> values;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_eventmap,container,false);
+        View v = inflater.inflate(R.layout.fragment_eventmap, container, false);
+        datasource = new EventDataSource(getContext());
+        values= new ArrayList<Event>();
         setMap();
         return v;
     }
@@ -54,35 +70,14 @@ public class EventMapFragment extends Fragment implements OnMapReadyCallback {
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         datasource = new EventDataSource(getContext());
-        googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-
-            @Override
-            public void onMapClick(LatLng latLng) {
-
-                // Creating a marker
-                MarkerOptions markerOptions = new MarkerOptions();
-
-                // Setting the position for the marker
-                markerOptions.position(latLng);
-
-                // Setting the title for the marker.
-                // This will be displayed on taping the marker
-                markerOptions.title(latLng.latitude + " : " + latLng.longitude);
-
-                markerOptions.icon(BitmapDescriptorFactory.defaultMarker(
-                        BitmapDescriptorFactory.HUE_GREEN));
-
-                // Clears the previously touched position
-//                mMap.clear();
-
-                // Animating to the touched position
-                mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
-
-                // Placing a marker on the touched position
-                mMap.addMarker(markerOptions);
-            }
-        });
-
+        datasource.open();
+        values = datasource.queryEvents(EventDataSource.ALL_EVENT);
+        datasource.close();
+        for(int i=0;i<values.size();i++){
+            Event tmp=values.get(i);
+            LatLng llg=tmp.getLatLng();
+            mMap.addMarker(new MarkerOptions().position(llg).title(tmp.getLocation()+" "+tmp.getCategotyName()));
+        }
         googleMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
 
             @Override
@@ -94,34 +89,22 @@ public class EventMapFragment extends Fragment implements OnMapReadyCallback {
             }
         });
 
-        datasource.open();
-        List<Event> events=datasource.queryEvents(1);
-        for(int i=0;i<events.size();i++){
-            Event tmp=events.get(i);
-            LatLng llg=tmp.getLatLng();
-            mMap.addMarker(new MarkerOptions().position(llg).title("event"));
-        }
-        datasource.close();
+//        datasource.open();
+//        List<Event> events=datasource.queryEvents(1);
+//        for(int i=0;i<events.size();i++){
+//            Event tmp=events.get(i);
+//            LatLng llg=tmp.getLatLng();
+//            mMap.addMarker(new MarkerOptions().position(llg).title("event"));
+//        }
+//        datasource.close();
 
 
 
-
-        LatLng destination1 = new LatLng(42.352311, -71.055304);
-        mMap.addMarker(new MarkerOptions().position(destination1).title("South Station, Boston"));
+        LatLng destination1 = new LatLng(43.7068109, -72.2735297);
+        mMap.addMarker(new MarkerOptions().position(destination1).title("Hanover, NH"));
 
         mMap.moveCamera(CameraUpdateFactory.newLatLng(destination1));
         mMap.animateCamera(CameraUpdateFactory.zoomTo(6));
-
-
-        LatLng destination2 = new LatLng(42.3656, -71.0096);
-        mMap.addMarker(new MarkerOptions().position(destination2).title("Logan Airport, Boston"));
-
-        LatLng destination3 = new LatLng(43.7068109, -72.2735297);
-        mMap.addMarker(new MarkerOptions().position(destination3).title("Hanover, NH"));
-
-
-        LatLng destination4 = new LatLng(40.7508, -73.9755);
-        mMap.addMarker(new MarkerOptions().position(destination4).title("New York City"));
     }
 
 
