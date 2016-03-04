@@ -17,6 +17,7 @@ public class ProfileFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
     private ImageView profielImageView;
+
     private Button saveButton;
     private Button cancelButton;
 
@@ -32,6 +33,8 @@ public class ProfileFragment extends Fragment {
         View view =  inflater.inflate(R.layout.fragment_profile, container, false);
 
         profielImageView = (ImageView) view.findViewById(R.id.profile_image);
+
+
         profielImageView.setImageResource(R.drawable.default_profile_pic);
 
 

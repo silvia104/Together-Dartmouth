@@ -12,6 +12,8 @@ import android.support.v7.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import edu.dartmouth.cs.together.utils.Globals;
+
 
 import java.util.ArrayList;
 

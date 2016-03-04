@@ -2,6 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="edu.dartmouth.cs.together" >
 
+    <uses-feature android:name="android.hardware.camera" />
+
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
          Google Maps Android API v2, but you must specify either coarse or fine
@@ -68,6 +72,13 @@
             android:name=".FilterActivity"
             android:label="@string/title_activity_filter"
             android:theme="@style/AppTheme.NoActionBar" />
+
+
+        <activity
+            android:name =".ProfileActivity"
+            android:label="@string/title_activity_profile"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name="com.soundcloud.android.crop.CropImageActivity" />
         <activity
             android:name=".LoginActivity"
             android:label="@string/title_activity_login" />
@@ -84,8 +95,7 @@
         <service android:name=".cloud.PostEventIntentService" />
         <service android:name=".cloud.DeleteServerRecordIntentService" />
         <service android:name=".cloud.GcmRegisterIntentService"/>
-        <service android:name=".cloud.JoinQuitEventIntentService"/>
-        <service android:name=".cloud.GetJoinerIntentService"/>
+
     </application>
 
 </manifest>

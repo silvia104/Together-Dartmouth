@@ -1,6 +1,7 @@
 package edu.dartmouth.cs.together.cloud;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -9,7 +10,10 @@ import com.google.android.gms.gcm.GoogleCloudMessaging;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import edu.dartmouth.cs.together.data.EventDataSource;
+
+import edu.dartmouth.cs.together.data.Message;
+import edu.dartmouth.cs.together.data.MessageDataSource;
+import edu.dartmouth.cs.together.utils.Globals;
 
 
 /**
@@ -36,10 +40,20 @@ public class GcmIntentService extends BaseIntentSerice {
             if (GoogleCloudMessaging.MESSAGE_TYPE_MESSAGE.equals(messageType)) {
                 Logger.getLogger("GCM_RECEIVED").log(Level.INFO, extras.toString());
                 String message = extras.getString("message");
-                if (message.startsWith("Event Delete")) {
-                } else if (message.startsWith("Event Joined:")){
-                } else if (message.startsWith("Event Quited:")) {
-                }
+                if (message == null) return;
+
+
+
+                //send broad cast to message service
+                Intent newMessageIntent = new Intent();
+                Bundle messageBundle = new Bundle();
+                messageBundle.putString(Globals.KEY_MESSAGE_BUNDLE_MESSAGE, message);
+                long time = System.currentTimeMillis();
+                messageBundle.putLong(Globals.KEY_MESSAGE_BUNDLE_TIME, time);
+                newMessageIntent.putExtras(messageBundle);
+                newMessageIntent.setAction(Globals.ACTION_NEW_MESSAGE_FROM_SERVER);
+                sendBroadcast(newMessageIntent);
+
                 showToast(message);
             }
         }

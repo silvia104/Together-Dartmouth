@@ -14,9 +14,9 @@ import android.view.ViewGroup;
 public class MyEventsAsJoiner extends Fragment {
 
 
-    public MyEventsAsJoiner() {
-        // Required empty public constructor
-    }
+//    public MyEventsAsJoiner() {
+//        // Required empty public constructor
+//    }
 
 
     @Override
@@ -25,5 +25,6 @@ public class MyEventsAsJoiner extends Fragment {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_my_events_as_joiner, container, false);
     }
+
 
 }

@@ -17,9 +17,6 @@ import java.util.List;
  * Created by TuanMacAir on 3/1/16.
  */
 public class EventDataSource  {
-    public static final int MY_OWN_EVENT = 0;
-    public static final int JOINED_EVENT =1;
-    public static final int ALL_EVENT = 2;
     private static SQLiteDatabase mDB = null;
     private DBHelper mDBHelper;
     public EventDataSource(Context context) {
@@ -40,17 +37,15 @@ public class EventDataSource  {
         mDBHelper.close();
     }
 
-    public long insertEvent(int eventType, Event event){
+    public long insertMyOwnEvent(Event event){
         open();
         // Start the transaction.
-
         mDB.beginTransaction();
         long i=-1;
         try{
 
             ContentValues values = getEventDetails(event);
-            i = mDB.insertWithOnConflict(getTableName(eventType), null, values,
-                    SQLiteDatabase.CONFLICT_REPLACE);
+            i = mDB.insert(MyOwnEventTable.TABLE_NAME, null, values);
             // return the row ID of the newly added row.
             mDB.setTransactionSuccessful();
 
@@ -64,37 +59,13 @@ public class EventDataSource  {
         return i;
     }
 
-
-    public void insertEvents(int eventType, List<Event> events){
-        open();
-        // Start the transaction.
-
-        mDB.beginTransaction();
-        long i=-1;
-        try{
-            for (Event event:events) {
-                ContentValues values = getEventDetails(event);
-                mDB.insertWithOnConflict(getTableName(eventType), null, values,
-                        SQLiteDatabase.CONFLICT_REPLACE);
-                // return the row ID of the newly added row.
-            }
-            mDB.setTransactionSuccessful();
-        }catch (SQLiteException e){
-            e.printStackTrace();
-        }finally
-        {
-            mDB.endTransaction();
-            // End the transaction.
-        }
-        return ;
-    }
-    public long deleteEvent(int eventType, long id) {
+    public long deleteMyOwnEvent(long id) {
         if (id == -1) return 0;
         open();
         int count = 0;
         try {
-           count = mDB.delete(getTableName(eventType),
-                   BaseEventTable.COLUMNS.EVENT_ID.colName() + " = " + id, null);
+           count = mDB.delete(MyOwnEventTable.TABLE_NAME,
+                    MyOwnEventTable.COLUMNS.EVENT_ID.colName() + " = " + id, null);
             //TODO: delete joiners and QAs
         } catch (SQLiteException e){
             e.printStackTrace();
@@ -103,30 +74,27 @@ public class EventDataSource  {
         return -1;
     }
 
-    public long updateEvent(int eventType, long id, Event event){
-        open();
-        if (id == -1) return id;
-        int updated = 1;
-        try{
-            ContentValues values = getEventDetails(event);
-            updated =mDB.update(getTableName(eventType), values,
-                    BaseEventTable.COLUMNS.EVENT_ID.colName() + "=" + id, null);
-        }catch (SQLiteException e){
-            e.printStackTrace();
-        }
-        if (updated == 1) {
-            return id;
-        } else {
-            return -1;
-        }
-    }
-    public long updateEvent(int eventType, long id, ContentValues values){
+    public long updateMyOwnEvent(long id, Event event){
         if (id == -1) return id;
         int updated = 0;
         open();
         try{
-            updated = mDB.update(getTableName(eventType), values,
-                    BaseEventTable.COLUMNS.EVENT_ID.colName() + "=" + id, null);
+            ContentValues values = getEventDetails(event);
+            updated = mDB.update(MyOwnEventTable.TABLE_NAME, values,
+                    MyOwnEventTable.COLUMNS.EVENT_ID.colName() + "=" + id, null);
+        }catch (SQLiteException e){
+            e.printStackTrace();
+        }
+        if (updated>0) return id;
+        else return -1;
+    }
+    public long updateMyOwnEvent(long id, ContentValues values){
+        if (id == -1) return id;
+        int updated = 0;
+        open();
+        try{
+            updated = mDB.update(MyOwnEventTable.TABLE_NAME, values,
+                    MyOwnEventTable.COLUMNS.EVENT_ID.colName() + "=" + id, null);
         }catch (SQLiteException e){
             e.printStackTrace();
         }
@@ -134,12 +102,12 @@ public class EventDataSource  {
         else return -1;
     }
 
-    public List<Event> queryEvents(int eventType){
+    public List<Event> queryMyOwnEvents(){
         open();
         List<Event> events = new ArrayList<>();
         Cursor cursor =null;
         try {
-            cursor = mDB.query(getTableName(eventType),
+            cursor = mDB.query(MyOwnEventTable.TABLE_NAME,
                     null, null, null, null, null, null);
 
             cursor.moveToFirst();
@@ -158,18 +126,17 @@ public class EventDataSource  {
         return events;
     }
 
-    public Event queryEventById(int eventType, long id){
+    public Event queryMyOwnEventById(long id){
         open();
         Event event = null;
         Cursor cursor =null;
         try {
-            cursor = mDB.query(getTableName(eventType),
-                    null,  BaseEventTable.COLUMNS.EVENT_ID.colName() + "=?",
+            cursor = mDB.query(MyOwnEventTable.TABLE_NAME,
+                    null,  MyOwnEventTable.COLUMNS.EVENT_ID.colName() + "=?",
                     new String[]{String.valueOf(id)}, null, null, null, null);
-            if (cursor.getCount()>0) {
-                cursor.moveToFirst();
-                event = cursorToEvent(cursor);
-            }
+
+            cursor.moveToFirst();
+            event = cursorToEvent(cursor);
         } catch (SQLiteException e){
             e.printStackTrace();
         }finally {
@@ -180,88 +147,44 @@ public class EventDataSource  {
         return event;
     }
 
-    public long insertEventJoinerRelation(long eventId, long joinerId){
-        open();
-        long id = -1;
-        try {
-            ContentValues values = new ContentValues();
-            values.put(EventJoinerTable.COLUMNS.EVENT_ID.colName(),eventId);
-            values.put(EventJoinerTable.COLUMNS.JOINER_ID.colName(),joinerId);
-            id = mDB.insert(EventJoinerTable.TABLE_NAME, null, values);
-        }catch (SQLiteException e){
-            e.printStackTrace();
-        }
-        finally {
-            return id;
-        }
-    }
-    public void deleteEventJoinerRealtion(long evnetId, long userId) {
-        open();
-        int count = 0;
-        try {
-            count = mDB.delete(EventJoinerTable.TABLE_NAME,
-                    EventJoinerTable.COLUMNS.EVENT_ID.colName() + "=" + evnetId + " AND "
-                            + EventJoinerTable.COLUMNS.JOINER_ID.colName() + "=" + userId, null);
-        }catch (SQLiteException e){
-            e.printStackTrace();
-        }
-        finally {
-            return;
-        }
 
-    }
     private Event cursorToEvent(Cursor cursor) {
         Event event = new Event();
-        event.setOwnerId(cursor.getLong(BaseEventTable.COLUMNS.OWNER_ID.index()));
-        event.setCategory(cursor.getInt(BaseEventTable.COLUMNS.CATEGORY.index()));
-        event.setShortDesc(cursor.getString(BaseEventTable.COLUMNS.SHORT_DESC.index()));
-        event.setLongDesc(cursor.getString(BaseEventTable.COLUMNS.LONG_DESC.index()));
-        event.setLocation(cursor.getString(BaseEventTable.COLUMNS.LOCATION_DESC.index()));
-        event.setLatLng(new LatLng(cursor.getDouble(BaseEventTable.COLUMNS.LATITUDE.index()),
-                cursor.getDouble(BaseEventTable.COLUMNS.LONGITUDE.index())));
+        event.setOwnerId(cursor.getLong(MyOwnEventTable.COLUMNS.OWNER_ID.index()));
+        event.setCategory(cursor.getInt(MyOwnEventTable.COLUMNS.CATEGORY.index()));
+        event.setShortDesc(cursor.getString(MyOwnEventTable.COLUMNS.SHORT_DESC.index()));
+        event.setLongDesc(cursor.getString(MyOwnEventTable.COLUMNS.LONG_DESC.index()));
+        event.setLocation(cursor.getString(MyOwnEventTable.COLUMNS.LOCATION_DESC.index()));
+        event.setLatLng(new LatLng(cursor.getDouble(MyOwnEventTable.COLUMNS.LATITUDE.index()),
+                cursor.getDouble(MyOwnEventTable.COLUMNS.LONGITUDE.index())));
         Calendar time = Calendar.getInstance();
         time.setTimeInMillis(cursor.getLong(
-                BaseEventTable.COLUMNS.TIME_MILLIS.index()));
+                MyOwnEventTable.COLUMNS.TIME_MILLIS.index()));
         event.setDateTime(time);
-        event.setDuration(cursor.getInt(BaseEventTable.COLUMNS.DURATION.index()));
-        event.setStatus(cursor.getInt(BaseEventTable.COLUMNS.STATUS.index()));
-        event.setLimit(cursor.getInt(BaseEventTable.COLUMNS.JOINER_LIMIT.index()));
-        event.setJoinerCount(cursor.getInt(BaseEventTable.COLUMNS.JOINER_COUNT.index()));
-        event.setEventId(cursor.getLong(BaseEventTable.COLUMNS.EVENT_ID.index()));
+        event.setDuration(cursor.getInt(MyOwnEventTable.COLUMNS.DURATION.index()));
+        event.setStatus(cursor.getInt(MyOwnEventTable.COLUMNS.STATUS.index()));
+        event.setLimit(cursor.getInt(MyOwnEventTable.COLUMNS.JOINER_LIMIT.index()));
+        event.setJoinerCount(cursor.getInt(MyOwnEventTable.COLUMNS.JOINER_COUNT.index()));
+        event.setEventId(cursor.getLong(MyOwnEventTable.COLUMNS.EVENT_ID.index()));
 
         return event;
     }
 
     private ContentValues getEventDetails(Event event){
         ContentValues values = new ContentValues();
-        values.put(BaseEventTable.COLUMNS.CATEGORY.colName(), event.getCategoryIdx());
-        values.put(BaseEventTable.COLUMNS.SHORT_DESC.colName(), event.getShortdesc());
-        values.put(BaseEventTable.COLUMNS.LATITUDE.colName(), event.getLatLng().latitude);
-        values.put(BaseEventTable.COLUMNS.LONGITUDE.colName(), event.getLatLng().longitude);
-        values.put(BaseEventTable.COLUMNS.LOCATION_DESC.colName(), event.getLocation());
-        values.put(BaseEventTable.COLUMNS.TIME_MILLIS.colName(), event.getTimeMillis());
-        values.put(BaseEventTable.COLUMNS.DURATION.colName(), event.getDuration());
-        values.put(BaseEventTable.COLUMNS.JOINER_LIMIT.colName(), event.getLimit());
-        values.put(BaseEventTable.COLUMNS.OWNER_ID.colName(), event.getOwner());
-        values.put(BaseEventTable.COLUMNS.LONG_DESC.colName(), event.getLongDesc());
-        values.put(BaseEventTable.COLUMNS.JOINER_COUNT.colName(), event.getmJoinerCount());
-        values.put(BaseEventTable.COLUMNS.STATUS.colName(), event.getStatus());
-        values.put(BaseEventTable.COLUMNS.EVENT_ID.colName(), event.getEventId());
+        values.put(MyOwnEventTable.COLUMNS.CATEGORY.colName(), event.getCategoryIdx());
+        values.put(MyOwnEventTable.COLUMNS.SHORT_DESC.colName(), event.getShortdesc());
+        values.put(MyOwnEventTable.COLUMNS.LATITUDE.colName(), event.getLatLng().latitude);
+        values.put(MyOwnEventTable.COLUMNS.LONGITUDE.colName(), event.getLatLng().longitude);
+        values.put(MyOwnEventTable.COLUMNS.LOCATION_DESC.colName(), event.getLocation());
+        values.put(MyOwnEventTable.COLUMNS.TIME_MILLIS.colName(), event.getTimeMillis());
+        values.put(MyOwnEventTable.COLUMNS.DURATION.colName(), event.getDuration());
+        values.put(MyOwnEventTable.COLUMNS.JOINER_LIMIT.colName(), event.getLimit());
+        values.put(MyOwnEventTable.COLUMNS.OWNER_ID.colName(), event.getOwner());
+        values.put(MyOwnEventTable.COLUMNS.LONG_DESC.colName(), event.getLongDesc());
+        values.put(MyOwnEventTable.COLUMNS.JOINER_COUNT.colName(), event.getmJoinerCount());
+        values.put(MyOwnEventTable.COLUMNS.STATUS.colName(), event.getStatus());
+        values.put(MyOwnEventTable.COLUMNS.EVENT_ID.colName(), event.getEventId());
         return values;
-    }
-    private String getTableName(int eventType){
-        String s = "";
-        switch (eventType){
-            case MY_OWN_EVENT:
-                s = MyOwnEventTable.TABLE_NAME;
-                break;
-            case JOINED_EVENT:
-                s = JoinedEventTable.TABLE_NAME;
-                break;
-            case ALL_EVENT:
-                s = AllEventTable.TABLE_NAME;
-                break;
-        }
-        return s;
     }
 }
