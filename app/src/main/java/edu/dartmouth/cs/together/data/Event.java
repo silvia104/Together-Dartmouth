@@ -1,9 +1,5 @@
 package edu.dartmouth.cs.together.data;
 
-
-import android.os.Parcel;
-import android.os.Parcelable;
-
 import com.google.android.gms.maps.model.LatLng;
 
 import java.text.SimpleDateFormat;
@@ -17,7 +13,7 @@ import edu.dartmouth.cs.together.utils.Globals;
  * Created by TuanMacAir on 2/27/16.
  */
 public class Event {
-    public static final String ID_KEY = "id" ;
+    public static final String ID_KEY = "event_id" ;
     public static final String CATEGORY_KEY = "category" ;
     public static final String SHORT_DESC_KEY = "short";
     public static final String LATITUDE_KEY = "lat";

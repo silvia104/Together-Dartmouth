@@ -16,6 +16,7 @@ import com.google.api.server.spi.config.ApiNamespace;
 import java.io.IOException;
 import java.util.List;
 import java.util.logging.Logger;
+
 import javax.inject.Named;
 
 import static edu.dartmouth.cs.together.backend.OfyService.ofy;
@@ -50,7 +51,8 @@ public class MessagingEndpoint {
      *
      * @param message The message to send
      */
-    public void sendMessage(@Named("message") String message) throws IOException {
+    public void sendMessage(@Named("deviceList") List<String> deviceList,
+                            @Named("message") String message) throws IOException {
         if(message == null || message.trim().length() == 0) {
             log.warning("Not sending message because it is empty");
             return;
@@ -60,17 +62,13 @@ public class MessagingEndpoint {
             message = message.substring(0, 1000) + "[...]";
         }
         Sender sender = new Sender(API_KEY);
-        String deviceId = null;
-        if (message.startsWith("id=")){
-            String[] parts = message.split(";;");
-            deviceId = parts[0].substring(3);
-            message = parts[1];
-        }
 
         Message msg = new Message.Builder().addData("message", message).build();
         List<RegistrationRecord> records = ofy().load().type(RegistrationRecord.class).limit(10).list();
         for(RegistrationRecord record : records) {
-            if(deviceId != null && !record.getRegId().equals(deviceId)){continue;}
+            if(deviceList != null && ! deviceList.contains(record.getRegId())) {
+                continue;
+            }
             Result result = sender.send(msg, record.getRegId(), 5);
             if (result.getMessageId() != null) {
                 log.info("Message sent to " + record.getRegId());

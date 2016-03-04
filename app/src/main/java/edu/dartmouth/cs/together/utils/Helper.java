@@ -18,6 +18,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by TuanMacAir on 2/27/16.
@@ -90,4 +92,5 @@ public class Helper {
     public static long intToUnsignedLong(int i){
       return   0x00000000FFFFFFFFl & (long) i;
     }
+
 }

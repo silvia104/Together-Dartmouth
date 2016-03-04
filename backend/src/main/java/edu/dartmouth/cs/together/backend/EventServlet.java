@@ -4,6 +4,8 @@ import com.google.appengine.labs.repackaged.org.json.JSONException;
 import com.google.appengine.labs.repackaged.org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -12,6 +14,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import edu.dartmouth.cs.together.backend.data.Event;
 import edu.dartmouth.cs.together.backend.data.EventDataSource;
+import edu.dartmouth.cs.together.backend.data.EventJoinerDataSource;
+import edu.dartmouth.cs.together.backend.data.User;
+import edu.dartmouth.cs.together.backend.data.UserDataSource;
 
 
 /**
@@ -23,30 +28,51 @@ public class EventServlet extends HttpServlet {
             throws ServletException, IOException {
         String jsonString = req.getParameter("json");
         String actionString = req.getParameter("action");
+        MessagingEndpoint msg = new MessagingEndpoint();
+        List<Long> userList = new ArrayList<>();
+        List<String> deviceList;
         // parse the json array from client
         try {
             JSONObject jsonObject = new JSONObject(jsonString);
-            Event event = new Event(jsonObject);
-            if (actionString.equals(Globals.ACTION_ADD)) {
-                boolean ret = EventDataSource.add(event);
-                // tell client how many records were actually added.
-                MessagingEndpoint msg = new MessagingEndpoint();
-                msg.sendMessage("New Event Added:" + ret);
+            if (actionString.equals(Globals.ACTION_JOIN)){
+                long eventId = jsonObject.getLong(Event.ID_KEY);
+                long userId = jsonObject.getLong(User.ID_KEY);
+                boolean ret = EventJoinerDataSource.add(eventId, userId);
+                if (ret) {
+                    userList.add(userId);
+                    userList.add((long)EventDataSource.queryById(eventId)
+                            .getProperty(Event.OWNER_KEY));
+                    deviceList = UserDataSource.queryDeviceByUserId(userList);
+                    msg.sendMessage(deviceList, "Event Joined:" + eventId + ":" + userId);
+                }
+            } else if(actionString.equals(Globals.ACTION_QUIT)){
+                long eventId = jsonObject.getLong(Event.ID_KEY);
+                long userId = jsonObject.getLong(User.ID_KEY);
+                boolean ret = EventJoinerDataSource.delete(eventId, userId);
+                userList.add(userId);
+                userList.add((long)EventDataSource.queryById(eventId)
+                        .getProperty(Event.OWNER_KEY));
+                deviceList = UserDataSource.queryDeviceByUserId(userList);
+                msg.sendMessage(deviceList, "Event Quited:" + eventId + ":" + userId);
+            } else{
+                Event event = new Event(jsonObject);
+                userList.add(event.getOwner());
+                deviceList = UserDataSource.queryDeviceByUserId(userList);
+                if (actionString.equals(Globals.ACTION_ADD)) {
+                    boolean ret = EventDataSource.add(event);
+                    if(ret) {
+                        msg.sendMessage(deviceList, "Event Added:" + event.getEventId());
+                    }
+                } else if (actionString.equals(Globals.ACTION_UPDATE)) {
+                    boolean ret = EventDataSource.update(event);
+                    if(ret) {
+                        msg.sendMessage(deviceList, "Event Updated:" + event.getEventId());
+                    }
+                }else if (actionString.equals(Globals.ACTION_DELETE)) {
+                    boolean ret = EventDataSource.delete(event.getEventId());
+                    msg.sendMessage(deviceList, "Event Deleted:" + event.getEventId());
+                }
             }
-            if (actionString.equals(Globals.ACTION_UPDATE)){
-                //TODO:
-                boolean ret = EventDataSource.update();
-                // tell client how many records were actually added.
-                MessagingEndpoint msg = new MessagingEndpoint();
-                msg.sendMessage("Event "+ event.getEventId() + " Updated:" + ret);
-            }
-            if (actionString.equals(Globals.ACTION_DELETE)){
-                boolean ret = EventDataSource.delete(event.getEventId());
-                // tell client how many records were actually added.
-                MessagingEndpoint msg = new MessagingEndpoint();
-                msg.sendMessage("Event "+ event.getEventId() + " Deleted:" + ret);
-            }
-
         } catch (JSONException e) {
             e.printStackTrace();
         }

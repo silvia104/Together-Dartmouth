@@ -15,6 +15,7 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import edu.dartmouth.cs.together.data.User;
 import edu.dartmouth.cs.together.utils.Helper;
 
 /**
@@ -25,16 +26,23 @@ public class JoinerCardViewAdapter extends RecyclerView.Adapter<JoinerCardViewAd
         private final Context mContext;
         private List<String> mNames = new ArrayList<>();
         private Bitmap bitmap;
-        public JoinerCardViewAdapter(Context context) {
-            for (int i = 0; i < 20; i++){
-                mNames.add("John Doe");
-            }
+        public JoinerCardViewAdapter(Context context, List<User> userList) {
             mContext = context;
+            for (User user: userList){
+                mNames.add(user.getAccount());
+            }
             mLayoutInflater = LayoutInflater.from(context);
             bitmap = Helper.getRoundedShape(
                     BitmapFactory.decodeResource(mContext.getResources(), R.drawable.test));
         }
 
+        public void updateAdapter(List<User> userList){
+            mNames.clear();
+            for (User user: userList){
+                mNames.add(user.getAccount());
+            }
+            notifyDataSetChanged();
+        }
         @Override
         public JoinerCardViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View v = mLayoutInflater.inflate(R.layout.itme_joinercard, parent, false);

@@ -16,7 +16,7 @@ public class User {
     public static final String USER_PARENT_ENTITY_NAME = "UserParent";
     public static final String USER_ENTITY_NAME = "User";
 
-    public static final String ID_KEY = "id";
+    public static final String ID_KEY = "user_id";
     public static final String ACCOUNT_KEY = "account";
     public static final String PASSWORD_KEY = "password";
     public static final String PHOTO_KEY = "photo";
@@ -26,7 +26,7 @@ public class User {
 
     private long mId;
     private String mEmail;
-    private int mRate;
+    private double mRate;
     private Blob mPhoto;
     private String mPassword;
     private String mDeviceId;
@@ -34,9 +34,9 @@ public class User {
     public User(){}
 
     public User(JSONObject json) throws JSONException{
-        mId = json.getInt(ID_KEY);
+        mId = json.getLong(ID_KEY);
         mEmail = json.getString(ACCOUNT_KEY);
-        mRate = json.getInt(RATE_KEY);
+        mRate = json.getLong(RATE_KEY);
         mPassword = json.getString(PASSWORD_KEY);
         mDeviceId = json.getString(DEVICE_KEY);
     }
@@ -60,7 +60,7 @@ public class User {
         mPassword = password;
     }
 
-    public void setRate(int i) {
+    public void setRate(double i) {
         mRate = i;
     }
 
@@ -70,7 +70,7 @@ public class User {
     public String getPassword(){
         return mPassword;
     }
-    public int getRate(){
+    public double getRate(){
         return mRate;
     }
 

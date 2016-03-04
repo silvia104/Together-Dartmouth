@@ -8,8 +8,9 @@ public class UserTable {
     enum COLUMNS{
         ID (0,"_idx"," integer primary key autoincrement not null"),
         EMAIL(1,"email"," string not null"),
-        RATE(2,"rate"," real not null"),
-        PHOTO(3,"photo"," blob not null");
+        RATE(2,"rate"," real"),
+        PHOTO(3,"photo"," blob"),
+        USER_ID(4,"user_id"," integer unique not null");
         private final int index;
         private final String colName;
         private final String command;
@@ -26,7 +27,8 @@ public class UserTable {
             return ID.colName + ID.command +", "
                     + EMAIL.colName + EMAIL.command +", "
                     + RATE.colName + RATE.command +", "
-                    + PHOTO.colName + PHOTO.command;
+                    + PHOTO.colName + PHOTO.command + ", "
+                    + USER_ID.colName + USER_ID.command;
         }
     }
     public static final String TABLE_CREATE_COMMAND = "create table "

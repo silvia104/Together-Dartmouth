@@ -37,4 +37,5 @@ dependencies {
     compile 'com.android.support:multidex:1.0.0'
 
     compile 'com.google.appengine:appengine-api-labs:1.7.6'
+    compile 'com.googlecode.json-simple:json-simple:1.1'
 }

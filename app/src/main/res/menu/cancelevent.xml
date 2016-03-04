@@ -5,5 +5,5 @@
         android:id="@+id/action_cancelevent"
         android:orderInCategory="100"
         android:title="@string/cancelevent"
-        app:showAsAction="always" />
+        app:showAsAction="never" />
 </menu>

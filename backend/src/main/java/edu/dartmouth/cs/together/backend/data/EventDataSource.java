@@ -7,9 +7,6 @@ import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
-
-import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -32,36 +29,26 @@ public class EventDataSource {
 
 
     // add activity record to datastore
-    public static boolean add(Event Event) {
+    public static boolean add(Event event) {
         // don't add record if it exists already
-        if (queryById(Event.getEventId())!=null) {
+        if (queryById(event.getEventId())!=null) {
             mLogger.log(Level.INFO, "Event exists");
             return false;
         }
-        Key parentKey = getKey();
-
-        Entity entity = new Entity(Event.Event_ENTITY_NAME, parentKey);
-        entity.setProperty(Event.ID_KEY, Event.getEventId());
-        entity.setProperty(Event.CATEGORY_KEY, Event.getCategoryIdx());
-        entity.setProperty(Event.SHORT_DESC_KEY, Event.getShortdesc());
-        entity.setProperty(Event.LOCATION_KEU, Event.getLocation());
-        entity.setProperty(Event.LATITUDE_KEY, Event.getLat());
-        entity.setProperty(Event.LONGITUDE_KEY, Event.getLng());
-        entity.setProperty(Event.LONG_DESC_KEY, Event.getLongDesc());
-
-        entity.setProperty(Event.DURATION_KEY, Event.getDuration());
-        entity.setProperty(Event.LIMIT_KEY, Event.getLimit());
-        entity.setProperty(Event.TIME_MILLIS_KEY, Event.getTimeMillis());
-        entity.setProperty(Event.OWNER_KEY, Event.getOwner());
-        entity.setProperty(Event.JOINER_COUNT_KEY, 0);
-
+        Entity entity = new Entity(Event.Event_ENTITY_NAME, getKey());
+        setEntityFromEvent(entity,event);
         mDatastore.put(entity);
         return true;
     }
 
-    public static boolean update() {
-        //TODO:
-       return false;
+    public static boolean update(Event event) {
+        Entity entity = queryById(event.getEventId());
+        if (entity == null){
+            return false;
+        }
+        setEntityFromEvent(entity,event);
+        mDatastore.put(entity);
+        return true;
     }
 
     // delete record from datastore
@@ -126,4 +113,21 @@ public class EventDataSource {
         Event.setJoinerCount((int) entity.getProperty(Event.JOINER_COUNT_KEY));
         return Event;
     }
+
+    private static void setEntityFromEvent(Entity entity, Event event){
+        entity.setProperty(Event.ID_KEY, event.getEventId());
+        entity.setProperty(Event.CATEGORY_KEY, event.getCategoryIdx());
+        entity.setProperty(Event.SHORT_DESC_KEY, event.getShortdesc());
+        entity.setProperty(Event.LOCATION_KEU, event.getLocation());
+        entity.setProperty(Event.LATITUDE_KEY, event.getLat());
+        entity.setProperty(Event.LONGITUDE_KEY, event.getLng());
+        entity.setProperty(Event.LONG_DESC_KEY, event.getLongDesc());
+
+        entity.setProperty(Event.DURATION_KEY, event.getDuration());
+        entity.setProperty(Event.LIMIT_KEY, event.getLimit());
+        entity.setProperty(Event.TIME_MILLIS_KEY, event.getTimeMillis());
+        entity.setProperty(Event.OWNER_KEY, event.getOwner());
+        entity.setProperty(Event.JOINER_COUNT_KEY, 0);
+    }
+
 }
