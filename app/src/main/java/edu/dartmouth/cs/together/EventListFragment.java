@@ -73,15 +73,16 @@ public class EventListFragment extends Fragment implements LoaderManager.LoaderC
 
         @Override
         public String lineOneText(Event e) {
-//            return e.getShortdesc();
             return e.getLocation();
         }
 
         @Override
         public String lineTwoText(Event e) {
-//            return e.getLocation();
             return e.getTime();
         }
+
+        @Override
+        public long getid(Event e){return e.getEventId();}
 
         @Override
         public String lineTreText(Event e) {

@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
+import edu.dartmouth.cs.together.data.Event;
 
 /**
  * Created by di on 2/27/2016.
@@ -63,7 +64,8 @@ public android.view.View getView(
         R.id.etext5);
         TextView lineSixView = (TextView)listItemView.findViewById(
         R.id.etext6);
-
+        T t = (T)getItem(position);
+        final long id=getid(t);
         imgView=(ImageView)listItemView.findViewById(
                 R.id.imageView2);
         imgView.setOnClickListener(new View.OnClickListener() {
@@ -73,6 +75,8 @@ public android.view.View getView(
                         // load your Data By using this particular custom adapter to
                         // your listview
                         Intent i=new Intent(getContext(),EventDetailActivity.class);
+                        i.putExtra("TAG",2);
+                        i.putExtra(Event.ID_KEY,id);
                         i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         v.getContext().startActivity(i);
 
@@ -80,7 +84,6 @@ public android.view.View getView(
         });
 
 
-        T t = (T)getItem(position);
         lineOneView.setText(lineOneText(t));
         lineTwoView.setText(lineTwoText(t));
         lineTreView.setText(lineTreText(t));
@@ -90,6 +93,8 @@ public android.view.View getView(
 
         return listItemView;
         }
+
+public abstract long getid(T t);
 
 public abstract String lineTreText(T t);
 
