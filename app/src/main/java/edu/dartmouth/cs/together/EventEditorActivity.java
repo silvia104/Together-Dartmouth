@@ -1,25 +1,23 @@
 package edu.dartmouth.cs.together;
 
+import android.content.BroadcastReceiver;
+import android.content.IntentFilter;
+import android.content.Loader;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
-import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.location.Location;
 import android.support.v7.widget.GridLayoutManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.DatePicker;
-import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -30,8 +28,10 @@ import com.google.android.gms.common.GooglePlayServicesRepairableException;
 
 import butterknife.OnClick;
 import edu.dartmouth.cs.together.cloud.PostEventIntentService;
+import edu.dartmouth.cs.together.cloud.QaIntentService;
 import edu.dartmouth.cs.together.data.Event;
 import edu.dartmouth.cs.together.data.EventDataSource;
+import edu.dartmouth.cs.together.data.Qa;
 import edu.dartmouth.cs.together.utils.Globals;
 import edu.dartmouth.cs.together.utils.Helper;
 
@@ -46,9 +46,7 @@ import java.util.List;
 
 public class EventEditorActivity extends BaseEventActivity implements DatePickerDialog.OnDateSetListener,
         TimePickerDialog.OnTimeSetListener {
-    private static final int SHORT_DESCRIPTION_DIALOG = 0;
-    private static final int LONG_DESCRIPTION_DIALOG = 1;
-    private static final int LOCATION_DIALOG = 2;
+
     private static final String LATLNG_KEY ="CANLENDAR_KEY" ;
     private static final String CATEGORY_KEY = "category";
     private static final String SHORT_DESC_KEY="shortdesc";
@@ -68,17 +66,32 @@ public class EventEditorActivity extends BaseEventActivity implements DatePicker
     private long mEventId;
     private String action = Globals.ACTION_ADD;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHomeButton("Event Editor");
         setCategories();
-        setQa();
         setLimit();
+
+        mQaAdapter = new QaRecVewAdapter(this, new ArrayList<Qa>(), true);
+        setBottonRecView(mQaAdapter);
+
+        mJoinBtn.setVisibility(View.GONE);
+
         Intent i = getIntent();
         mEventId = i.getLongExtra(Globals.EVENT_INDEX_KEY, -1);
         if (mEventId > -1) {
+        //TODO: to remove
+        if (savedInstanceState == null) {
+            mEventId  = getSharedPreferences(getPackageName(),MODE_PRIVATE).getLong(
+                    Event.ID_KEY,-1);
+        }else {
+          //TODO: to remove
+            mEventId = -1;
+            restoreValues(savedInstanceState);
+        }
+
+        if (mEventId != -1) {
             disableLimitSeekbar();
             //TODO: Hook mEvent with mEventId
             EventDataSource db = new EventDataSource(getApplicationContext());
@@ -92,8 +105,52 @@ public class EventEditorActivity extends BaseEventActivity implements DatePicker
                         Toast.LENGTH_SHORT);
                 finish();
             }
+            new LoadEventAsyncTask(EventDataSource.MY_OWN_EVENT).execute(mEventId);
+            getLoaderManager().initLoader(0,null,this).forceLoad();
         } else {
             mEvent = new Event();
+            mFab.hide();
+        }
+
+        mDateReloadReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                getLoaderManager().restartLoader(1,null,EventEditorActivity.this).forceLoad();
+            }
+        };
+        if (mDateReloadReceiver != null){
+            this.registerReceiver(mDateReloadReceiver,
+                    new IntentFilter(Globals.RELOAD_QUESTION_DATA_IN_DETAIL));
+        }
+        mEventUpdateReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                new LoadEventAsyncTask(EventDataSource.MY_OWN_EVENT).execute(mEventId);
+            }
+        };
+        if (mEventUpdateReceiver != null){
+            this.registerReceiver(mEventUpdateReceiver,
+                    new IntentFilter(Globals.UPDATE_EVENT_DETAIL));
+        }
+    }
+
+
+
+    @Override
+    public Loader<List<Qa>> onCreateLoader(int id, Bundle args) {
+        return new QaLoader(getApplicationContext(),mEventId);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<List<Qa>> loader, List<Qa> data) {
+        super.onLoadFinished(loader, data);
+        if (data.size()==0){
+            Intent i = new Intent(getApplicationContext(),
+                    QaIntentService.class);
+            i.putExtra(Event.ID_KEY,mEventId);
+            startService(i);
+        }else {
+            mQaAdapter.updateData(data);
         }
 
         if (savedInstanceState != null) {
@@ -291,12 +348,10 @@ public class EventEditorActivity extends BaseEventActivity implements DatePicker
                         Globals.DARTMOUTH_GPS.longitude, latlng.latitude,
                         latlng.longitude, result);
                 if (result[0] > Globals.RADIUS_50MILES) {
-                    mLocationTv.setText(
+                    mLocationTv.setError(
                             getString(R.string.wronglocation));
-                    mLocationTv.setTextColor(Color.RED);
                     mLatLng = null;
                 } else {
-                    mLocationTv.setTextColor(Color.GRAY);
                     mLatLng = latlng;
                     String address = place.getAddress().toString();
                     if (address.length() == 0) {
@@ -311,12 +366,6 @@ public class EventEditorActivity extends BaseEventActivity implements DatePicker
             }
         }
     }
-
-    private void setQa() {
-        QaRecVewAdapter mQaAdapter = new QaRecVewAdapter(this, generateQuestions(), true);
-        setBottonRecView(mQaAdapter);
-    }
-
     private void setCategories() {
         mCategoryRecView.setLayoutManager(new GridLayoutManager(this, 5));
         mCategoryRecView.setHasFixedSize(true);
@@ -441,105 +490,6 @@ public class EventEditorActivity extends BaseEventActivity implements DatePicker
         builder.create().show();
     }
 
-    private void ShowInputDialog(final int type) {
-
-        final Dialog inputDialog = createInputDialog(type);
-        inputDialog.setOnShowListener(new DialogInterface.OnShowListener() {
-            @Override
-            public void onShow(DialogInterface dialog) {
-                Button cancel = (Button) inputDialog.findViewById(R.id.cancelBtn);
-                cancel.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        inputDialog.cancel();
-                    }
-                });
-                Button save = (Button) inputDialog.findViewById(R.id.saveBtn);
-                save.setOnClickListener(
-                        new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                EditText editText;
-                                switch (type) {
-                                    case LONG_DESCRIPTION_DIALOG:
-                                        editText = (EditText) inputDialog.findViewById(R.id.editLongDesc);
-                                        mLongDesc.setText(editText.getText());
-                                        inputDialog.cancel();
-                                        break;
-                                    case SHORT_DESCRIPTION_DIALOG:
-                                        editText = (EditText) inputDialog.findViewById(R.id.editShortDesc);
-                                        if (editText.getText().length() == 0) {
-                                            editText.setHint("Short description can't be empty!");
-                                            editText.setHintTextColor(Color.RED);
-                                        } else {
-                                            mShortDesc.setText(editText.getText());
-                                            mShortDesc.setTag("");
-                                            inputDialog.cancel();
-
-                                        }
-                                        break;
-                                    case LOCATION_DIALOG:
-                                        editText = (EditText) inputDialog.findViewById(R.id.editLongDesc);
-                                        if (editText.getText().length() == 0) {
-                                            editText.setHint("Location description can't be empty!");
-                                            editText.setHintTextColor(Color.RED);
-                                        } else {
-                                            mLocationTv.setText(editText.getText());
-                                            mLocationTv.setTextColor(Color.GRAY);
-                                            mLocationTv.setTag("");
-                                            inputDialog.cancel();
-                                        }
-                                        break;
-                                }
-                            }
-
-                        }
-
-                );
-            }
-        });
-        inputDialog.show();
-        inputDialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
-                | WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
-        inputDialog.getWindow().setSoftInputMode(
-                WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-    }
-
-    private Dialog createInputDialog(int type) {
-        View v = this.getLayoutInflater().inflate(R.layout.dialog_input, null);
-        EditText shortDesc = (EditText) v.findViewById(R.id.editShortDesc);
-        EditText longDesc = (EditText) v.findViewById(R.id.editLongDesc);
-        ;
-        String title = "";
-        switch (type) {
-            case SHORT_DESCRIPTION_DIALOG:
-                longDesc.setVisibility(View.GONE);
-                title = "Input Short Description";
-                if (mShortDesc.getText().length() > 0) {
-                    shortDesc.setText(mShortDesc.getText());
-                    shortDesc.setSelection(shortDesc.getText().length());
-
-                }
-                break;
-            case LONG_DESCRIPTION_DIALOG:
-                shortDesc.setVisibility(View.GONE);
-                title = "Input Long Description";
-                if (mLongDesc.getText().length() > 0) {
-                    longDesc.setText(mLongDesc.getText());
-                    longDesc.setSelection(longDesc.getText().length());
-                }
-                break;
-            case LOCATION_DIALOG:
-                shortDesc.setVisibility(View.GONE);
-                title = "Input Location Description";
-                break;
-        }
-        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setView(v)
-                .setTitle(title);
-        // Create the AlertDialog object and return it
-        return builder.create();
-    }
 
     class EventOperationAsyncTask extends AsyncTask<Event,Void,Long>{
         @Override

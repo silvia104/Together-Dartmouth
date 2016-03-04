@@ -34,9 +34,20 @@ public class UserDataSource  {
     // add activity record to datastore
     public static boolean add(User user) {
         // don't add record if it exists already
+
         if (queryByAccount(user.getAccount(),user.getDevice()).size()>0) {
             mLogger.log(Level.INFO, "user exists");
             return false;
+        Entity found = queryByAccount(user.getAccount());
+        if (found !=null) {
+            String deviceId = (String)found.getProperty(User.DEVICE_KEY);
+            if (deviceId.equals(user.getDevice())){
+                mLogger.log(Level.INFO, "user exists");
+                return false;
+            } else {
+                update(found, user);
+                return true;
+            }
         }
         Key parentKey = getKey();
 
@@ -51,9 +62,19 @@ public class UserDataSource  {
         return true;
     }
 
-    public static boolean update() {
-        //Do nothing for now
-        return false;
+    public static boolean update(Entity entity, User user) {
+        if (entity==null) return false;
+        setEntityFromUser(entity, user);
+        mDatastore.put(entity);
+        return true;
+    }
+
+    private static void setEntityFromUser(Entity entity, User user) {
+        entity.setProperty(User.ID_KEY, user.getId());
+        entity.setProperty(User.ACCOUNT_KEY, user.getAccount());
+        entity.setProperty(User.RATE_KEY, user.getRate());
+        entity.setProperty(User.DEVICE_KEY, user.getDevice());
+        //TODO: photo?
     }
 
     // delete record from datastore
@@ -107,6 +128,32 @@ public class UserDataSource  {
                     result.add(entity);
                 }
             }
+    public static Entity queryByAccount(String account) {
+        Query query = new Query(User.USER_ENTITY_NAME);
+        Entity entity = null;
+        query.setFilter(new Query.FilterPredicate(User.ACCOUNT_KEY,
+                Query.FilterOperator.EQUAL,
+                account));
+        query.setAncestor(getKey());
+
+        PreparedQuery pq = mDatastore.prepare(query);
+        entity = pq.asSingleEntity();
+
+        return entity;
+    }
+    public static List<User> queryByIdList(List<Long> userIds) {
+        List<User> result = new ArrayList<>();
+        Query query = new Query(User.USER_ENTITY_NAME);
+        query.setFilter(new Query.FilterPredicate(User.ID_KEY,
+                Query.FilterOperator.IN,
+                userIds));
+        query.setAncestor(getKey());
+
+        PreparedQuery pq = mDatastore.prepare(query);
+        for(Entity entity : pq.asIterable()){
+            result.add(getUserFromEntity(entity));
+        }
+
         return result;
     }
 

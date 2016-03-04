@@ -19,10 +19,12 @@ import java.util.List;
 public class EventDataSource  {
     private static SQLiteDatabase mDB = null;
     private DBHelper mDBHelper;
+    private Context mContext;
     public EventDataSource(Context context) {
         // the DBHelper is a singleton, and mDB is a static member variable
         // so it doesn't matter if user has more than one ActivityDataSource instance.
         mDBHelper = DBHelper.getInstance(context);
+        mContext = context;
     }
     public void open() {
         // don't create a new connection if the current one is open.
@@ -67,6 +69,10 @@ public class EventDataSource  {
            count = mDB.delete(MyOwnEventTable.TABLE_NAME,
                     MyOwnEventTable.COLUMNS.EVENT_ID.colName() + " = " + id, null);
             //TODO: delete joiners and QAs
+           count = mDB.delete(getTableName(eventType),
+                   BaseEventTable.COLUMNS.EVENT_ID.colName() + " = " + id, null);
+            deleteEventJoinerRelationByEventId(id);
+            new QaDataSource(mContext).deletQaByEventId(id);
         } catch (SQLiteException e){
             e.printStackTrace();
         }
@@ -143,10 +149,52 @@ public class EventDataSource  {
             // Make sure to close the cursor
             if (cursor!=null) cursor.close();
         }
-
         return event;
     }
 
+    public long insertEventJoinerRelation(long eventId, long joinerId){
+        open();
+        long id = -1;
+        try {
+            ContentValues values = new ContentValues();
+            values.put(EventJoinerTable.COLUMNS.EVENT_ID.colName(),eventId);
+            values.put(EventJoinerTable.COLUMNS.JOINER_ID.colName(),joinerId);
+            id = mDB.insert(EventJoinerTable.TABLE_NAME, null, values);
+        }catch (SQLiteException e){
+            e.printStackTrace();
+        }
+        finally {
+            return id;
+        }
+    }
+
+    public int deleteEventJoinerRelationByEventId(long eventId){
+        open();
+        int count = 0;
+        try {
+            count = mDB.delete(EventJoinerTable.TABLE_NAME,
+                    EventJoinerTable.COLUMNS.EVENT_ID.colName() + "=" + eventId, null);
+        }catch (SQLiteException e){
+            e.printStackTrace();
+        }
+        finally {
+            return count;
+        }
+    }
+
+    public int deleteEventJoinerRelation(long evnetId, long userId) {
+        open();
+        int count = 0;
+        try {
+            count = mDB.delete(EventJoinerTable.TABLE_NAME,
+                    EventJoinerTable.COLUMNS.EVENT_ID.colName() + "=" + evnetId + " AND "
+                            + EventJoinerTable.COLUMNS.JOINER_ID.colName() + "=" + userId, null);
+        }catch (SQLiteException e){
+            e.printStackTrace();
+        }
+        finally {
+            return count;
+        }
 
     private Event cursorToEvent(Cursor cursor) {
         Event event = new Event();

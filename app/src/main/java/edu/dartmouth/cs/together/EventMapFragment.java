@@ -1,5 +1,6 @@
 package edu.dartmouth.cs.together;
 
+import android.content.Intent;
 import android.support.v4.app.FragmentManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -15,7 +16,14 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import java.util.List;
+
+import edu.dartmouth.cs.together.data.Event;
+import edu.dartmouth.cs.together.data.EventDataSource;
+import edu.dartmouth.cs.together.utils.Globals;
 
 /**
  * Created by di on 2/28/2016.
@@ -23,7 +31,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 public class EventMapFragment extends Fragment implements OnMapReadyCallback {
 
     private GoogleMap mMap;
-
+    private EventDataSource datasource;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -45,7 +53,7 @@ public class EventMapFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-
+        datasource = new EventDataSource(getContext());
         googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
 
             @Override
@@ -74,6 +82,29 @@ public class EventMapFragment extends Fragment implements OnMapReadyCallback {
                 mMap.addMarker(markerOptions);
             }
         });
+
+        googleMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
+
+            @Override
+            public void onMapLongClick(LatLng latLng) {
+                Intent i = new Intent(getContext(), EventEditorActivity.class);
+                i.putExtra(Globals.MAP_LATITUDE,latLng.latitude);
+                i.putExtra(Globals.MAP_LONGITUDE,latLng.longitude);
+                startActivity(i);
+            }
+        });
+
+        datasource.open();
+        List<Event> events=datasource.queryEvents(1);
+        for(int i=0;i<events.size();i++){
+            Event tmp=events.get(i);
+            LatLng llg=tmp.getLatLng();
+            mMap.addMarker(new MarkerOptions().position(llg).title("event"));
+        }
+        datasource.close();
+
+
+
 
         LatLng destination1 = new LatLng(42.352311, -71.055304);
         mMap.addMarker(new MarkerOptions().position(destination1).title("South Station, Boston"));

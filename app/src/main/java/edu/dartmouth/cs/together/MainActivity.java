@@ -27,6 +27,9 @@ import edu.dartmouth.cs.together.utils.Globals;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     private boolean isListFragment;
+    private final int GET_RESULT_SUCCESS = -1;
+    public int filterTime;
+    public int filterDist;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -148,11 +151,29 @@ public class MainActivity extends AppCompatActivity
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             Intent intent = new Intent(this, FilterActivity.class);
-            startActivity(intent);
+            startActivityForResult(intent,Globals.SETTING_FILTER);
             return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode == Globals.SETTING_FILTER){
+            if(resultCode == GET_RESULT_SUCCESS) {
+                if (data!=null ) {
+                    Bundle extras = data.getExtras();
+                    filterTime = (int)extras.get(edu.dartmouth.cs.together.Globals.KEY_TIME_RANGE);
+                    filterDist = (int) extras.get(edu.dartmouth.cs.together.Globals.KEY_DISTANCE_RANGE);
+                    String selectedInterest = extras.getString(edu.dartmouth.cs.together.Globals.KEY_INTEREST_CATEGORY);
+                }
+
+            }
+        }
     }
 
     @SuppressWarnings("StatementWithEmptyBody")

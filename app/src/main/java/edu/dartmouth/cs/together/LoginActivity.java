@@ -138,14 +138,11 @@ public class LoginActivity extends AppCompatActivity {
         } else {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
-            //TODO: temporary holder
             User user = new User(email);
             user.setPassword(password);
             Globals.currentUser = user;
-            //TODO: temporary holder
 
             showProgress(true);
-           //TODO:modify the following line
             mAuthTask = new UserLoginTask(user);
             mAuthTask.execute((Void) null);
         }

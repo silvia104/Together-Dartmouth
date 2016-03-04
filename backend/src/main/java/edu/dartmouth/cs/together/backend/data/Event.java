@@ -134,8 +134,8 @@ public class Event {
     public void setOwnerId(long id){
         mOwnerId = id;
     }
-    public void setJoinerCount (int n){
-        mJoinerCount = n;
+    public void increaseJoiner (int i){
+        mJoinerCount += i;
     }
 
     public int getJoinerCount (){
@@ -144,5 +144,9 @@ public class Event {
 
     public void setId(long id) {
         mEventId = id;
+    }
+
+    public void setJoinerCount(int num) {
+        mJoinerCount = num;
     }
 }
