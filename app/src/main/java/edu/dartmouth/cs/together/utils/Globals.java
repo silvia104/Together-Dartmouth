@@ -20,6 +20,7 @@ public class Globals {
     public static final String REGISTRATION_COMPLETE = "edu.dartmouth.cs.together.registration_complete_action";
     public static final String RELOAD_JOINER_DATA = "reload_joiner_data";
     public static final String EVENT_TYPE_KEY = "EVENT_TYPE_KEY";
+    public static final String DELETE_EVENT ="delete_event";
     public static final String RELOAD_QUESTION_DATA_IN_DETAIL = "reload_question_in_detail";
     public static final String UPDATE_EVENT_DETAIL = "update_event_detail";
     public static String[] sports = {"Soccer","Skiing","Cycling","Jogging","Hiking",
@@ -29,7 +30,7 @@ public class Globals {
     public static LatLng DARTMOUTH_GPS = new LatLng(43.726034, -72.142917);
     public static double RADIUS_50MILES = 80467.2;
     public static String EVENT_INDEX_KEY="EVENT_INDEX_KEY";
-    public static String SERVER_ADDR = "http://10.0.0.30:8080";
+    public static String SERVER_ADDR = "http://10.31.118.176:8080";
     public static String DEVICE_ID;
     public static User currentUser;
     public static final String ACTION_ADD = "add";
@@ -41,7 +42,6 @@ public class Globals {
 
     public static final String ACTION_NOTHING = "NA";
     public static final String ACTION_KEY = "action_key";
-    public static long tempEvent = -1;
 
     static{
         for (String s : sports){

@@ -73,7 +73,9 @@
         android:paddingTop="10dp"
         android:paddingBottom="10dp"
         android:layout_below="@id/shortDescLayout"
-        android:gravity="center_vertical">
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:weightSum="1">
 
         <ImageButton
             android:id="@+id/pinInMap"
@@ -93,8 +95,20 @@
             android:hint="@string/locationHint"
             android:focusable="true"
             android:focusableInTouchMode="true"
-            android:textSize="20dp"
-            android:tag="EMPTY"/>
+            android:textSize="18dp"
+            android:tag="EMPTY"
+            android:layout_weight="0.9"/>
+
+        <ImageButton
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:src="@drawable/ic_edit"
+            android:background="#ffffff"
+            android:layout_gravity="end"
+            android:scaleType="fitCenter"
+            android:padding="3dp"
+            android:id="@+id/editLocationDescBtn"
+            android:layout_weight="0.1"/>
 
     </LinearLayout>
 
