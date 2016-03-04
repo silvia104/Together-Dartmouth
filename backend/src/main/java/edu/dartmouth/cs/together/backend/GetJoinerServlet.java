@@ -26,7 +26,8 @@ public class GetJoinerServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException{
         long eventId = Long.parseLong(req.getParameter(Event.ID_KEY));
-        List<Long> userIds = EventJoinerDataSource.queryByEventId(eventId);
+        List<Long> userIds = EventJoinerDataSource.entitiesToUserId(
+                EventJoinerDataSource.queryByEventId(eventId));
         List<User> userList = UserDataSource.queryByIdList(userIds);
         try {
             JSONArray userJsonArray = new JSONArray();

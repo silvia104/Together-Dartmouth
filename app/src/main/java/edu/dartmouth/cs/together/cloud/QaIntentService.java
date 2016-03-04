@@ -1,0 +1,113 @@
+package edu.dartmouth.cs.together.cloud;
+
+import android.content.ContentValues;
+import android.content.Intent;
+import android.util.Log;
+
+
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import edu.dartmouth.cs.together.data.Event;
+import edu.dartmouth.cs.together.data.Qa;
+import edu.dartmouth.cs.together.data.QaDataSource;
+import edu.dartmouth.cs.together.data.QaTable;
+import edu.dartmouth.cs.together.data.Qa;
+import edu.dartmouth.cs.together.utils.Globals;
+
+/**
+ * Created by TuanMacAir on 3/3/16.
+ */
+public class QaIntentService extends BaseIntentSerice {
+    public QaIntentService() {
+        super("QaIntentService");
+    }
+
+    @Override
+    protected void onHandleIntent(Intent intent) {
+        String q = intent.getStringExtra(Qa.Q_KEY);
+        String a = intent.getStringExtra(Qa.A_KEY);
+        long qaId = intent.getLongExtra(Qa.ID_KEY, -1);
+        long eventId = intent.getLongExtra(Event.ID_KEY, -1);
+        List<Qa> qas = new ArrayList<>();
+        String uploadState = "";
+        try {
+            Map<String, String> params = new HashMap<>();
+
+            if (qaId == -1) {
+                params.put(Event.ID_KEY,eventId+"");
+                params.put("action",Globals.ACTION_POLL);
+            } else {
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put(Qa.ID_KEY, qaId);
+                jsonObject.put(Event.ID_KEY, eventId);
+                if (a == null) {
+                    jsonObject.put(Qa.Q_KEY, q);
+                    params.put("action", Globals.ACTION_ADD);
+                } else {
+                    jsonObject.put(Qa.A_KEY, a);
+                    params.put("action", Globals.ACTION_UPDATE);
+                }
+                params.put("json", jsonObject.toString());
+            }
+            try {
+                String data = ServerUtilities.post(Globals.SERVER_ADDR + "/qa.do", params);
+                QaDataSource db =  new QaDataSource(getApplicationContext());
+                if (data.length() > 0){
+                    qas = parseJosonArray(data);
+                    db.insertQas(qas);
+                    if (qas.size() > 0){
+                        sendBroadcast(new Intent(Globals.RELOAD_QUESTION_DATA_IN_DETAIL));
+                    }
+                }else {
+                    if (a==null) {
+                        Qa qa = new Qa();
+                        qa.setQuestion(q);
+                        qa.setId(qaId);
+                        qa.setEventId(eventId);
+                        db.insertQa(qa);
+                    } else {
+                        ContentValues values = new ContentValues();
+                        values.put(QaTable.COLUMNS.ANSWER.colName(),a);
+                        db.updateQa(qaId,values);
+                    }
+                    sendBroadcast(new Intent(Globals.RELOAD_QUESTION_DATA_IN_DETAIL));
+                }
+
+            } catch (Exception e1) {
+                uploadState = "Sync failed: " + e1.getMessage();
+                Log.e(this.getClass().getName(), "data posting error " + e1);
+            }
+            if (uploadState.length() > 0) {
+                showToast(uploadState);
+            }
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+    private List<Qa> parseJosonArray(String data){
+        List<Qa> result = new ArrayList<>();
+        data = data.substring(0,data.length()-1);
+        try {
+            final JSONArray qas = new JSONArray(data);
+            final int n = qas.length();
+            for (int i = 0; i < n; ++i) {
+                final JSONObject qa = qas.getJSONObject(i);
+                result.add(new Qa(qa));
+            }
+        }catch (org.json.JSONException e){
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+}

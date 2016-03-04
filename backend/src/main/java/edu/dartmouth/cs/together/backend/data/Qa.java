@@ -1,14 +1,13 @@
-package edu.dartmouth.cs.together.data;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import edu.dartmouth.cs.together.utils.Helper;
+package edu.dartmouth.cs.together.backend.data;
 
 /**
  * Created by TuanMacAir on 2/27/16.
  */
 public class Qa {
+    public static final String Qa_PARENT_ENTITY_KEY = "QaParent";
+    public static final String Qa_PARENT_ENTITY_NAME = "QaParent";
+    public static final String Qa_ENTITY_NAME = "Qa";
+
     public static final String Q_KEY = "question";
     public static final String A_KEY = "answer";
     public static final String ID_KEY = "question_id";
@@ -17,32 +16,8 @@ public class Qa {
     private String mQ="";
     private String mA="";
     private long mQaId;
-    public Qa(String q, String a){
-        mQ = q;
-        mA = a;
-    }
-    public Qa(String q){
-        mQ = q;
-        mQaId = Helper.intToUnsignedLong(mQ.hashCode());
-    }
-
     public Qa() {
 
-    }
-    public Qa(JSONObject jsonObject){
-        try {
-            mEventId = jsonObject.getLong(Event.ID_KEY);
-            mQ = jsonObject.getString(Q_KEY);
-            mA = jsonObject.getString(A_KEY);
-            mQaId = jsonObject.getLong(ID_KEY);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    public void setAnswer(String a){
-        mA = a;
     }
     public String getQuestion() {
         return mQ;
@@ -67,5 +42,9 @@ public class Qa {
 
     public void setEventId(long id) {
         mEventId = id;
+    }
+
+    public void setAnswer(String a) {
+        mA = a;
     }
 }
