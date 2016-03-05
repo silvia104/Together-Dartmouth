@@ -19,6 +19,7 @@ import java.util.List;
 
 import edu.dartmouth.cs.together.data.Event;
 import edu.dartmouth.cs.together.data.EventDataSource;
+import edu.dartmouth.cs.together.utils.Globals;
 
 
 /**
@@ -27,8 +28,7 @@ import edu.dartmouth.cs.together.data.EventDataSource;
 public class MyEventsAsInitiator extends ListFragment implements
         LoaderManager.LoaderCallbacks<List<Event>>{
 
-    private ListView mListView;
-    private List<Event> mInitiatedEventList = new ArrayList<>();
+    private List<Event> mInitiatedEventsList = new ArrayList<>();
     private EventDataSource mDB;
     private initiatedEventsAdapter mAdapter;
     private Context mContext;
@@ -42,14 +42,12 @@ public class MyEventsAsInitiator extends ListFragment implements
     public void onActivityCreated (Bundle savedInstanceState){
         super.onActivityCreated(savedInstanceState);
         mContext = getActivity();
-        mAdapter = new initiatedEventsAdapter(mContext,mInitiatedEventList);
+        mAdapter = new initiatedEventsAdapter(mContext,mInitiatedEventsList);
         setListAdapter(mAdapter);
         if(savedInstanceState == null){
             getLoaderManager().initLoader(0, null, this).forceLoad();
         }
         mDB = new EventDataSource(mContext);
-
-
     }
 
     @Override
@@ -80,9 +78,11 @@ public class MyEventsAsInitiator extends ListFragment implements
         if(data == null){
             data = new ArrayList<>();
         }
-        mInitiatedEventList.addAll(data);
+        mInitiatedEventsList.addAll(data);
         mAdapter.notifyDataSetChanged();
     }
+
+
 
     @Override
     public void onLoaderReset(Loader<List<Event>> loader) {
@@ -100,7 +100,7 @@ public class MyEventsAsInitiator extends ListFragment implements
         // get all records in background as loader
         @Override
         public List<Event> loadInBackground() {
-            return mDB.queryEvents(EventDataSource.MY_OWN_EVENT);
+            return mDB.queryEventByOwnerId(Globals.currentUser.getId());
         }
 
 

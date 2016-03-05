@@ -1,23 +1,51 @@
 package edu.dartmouth.cs.together;
 
 
+import android.content.Context;
+import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.ListFragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.AsyncTaskLoader;
+import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import edu.dartmouth.cs.together.data.Event;
+import edu.dartmouth.cs.together.data.EventDataSource;
+import edu.dartmouth.cs.together.utils.Globals;
 
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MyEventsAsJoiner extends Fragment {
+public class MyEventsAsJoiner extends ListFragment
+    implements  LoaderManager.LoaderCallbacks<List<Event>>{
 
+
+    private List<Event> mJoinedEventsList = new ArrayList<>();
+    private EventDataSource mDB;
+    private joinedEventsAdapter mAdapter;
+    private Context mContext;
 
     public MyEventsAsJoiner() {
         // Required empty public constructor
     }
 
+    @Override
+    public void onActivityCreated (Bundle savedInstanceState){
+        super.onActivityCreated(savedInstanceState);
+        mContext = getActivity();
+        mAdapter = new joinedEventsAdapter(mContext,mJoinedEventsList);
+        setListAdapter(mAdapter);
+        mDB = new EventDataSource(mContext);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -26,4 +54,104 @@ public class MyEventsAsJoiner extends Fragment {
         return inflater.inflate(R.layout.fragment_my_events_as_joiner, container, false);
     }
 
+    @Override
+    public Loader<List<Event>> onCreateLoader(int id, Bundle args) {
+        return new joinedEventsLoader(mContext);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<List<Event>> loader, List<Event> data) {
+        if(data == null){
+            data = new ArrayList<>();
+        }
+        mJoinedEventsList.clear();
+        mJoinedEventsList.addAll(data);
+        mAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onLoaderReset(Loader<List<Event>> loader) {
+
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisible){
+        super.setUserVisibleHint(isVisible);
+        if(isVisible){
+            mJoinedEventsList.clear();
+            mAdapter.notifyDataSetChanged();
+            getLoaderManager().initLoader(0, null, this).forceLoad();
+        }
+
+    }
+
+    @Override
+    public void onListItemClick(ListView l, View v, int position, long id) {
+        super.onListItemClick(l,v,position, id);
+        Intent i = new Intent(getActivity(),EventDetailActivity.class);
+        startActivity(i);
+    }
+
+
+    static class joinedEventsLoader extends AsyncTaskLoader<List<Event>> {
+        private EventDataSource mDB;
+
+        public joinedEventsLoader(Context context) {
+            super(context);
+            mDB = new EventDataSource(context);
+        }
+
+        // get all records in background as loader
+        @Override
+        public List<Event> loadInBackground() {
+            return mDB.queryEventByJoinerId(Globals.currentUser.getId());
+        }
+    }
+
+    class joinedEventsAdapter extends EventArrayAdapter<Event>{
+
+        private int mListItemLayoutResId;
+
+        public joinedEventsAdapter(Context context, List<Event> ts) {
+            this(context, R.layout.event_list, ts);
+        }
+
+        public joinedEventsAdapter(Context context, int listItemLayoutResourceId, List<Event> ts) {
+            super(context, listItemLayoutResourceId, ts);
+            this.context = context;
+            mListItemLayoutResId = listItemLayoutResourceId;
+        }
+
+        @Override
+        public long getid(Event event) {
+            return event.getEventId();
+        }
+
+        @Override
+        public String lineOneText(Event event) {
+//            return e.getShortdesc();
+            return event.getLocation();
+        }
+        @Override
+        public String lineTwoText(Event event) {
+            return event.getTime();
+        }
+        @Override
+        public String lineTreText(Event event) {
+            return "Duration" + event.getDuration();
+        }
+        @Override
+        public String lineFouText(Event event) {
+            return event.getShortdesc();
+        }
+        @Override
+        public String lineFivText(Event event) {
+            return "Joined Number";
+        }
+        @Override
+        public String lineSixText(Event event) {
+            return event.getmJoinerCount() + "/" + event.getLimit();
+        }
+
+    }
 }
