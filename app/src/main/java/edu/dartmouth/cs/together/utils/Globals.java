@@ -33,7 +33,7 @@ public class Globals {
     public static double RADIUS_50MILES = 80467.2;
     public static String EVENT_INDEX_KEY="EVENT_INDEX_KEY";
 
-    public static String SERVER_ADDR = "http://10.31.118.176:8080";
+    public static String SERVER_ADDR = "http://10.31.37.24:8080";
     public static String DEVICE_ID;
     public static User currentUser;
     public static final String ACTION_ADD = "add";
@@ -43,6 +43,19 @@ public class Globals {
     public static final String ACTION_QUIT = "quit";
     public static final String ACTION_POLL = "poll" ;
 
+    public static final String ACTION_NOTHING = "NA";
+    public static final String ACTION_KEY = "action_key";
+
+    //temporary content, provided by user preference
+    public static String[] interestList = {
+            "Sport", "Movie", "Music", "Food", "Pet", "Party", "Other"
+    };
+
+    public static String[] timeRanges = new String[]{
+            "Any Time", "Today", "In 3 Days", "In 1 Week", "In 2 Weeks"
+    };
+
+
     //name of shared preference file
     public static String KEY_SHARED_PREFERENCE_FILE = "shared preference file";
 
@@ -51,14 +64,14 @@ public class Globals {
     public static String KEY_DISTANCE_RANGE = "distance range";
     public static String KEY_INTEREST_CATEGORY = "interest category";
 
-    public static final String ACTION_NOTHING = "NA";
-    public static final String ACTION_KEY = "action_key";
-
     static{
         for (String s : sports){
             categories.add(s);
         }
         for (String s: life){
+            categories.add(s);
+        }
+        for (String s:interestList){
             categories.add(s);
         }
     }
@@ -73,5 +86,6 @@ public class Globals {
         event.setDateTime(cal);
         event.setLimit(15);
     }
+
 
 }

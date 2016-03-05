@@ -157,9 +157,9 @@ public class MainActivity extends AppCompatActivity
             if(resultCode == GET_RESULT_SUCCESS) {
                 if (data!=null ) {
                     Bundle extras = data.getExtras();
-                    filterTime = (int)extras.get(edu.dartmouth.cs.together.Globals.KEY_TIME_RANGE);
-                    filterDist = (int) extras.get(edu.dartmouth.cs.together.Globals.KEY_DISTANCE_RANGE);
-                    String selectedInterest = extras.getString(edu.dartmouth.cs.together.Globals.KEY_INTEREST_CATEGORY);
+                    filterTime = (int)extras.get(Globals.KEY_TIME_RANGE);
+                    filterDist = (int) extras.get(Globals.KEY_DISTANCE_RANGE);
+                    String selectedInterest = extras.getString(Globals.KEY_INTEREST_CATEGORY);
                 }
 
             }
