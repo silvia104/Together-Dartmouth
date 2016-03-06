@@ -70,9 +70,8 @@ public class EventMapFragment extends Fragment implements OnMapReadyCallback {
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         datasource = new EventDataSource(getContext());
-        datasource.open();
         values = datasource.queryEvents(EventDataSource.ALL_EVENT);
-        datasource.close();
+        //datasource.close();
         for(int i=0;i<values.size();i++){
             Event tmp=values.get(i);
             LatLng llg=tmp.getLatLng();

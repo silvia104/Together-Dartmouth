@@ -1,5 +1,6 @@
 package edu.dartmouth.cs.together;
 
+import android.content.SharedPreferences;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -19,6 +20,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
 import edu.dartmouth.cs.together.cloud.GcmRegisterIntentService;
+import edu.dartmouth.cs.together.data.User;
 import edu.dartmouth.cs.together.utils.Globals;
 
 
@@ -28,16 +30,14 @@ public class MainActivity extends AppCompatActivity
     private final int GET_RESULT_SUCCESS = -1;
     public int filterTime;
     public int filterDist;
-
+    private SharedPreferences mSharedPreference;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-       /* if((Globals.DEVICE_ID =
-                getSharedPreferences(getPackageName(),MODE_PRIVATE)
-                        .getString(Globals.DEVICE_ID_PREF_KEY,null))==null) {*/
+        mSharedPreference = getSharedPreferences(getPackageName(),MODE_PRIVATE);
+        if (!Globals.isRegistered) {
             registerDevice();
-        //}
-        startActivity(new Intent(getApplicationContext(),LoginActivity.class));
+        }
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -115,6 +115,18 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        if (!mSharedPreference.getBoolean(Globals.LOGIN_STATUS_KEY,false)) {
+            startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+        } else {
+            Globals.currentUser = new User();
+            Globals.currentUser.setId(mSharedPreference.getLong(User.ID_KEY,-1));
+            Globals.currentUser.setAccount(mSharedPreference.getString(User.ACCOUNT_KEY, "UNKNOWN"));
+        }
+    }
+
+    @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
@@ -128,6 +140,8 @@ public class MainActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
+        getMenuInflater().inflate(R.menu.logout, menu);
+
         return true;
     }
 
@@ -142,6 +156,11 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.action_settings) {
             Intent intent = new Intent(this, FilterActivity.class);
             startActivityForResult(intent,Globals.SETTING_FILTER);
+            return true;
+        }
+        if (id == R.id.action_logout) {
+            mSharedPreference.edit()
+                    .putBoolean(Globals.LOGIN_STATUS_KEY, false).commit();
             return true;
         }
 

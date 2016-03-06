@@ -54,7 +54,6 @@ public class UserDataSource  {
         entity.setProperty(User.DEVICE_KEY, user.getDevice());
         entity.setProperty(User.ID_KEY, user.getId());
         mDatastore.put(entity);
-        // TODO: save photo;
         return true;
     }
 

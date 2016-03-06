@@ -52,12 +52,13 @@ public class EventListFragment extends Fragment implements LoaderManager.LoaderC
                              Bundle savedInstanceState) {
 
         final View view = inflater.inflate(R.layout.fragment_eventlist, container, false);
+        mContext = getActivity().getApplicationContext();
+
         list = (ListView) view.findViewById(R.id.event_list);
-        datasource = new EventDataSource(getContext());
+        datasource = new EventDataSource(mContext);
         values= new ArrayList<Event>();
         UpdateEvent();
         dafaultFilter();
-        mContext = getActivity().getApplicationContext();
         eventAdapter = new eventarrayAdapter(mContext, values);
         list.setAdapter(eventAdapter);
         list.setOnItemClickListener(new ListClickHandler());
@@ -138,14 +139,13 @@ public class EventListFragment extends Fragment implements LoaderManager.LoaderC
 
     public void UpdateEvent(){
         Map<String, String> params = new HashMap<String, String>();
-        new AsyncTask<Void, Void, String>() {
+        new AsyncTask<Void, Void, List<Event>>() {
 
             @Override
             // Get history and upload it to the server.
-            protected String doInBackground(Void... arg0) {
+            protected List<Event> doInBackground(Void... arg0) {
                 JSONArray jarray=null;
                 String event=null;
-                datasource.open();
                 datasource.clearAllEvent();
 //            datasource.clearAllEvent();
                 try {
@@ -191,29 +191,27 @@ public class EventListFragment extends Fragment implements LoaderManager.LoaderC
                             LatLng ll = new LatLng(Double.parseDouble(lat), Double.parseDouble(lng));
                             eobj.setLatLng(ll);
                             values.add(eobj);
-                            datasource.insertEvent(EventDataSource.ALL_EVENT, eobj);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
+                        datasource.insertEvents(EventDataSource.ALL_EVENT, values);
                     }
                 }
-                datasource.close();
-                return null;
+                //datasource.close();
+                return values;
             }
             @Override
-            protected void onPostExecute(String errString) {
-                updateList();
+            protected void onPostExecute(List<Event> events) {
+                list.setAdapter(new eventarrayAdapter(mContext, values));
             }
         }.execute();
     }
 
     public void updateList(){
 
-        datasource.open();
         values = datasource.queryEvents(EventDataSource.ALL_EVENT);
-        list.setAdapter(new eventarrayAdapter(mContext, values) {
-        });
-        datasource.close();
+        list.setAdapter(new eventarrayAdapter(mContext, values));
+        //datasource.close();
     }
 
     public void updateListfromvalues(){

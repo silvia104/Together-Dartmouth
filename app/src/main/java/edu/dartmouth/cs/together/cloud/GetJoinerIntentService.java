@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 import edu.dartmouth.cs.together.data.Event;
+import edu.dartmouth.cs.together.data.EventDataSource;
 import edu.dartmouth.cs.together.data.User;
 import edu.dartmouth.cs.together.data.UserDataSource;
 import edu.dartmouth.cs.together.utils.Globals;
@@ -40,6 +41,10 @@ public class GetJoinerIntentService extends BaseIntentSerice {
             if(response.length()>0) {
                 List<User> users = parseJosonArray(response);
                 new UserDataSource(getApplicationContext()).insertUsers(users);
+                for (User u : users) {
+                    new EventDataSource(getApplicationContext())
+                            .insertEventJoinerRelation(eventId, u.getId());
+                }
                 sendBroadcast(new Intent(Globals.RELOAD_JOINER_DATA));
             }
         } catch (Exception e1) {
@@ -54,16 +59,18 @@ public class GetJoinerIntentService extends BaseIntentSerice {
 
     private List<User> parseJosonArray(String data){
         List<User> result = new ArrayList<>();
-        data = data.substring(0,data.length()-1);
-        try {
-            final JSONArray users = new JSONArray(data);
-            final int n = users.length();
-            for (int i = 0; i < n; ++i) {
-                final JSONObject user = users.getJSONObject(i);
-                result.add(new User(user));
+        if (data.length() > 0) {
+            data = data.substring(0, data.length() - 1);
+            try {
+                final JSONArray users = new JSONArray(data);
+                final int n = users.length();
+                for (int i = 0; i < n; ++i) {
+                    final JSONObject user = users.getJSONObject(i);
+                    result.add(new User(user));
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-        }catch (JSONException e){
-            e.printStackTrace();
         }
         return result;
     }

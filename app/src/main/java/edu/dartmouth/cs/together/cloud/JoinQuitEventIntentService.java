@@ -45,30 +45,35 @@ public class JoinQuitEventIntentService extends BaseIntentSerice {
                 params.put("action", action);
                 // post add request
                 String resp = ServerUtilities.post(Globals.SERVER_ADDR + "/eventops.do", params);
-                resp = resp.substring(0,resp.length()-1);
                 EventDataSource db = new EventDataSource(getApplicationContext());
-                if (resp.contains("failed")){
+                if (resp.contains("failed")) {
                     db.deleteEventJoinerRelationByEventId(eventId);
                     db.deleteEvent(EventDataSource.ALL_EVENT, eventId);
-                    db.deleteEvent(EventDataSource.JOINED_EVENT,eventId);
+                    db.deleteEvent(EventDataSource.JOINED_EVENT, eventId);
                     showToast("Event is cancelled!");
                 } else {
                     if (action.equals(Globals.ACTION_JOIN)) {
                         db.insertEventJoinerRelation(eventId, joinerId);
-                        if (resp.length() == 0){
-                            showToast("Join Failed!");
+                        Intent i = new Intent(Globals.UPDATE_EVENT_DETAIL);
+                        i.putExtra(Globals.ACTION_JOIN, true);
+                        if (resp.length() == 0) {
+                            showToast("Already Joined!");
+                        } else {
+                            int newCount = Integer.parseInt(resp.trim());
+                            ContentValues values = new ContentValues();
+                            values.put(BaseEventTable.COLUMNS.JOINER_COUNT.colName(), newCount);
+                            db.updateEvent(EventDataSource.ALL_EVENT, eventId, values);
+                            Event event = db.queryEventById(EventDataSource.ALL_EVENT, eventId);
+                            db.insertEvent(EventDataSource.JOINED_EVENT, event);
+                            i.putExtra(Event.ID_KEY, eventId);
                         }
-                        int newCount = Integer.parseInt(resp.trim());
-                        ContentValues values = new ContentValues();
-                        values.put(JoinedEventTable.COLUMNS.JOINER_COUNT.colName(), newCount);
-                        db.updateEvent(EventDataSource.JOINED_EVENT, eventId, values);
-                        db.updateEvent(EventDataSource.ALL_EVENT, eventId, values);
-                        sendBroadcast(new Intent(Globals.UPDATE_EVENT_DETAIL));
+                        sendBroadcast(i);
                     } else if (action.equals(Globals.ACTION_QUIT)) {
                         db.deleteEventJoinerRelation(eventId, joinerId);
                         db.deleteEvent(EventDataSource.JOINED_EVENT, eventId);
                     }
                 }
+
             } catch (Exception e1) {
                 uploadState = "Sync failed: " + e1.getMessage();
                 Log.e(this.getClass().getName(), "data posting error " + e1);

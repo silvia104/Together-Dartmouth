@@ -5,18 +5,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.Loader;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.zip.GZIPOutputStream;
 
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 import edu.dartmouth.cs.together.cloud.JoinQuitEventIntentService;
 import edu.dartmouth.cs.together.cloud.QaIntentService;
@@ -29,6 +25,8 @@ import edu.dartmouth.cs.together.utils.Globals;
 public class EventDetailActivity extends BaseEventActivity {
     private long mEventId;
     private int mEventType;
+    private boolean mRefreshed;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,6 +55,7 @@ public class EventDetailActivity extends BaseEventActivity {
         mDateReloadReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
+                mRefreshed = true;
                 getLoaderManager().restartLoader(1,null,EventDetailActivity.this).forceLoad();
             }
         };
@@ -71,6 +70,9 @@ public class EventDetailActivity extends BaseEventActivity {
                 if (id == 0L) {
                     finish();
                     return;
+                }
+                if (intent.getBooleanExtra(Globals.ACTION_JOIN, false)){
+                    mJoinBtn.setVisibility(View.GONE);
                 }
                 new LoadEventAsyncTask(mEventType).execute(mEventId);
             }
@@ -136,7 +138,7 @@ public class EventDetailActivity extends BaseEventActivity {
     public void onLoadFinished(Loader<List<Qa>> loader, List<Qa> data) {
         super.onLoadFinished(loader, data);
         mQaAdapter.updateData(data);
-        if (data.size()==0){
+        if (data.size()==0 || !mRefreshed){
             Intent i = new Intent(getApplicationContext(),
                     QaIntentService.class);
             i.putExtra(Event.ID_KEY,mEventId);

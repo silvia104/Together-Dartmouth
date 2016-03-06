@@ -39,12 +39,12 @@ public class GcmRegisterIntentService extends BaseIntentSerice {
                             new AndroidJsonFactory(), null)
                             // Need setRootUrl
                             .setRootUrl(Globals.SERVER_ADDR + "/_ah/api/")
-                        .setGoogleClientRequestInitializer(new GoogleClientRequestInitializer() {
+                            .setGoogleClientRequestInitializer(new GoogleClientRequestInitializer() {
                             @Override
                             public void initialize(AbstractGoogleClientRequest<?> abstractGoogleClientRequest) throws IOException {
                                 abstractGoogleClientRequest.setDisableGZipContent(true);
-                            }
-                        });
+                            }});
+
             // end of optional local run code
             regService = builder.build();
         }
@@ -63,8 +63,7 @@ public class GcmRegisterIntentService extends BaseIntentSerice {
             // is using accounts.
             regService.register(regId).execute();
             Globals.DEVICE_ID = regId;
-            getSharedPreferences(getApplication().getPackageName(),MODE_PRIVATE)
-                    .edit().putString(Globals.DEVICE_ID_PREF_KEY, regId).commit();
+            Globals.isRegistered = true;
             showToast("Registration is done!");
         } catch (IOException ex) {
             ex.printStackTrace();

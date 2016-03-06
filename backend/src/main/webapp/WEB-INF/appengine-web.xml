@@ -19,4 +19,7 @@
 
         <property name="gcm.api.key" value="AIzaSyAfnREq13_XbOhoC0og4w1SihF2O2UgtOM"/>
     </system-properties>
+    <inbound-services>
+        <service>mail_bounce</service>
+    </inbound-services>
 </appengine-web-app>

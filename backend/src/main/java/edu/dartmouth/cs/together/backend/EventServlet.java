@@ -54,8 +54,6 @@ public class EventServlet extends HttpServlet {
                 long userId = jsonObject.getLong(User.ID_KEY);
                 Entity entity = EventDataSource.queryById(eventId);
                 if (noEvent(entity,eventId,resp)) return;
-
-
                 Event newEvent = EventDataSource.getEventFromEntity(entity);
                 if (newEvent.getJoinerCount() < newEvent.getLimit()) {
                     boolean ret = EventJoinerDataSource.add(eventId, userId);
@@ -67,7 +65,6 @@ public class EventServlet extends HttpServlet {
                         writer.flush();
                         userList.add((long) entity.getProperty(Event.OWNER_KEY));
                         deviceList = UserDataSource.queryDeviceByUserId(userList);
-
                         msg.sendMessage(deviceList, "Event Joined:" + eventId + ":" + userId);
                     }
                 }

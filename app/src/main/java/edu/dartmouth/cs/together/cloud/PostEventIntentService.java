@@ -74,9 +74,9 @@ public class PostEventIntentService extends BaseIntentSerice {
                     if (result.contains(":")){
                         JSONObject json = new JSONObject(result.substring(0, result.length() - 1));
                         event = new Event(json);
-                        db.insertEvent(EventDataSource.ALL_EVENT, event);
-                        db.insertEvent(EventDataSource.JOINED_EVENT, event);
-                        db.insertEvent(EventDataSource.MY_OWN_EVENT, event);
+                        db.updateEvent(EventDataSource.ALL_EVENT, eventId, event);
+                        db.updateEvent(EventDataSource.JOINED_EVENT,eventId, event);
+                        db.updateEvent(EventDataSource.MY_OWN_EVENT, eventId,event);
                         sendBroadcast(new Intent(Globals.UPDATE_EVENT_DETAIL));
                     } else {
                         db.deleteEvent(EventDataSource.ALL_EVENT, eventId);

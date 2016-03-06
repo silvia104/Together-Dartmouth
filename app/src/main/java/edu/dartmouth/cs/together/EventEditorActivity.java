@@ -13,10 +13,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.SeekBar;
@@ -64,6 +62,8 @@ public class EventEditorActivity extends BaseEventActivity implements DatePicker
     private Calendar mNow = Calendar.getInstance();
     private Calendar mTime = Calendar.getInstance();
     private long mEventId;
+
+    private boolean mRefreshed = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -110,7 +110,8 @@ public class EventEditorActivity extends BaseEventActivity implements DatePicker
         mDateReloadReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                getLoaderManager().restartLoader(1,null,EventEditorActivity.this).forceLoad();
+                mRefreshed = true;
+                getLoaderManager().restartLoader(0,null,EventEditorActivity.this).forceLoad();
             }
         };
         if (mDateReloadReceiver != null){
@@ -205,6 +206,7 @@ public class EventEditorActivity extends BaseEventActivity implements DatePicker
 
     @OnClick(R.id.locationText)
     public void onLocationClick(View view) {
+        mLocationTv.setError(null);
         int PLACE_PICKER_REQUEST = 1;
         PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
         builder.setLatLngBounds(
@@ -240,6 +242,7 @@ public class EventEditorActivity extends BaseEventActivity implements DatePicker
 
     @OnClick(R.id.shortDescLayout)
     public void onShortDescClick(View view) {
+        mShortDesc.setError(null);
         ShowInputDialog(SHORT_DESCRIPTION_DIALOG);
 
     }

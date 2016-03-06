@@ -53,7 +53,7 @@ public class MyEventsFragment extends Fragment {
         fragmentList.add(asJoinerFragment);
 
 
-        mViewPageAdapter =new ActionTabsViewPagerAdapter(getFragmentManager(),
+        mViewPageAdapter =new ActionTabsViewPagerAdapter(getChildFragmentManager(),
                 fragmentList);
         mViewPager.setAdapter(mViewPageAdapter);
         mSlidingTabLayout.setDistributeEvenly(true);
