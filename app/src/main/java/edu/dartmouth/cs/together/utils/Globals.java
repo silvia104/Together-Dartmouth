@@ -27,17 +27,14 @@ public class Globals {
     public static final String ACTION_CODE = "code";
     public static final String LOGIN_STATUS_KEY ="login_status" ;
     public static String[] sports = {"Soccer","Skiing","Cycling","Jogging","Hiking",
-            "Tennis","Skating","Dancing","Gym","Basketball","Swimming","Billiard"};
-    public static String[] life = {"Movie","Party","Shopping","Dining", "Travel", "Study"};
+            "Tennis","Dancing","Gym","Basketball","Swimming","Billiard"};
+    public static String[] life = {"Movie","Party","Shopping","Dining", "Travel", "Study",
+            "Music", "Pet", "Other"};
     public static List<String> categories = new ArrayList<>();
     public static LatLng DARTMOUTH_GPS = new LatLng(43.726034, -72.142917);
     public static double RADIUS_50MILES = 80467.2;
 
-<<<<<<< HEAD
     public static String SERVER_ADDR = "http://10.0.0.30:8080";
-=======
-    public static String SERVER_ADDR = "http://192.168.0.104:8080";
->>>>>>> origin/test
     //public static String SERVER_ADDR = "https://together-1234.appspot.com";
     public static String DEVICE_ID;
     public static User currentUser;
@@ -50,11 +47,6 @@ public class Globals {
 
     public static final String ACTION_NOTHING = "NA";
     public static final String ACTION_KEY = "action_key";
-
-    //temporary content, provided by user preference
-    public static String[] interestList = {
-            "Sport", "Movie", "Music", "Food", "Pet", "Party", "Other"
-    };
 
     public static String[] timeRanges = new String[]{
             "Any Time", "Today", "In 3 Days", "In 1 Week", "In 2 Weeks"
@@ -82,11 +74,7 @@ public class Globals {
         for (String s : life) {
             categories.add(s);
         }
-        for (String s:interestList){
-            categories.add(s);
-        }
     }
     public static boolean isRegistered = false;
-
 
 }
