@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import edu.dartmouth.cs.together.utils.Globals;
+
 /**
  * Created by TuanMacAir on 3/1/16.
  */
@@ -57,6 +59,9 @@ public class EventDataSource  {
         try{
 
             ContentValues values = getEventDetails(event);
+            if (eventType == JOINED_EVENT){
+                values.put(UserTable.COLUMNS.USER_ID.colName(), Globals.currentUser.getId());
+            }
             i = mDB.insertWithOnConflict(getTableName(eventType), null, values,
                     SQLiteDatabase.CONFLICT_REPLACE);
             // return the row ID of the newly added row.
@@ -82,6 +87,9 @@ public class EventDataSource  {
         try{
             for (Event event:events) {
                 ContentValues values = getEventDetails(event);
+                if (eventType == JOINED_EVENT){
+                    values.put(UserTable.COLUMNS.USER_ID.colName(), Globals.currentUser.getId());
+                }
                 mDB.insertWithOnConflict(getTableName(eventType), null, values,
                         SQLiteDatabase.CONFLICT_REPLACE);
                 // return the row ID of the newly added row.
@@ -101,9 +109,16 @@ public class EventDataSource  {
         open();
         int count = 0;
         try {
-           count = mDB.delete(getTableName(eventType),
-                   BaseEventTable.COLUMNS.EVENT_ID.colName() + " = " + id, null);
-            deleteEventJoinerRelationByEventId(id);
+            if (eventType == JOINED_EVENT){
+                mDB.delete(getTableName(eventType),
+                        BaseEventTable.COLUMNS.EVENT_ID.colName() + " = " + id
+                        +" AND " + UserTable.COLUMNS.USER_ID.colName() + "="
+                        + Globals.currentUser.getId(), null);
+            }else {
+                count = mDB.delete(getTableName(eventType),
+                        BaseEventTable.COLUMNS.EVENT_ID.colName() + " = " + id, null);
+                deleteEventJoinerRelationByEventId(id);
+            }
             new QaDataSource(mContext).deletQaByEventId(id);
         } catch (SQLiteException e){
             e.printStackTrace();
@@ -211,43 +226,6 @@ public class EventDataSource  {
             if (cursor!=null) cursor.close();
         }
         return events;
-    }
-
-    public List<Event> queryEventByJoinerId(long joinerId){
-        open();
-        List<Event> events = new ArrayList<>();
-        Cursor joinerCursor =null;
-        try {
-            joinerCursor = mDB.query(EventJoinerTable.TABLE_NAME,
-                    null,  EventJoinerTable.COLUMNS.JOINER_ID.colName() + "=?",
-                    new String[]{String.valueOf(joinerId)}, null, null, null, null);
-            joinerCursor.moveToFirst();
-            while(!joinerCursor.isAfterLast()) {
-                //there are more than one joiner, so we have to query event by eventID
-                // after we get eventID by joinerID in EventJoiner table
-                long eventId = joinerCursor.getLong(EventJoinerTable.COLUMNS.EVENT_ID.index());
-                Cursor eventCursor = mDB.query(getTableName(JOINED_EVENT), null,
-                        BaseEventTable.COLUMNS.EVENT_ID.colName() + "=?",
-                        new String[]{String.valueOf(eventId)}, null, null, null, null);
-                eventCursor.moveToFirst();
-                while (!eventCursor.isAfterLast()) {
-                    Event event = cursorToEvent(eventCursor);
-                    events.add(event);
-                    eventCursor.moveToNext();
-                }
-                if(eventCursor!=null) eventCursor.close();
-
-                joinerCursor.moveToNext();
-            }
-//                event = cursorToEvent(joinerCursor);
-        } catch (SQLiteException e){
-            e.printStackTrace();
-        }finally {
-            // Make sure to close the cursor
-            if (joinerCursor!=null) joinerCursor.close();
-        }
-        return events;
-
     }
 
     public long insertEventJoinerRelation(long eventId, long joinerId){
