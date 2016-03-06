@@ -89,8 +89,13 @@ public class MyEventsAsJoiner extends ListFragment
     public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l,v,position, id);
         Intent i = new Intent(getActivity(),EventDetailActivity.class);
+        Event event = mAdapter.getItem(position);
+        long eventId = event.getEventId();
+        i.putExtra(Event.ID_KEY, eventId);
+        i.putExtra("TAG", EventDataSource.JOINED_EVENT);
         startActivity(i);
     }
+
 
 
     static class joinedEventsLoader extends AsyncTaskLoader<List<Event>> {

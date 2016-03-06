@@ -33,7 +33,7 @@ public class Globals {
     public static double RADIUS_50MILES = 80467.2;
     public static String EVENT_INDEX_KEY="EVENT_INDEX_KEY";
 
-    public static String SERVER_ADDR = "http://10.31.37.24:8080";
+    public static String SERVER_ADDR = "http://192.168.2.7:8080";
     public static String DEVICE_ID;
     public static User currentUser;
     public static final String ACTION_ADD = "add";

@@ -11,11 +11,16 @@ public class Message {
 
     private long msgId;
     private long eventId;
+
+
+    private String eventShortDesc;
     private int msgType;
     private long msgTime;
     private boolean isRead;
     //for quesiton, maybe there should be this question id?
     private long qaId;
+    private String question;
+    private String answer;
 
 
     public Message(){
@@ -107,6 +112,31 @@ public class Message {
     public void setQaId(long qaId) {
         this.qaId = qaId;
     }
+
+
+    public String getEventShortDesc() {
+        return eventShortDesc;
+    }
+
+    public String getQuestion() {
+        return question;
+    }
+    public String getAnswer() {
+        return answer;
+
+    }
+    public void setEventShortDesc(String eventShortDesc) {
+        this.eventShortDesc = eventShortDesc;
+    }
+
+    public void setQuestion(String question) {
+        this.question = question;
+    }
+
+    public void setAnswer(String answer) {
+        this.answer = answer;
+    }
+
 
     public String getDateTimeString (String dateFormat)
     {

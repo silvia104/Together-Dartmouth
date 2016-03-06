@@ -17,9 +17,12 @@ enum COLUMNS{
     MSG_TYPE(1,"type"," int not null"),
     TIME(2,"time"," integer not null"),
     DESCRIPTION(3, "description", " string not null"),
-    IS_READ(4, " read", " integer not null"),
+    IS_READ(4, "read", " integer not null"),
     EVENT_ID(5,"event_id"," integer not null"),
-    QA_ID(6, "question", " integer");
+    EVENT_SHORT_DESC(6, "event_short_desc", " string not null"),
+    QA_ID(7, "qa", " integer"),
+    QUESTION(8, "q", " string not null"),
+    ANSWER(9, "a", " string not null");
 
     private final int index;
     private final String colName;
@@ -40,7 +43,10 @@ enum COLUMNS{
                 + DESCRIPTION.colName + DESCRIPTION.command + ", "
                 + IS_READ.colName + IS_READ.command + ", "
                 + EVENT_ID.colName + EVENT_ID.command + ", "
-                + QA_ID.colName + QA_ID.command;
+                + EVENT_SHORT_DESC.colName + EVENT_SHORT_DESC.command + ", "
+                + QA_ID.colName + QA_ID.command + ", "
+                + QUESTION.colName + QUESTION.command + ", "
+                + ANSWER.colName + ANSWER.command;
     }
 }
     public static final String TABLE_CREATE_COMMAND = "create table "
