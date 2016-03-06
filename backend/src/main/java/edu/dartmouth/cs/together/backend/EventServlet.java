@@ -76,10 +76,8 @@ public class EventServlet extends HttpServlet {
 
                 boolean ret = EventJoinerDataSource.delete(eventId, userId);
                 Event newEvent = EventDataSource.getEventFromEntity(entity);
-                newEvent.increaseJoiner(1);
+                newEvent.increaseJoiner(-1);
                 EventDataSource.update(newEvent);
-
-
                 userList.add((long)entity.getProperty(Event.OWNER_KEY));
                 deviceList = UserDataSource.queryDeviceByUserId(userList);
                 msg.sendMessage(deviceList, "Event Quited:" + eventId + ":" + userId);

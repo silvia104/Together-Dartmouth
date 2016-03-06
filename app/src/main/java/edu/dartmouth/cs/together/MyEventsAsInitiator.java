@@ -1,17 +1,17 @@
 package edu.dartmouth.cs.together;
 
 
-import android.content.Context;
-import android.support.v4.app.Fragment;
-import android.os.Bundle;
+import android.content.Intent;
 import android.support.v4.app.LoaderManager;
-import android.support.v4.content.AsyncTaskLoader;
+import android.content.Context;
 import android.support.v4.content.Loader;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.ListFragment;
+import android.os.Bundle;
+import android.support.v4.content.AsyncTaskLoader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.ListView;
 
 import java.util.ArrayList;
@@ -25,13 +25,12 @@ import edu.dartmouth.cs.together.utils.Globals;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MyEventsAsInitiator extends Fragment implements
-        LoaderManager.LoaderCallbacks<List<Event>> {
+public class MyEventsAsInitiator extends ListFragment implements
+        LoaderManager.LoaderCallbacks<List<Event>>{
 
-    private ListView mListView;
-    private initiatedEventsAdapter mApater;
-    private List<Event> mInitiatedEventList = new ArrayList<>();
+    private List<Event> mInitiatedEventsList = new ArrayList<>();
     private EventDataSource mDB;
+    private initiatedEventsAdapter mAdapter;
     private Context mContext;
 
 
@@ -40,39 +39,74 @@ public class MyEventsAsInitiator extends Fragment implements
         // Required empty public constructor
     }
 
+    public void onActivityCreated (Bundle savedInstanceState){
+        super.onActivityCreated(savedInstanceState);
+        mContext = getActivity();
+        mAdapter = new initiatedEventsAdapter(mContext,mInitiatedEventsList);
+        setListAdapter(mAdapter);
+        if(savedInstanceState == null){
+            getLoaderManager().initLoader(0, null, this).forceLoad();
+        }
+        mDB = new EventDataSource(mContext);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        final View view = inflater.inflate(R.layout.fragment_my_events_as_starter, container, false);
-        mListView = (ListView)view.findViewById(R.id.initiated_event_list);
-        mContext = getActivity();
-        mDB = new EventDataSource(getActivity());
-//        mListView.setOnItemClickListener(new EventListFragment.ListClickHandler());
-        if (savedInstanceState == null) {
-            getLoaderManager().initLoader(0, null, this).forceLoad();
-        }
-        mApater = new initiatedEventsAdapter(mContext, mInitiatedEventList);
-        mListView.setAdapter(mApater);
+        View view =  inflater.inflate(R.layout.fragment_my_events_as_starter, container, false);
+
         return view;
+    }
+
+
+    @Override
+    public void onListItemClick(ListView l, View v, int position, long id) {
+        super.onListItemClick(l,v,position, id);
+        Intent i = new Intent(getActivity(),EventDetailActivity.class);
+        Event event = mAdapter.getItem(position);
+        long eventId = event.getEventId();
+        i.putExtra(Event.ID_KEY, eventId);
+        i.putExtra("TAG",EventDataSource.MY_OWN_EVENT);
+        startActivity(i);
     }
 
     @Override
     public Loader<List<Event>> onCreateLoader(int id, Bundle args) {
-        //load all data in myownevent table
-        //mInitiatedEventList = mDB.queryEvents(EventDataSource.MY_OWN_EVENT);
         return new initiatedEventsLoader(mContext);
+
     }
 
     @Override
     public void onLoadFinished(Loader<List<Event>> loader, List<Event> data) {
-        mInitiatedEventList.addAll(data);
-        mApater.notifyDataSetChanged();
+        if(data == null){
+            data = new ArrayList<>();
+        }
+        mInitiatedEventsList.addAll(data);
+        mAdapter.notifyDataSetChanged();
     }
+
+
 
     @Override
     public void onLoaderReset(Loader<List<Event>> loader) {
+
+    }
+
+    static class initiatedEventsLoader extends AsyncTaskLoader<List<Event>> {
+        private EventDataSource mDB;
+
+        public initiatedEventsLoader(Context context) {
+            super(context);
+            mDB = new EventDataSource(context);
+        }
+
+        // get all records in background as loader
+        @Override
+        public List<Event> loadInBackground() {
+            return mDB.queryOwnedEvent(Globals.currentUser.getId());
+        }
+
 
     }
 
@@ -92,7 +126,7 @@ public class MyEventsAsInitiator extends Fragment implements
 
         @Override
         public long getid(Event event) {
-            return 0;
+            return event.getEventId();
         }
 
         @Override
@@ -122,19 +156,4 @@ public class MyEventsAsInitiator extends Fragment implements
         }
 
     }
-
-    static class initiatedEventsLoader extends AsyncTaskLoader<List<Event>> {
-        private EventDataSource mDB;
-        public initiatedEventsLoader(Context context) {
-            super(context);
-            mDB = new EventDataSource(context);
-        }
-        // get all records in background as loader
-        @Override
-        public List<Event> loadInBackground() {
-            return mDB.queryEvents(EventDataSource.MY_OWN_EVENT);
-        }
-
-    }
-
 }

@@ -26,7 +26,7 @@ public class EventDetailActivity extends BaseEventActivity {
     private long mEventId;
     private int mEventType;
     private boolean mRefreshed;
-
+    private Menu mMemu;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,6 +72,9 @@ public class EventDetailActivity extends BaseEventActivity {
                     return;
                 }
                 if (intent.getBooleanExtra(Globals.ACTION_JOIN, false)){
+                    if (mMenu.size()==1) {
+                        mMenu.add(0, R.id.action_quit, 1, R.string.quit);
+                    }
                     mJoinBtn.setVisibility(View.GONE);
                 }
                 new LoadEventAsyncTask(mEventType).execute(mEventId);
@@ -93,6 +96,7 @@ public class EventDetailActivity extends BaseEventActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        mMenu = menu;
         if (mEventType==EventDataSource.JOINED_EVENT) {
             getMenuInflater().inflate(R.menu.quit, menu);
             return true;

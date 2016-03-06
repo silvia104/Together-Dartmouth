@@ -5,8 +5,9 @@
     tools:context=".MyEventsAsInitiator">
 
     <ListView
-        android:id="@+id/initiated_event_list"
+        android:id="@android:id/list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
     </ListView>
+
 </FrameLayout>

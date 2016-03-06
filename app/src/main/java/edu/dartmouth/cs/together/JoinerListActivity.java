@@ -54,11 +54,11 @@ public class JoinerListActivity extends BasePopoutActivity implements
         mDateReloadReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
+                mRefreshed=true;
                 getLoaderManager().restartLoader(0,null,JoinerListActivity.this).forceLoad();
             }
         };
         if (mDateReloadReceiver != null){
-            mRefreshed=true;
             getApplicationContext().registerReceiver(mDateReloadReceiver,
                     new IntentFilter(Globals.RELOAD_JOINER_DATA));
         }

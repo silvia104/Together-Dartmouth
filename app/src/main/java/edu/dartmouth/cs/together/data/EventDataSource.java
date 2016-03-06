@@ -346,6 +346,7 @@ public class EventDataSource  {
         return false;
 
     }
+    /*
 
     public List<Event> queryEventByJoinerId(long joinerId){
         open();
@@ -371,6 +372,31 @@ public class EventDataSource  {
                 }
 //                event = cursorToEvent(joinerCursor);
             }
+        } catch (SQLiteException e){
+            e.printStackTrace();
+        }finally {
+            // Make sure to close the cursor
+            if (joinerCursor!=null) joinerCursor.close();
+        }
+        return events;
+
+    }
+    */
+    public List<Event> queryEventByJoinerId(long joinerId){
+        open();
+        List<Event> events = new ArrayList<>();
+        Cursor joinerCursor =null;
+        try {
+                joinerCursor = mDB.query(JoinedEventTable.TABLE_NAME,
+                    null, UserTable.COLUMNS.USER_ID.colName() + "=?",
+                    new String[]{String.valueOf(joinerId)}, null, null, null, null);
+                if (joinerCursor.getCount()>0){
+                    joinerCursor.moveToFirst();
+                    while(!joinerCursor.isAfterLast()){
+                        events.add(cursorToEvent(joinerCursor));
+                        joinerCursor.moveToNext();
+                    }
+                }
         } catch (SQLiteException e){
             e.printStackTrace();
         }finally {
