@@ -5,9 +5,9 @@ package edu.dartmouth.cs.together.data;
  */
 public class JoinedEventTable extends BaseEventTable {
     public static final String TABLE_NAME = "joinedevent";
-
     public static final String TABLE_CREATE_COMMAND = "create table "
             + JoinedEventTable.TABLE_NAME + "("
             + COLUMNS.createCommand()
+            + UserTable.COLUMNS.USER_ID.colName() + " integer not null"
             +");";
 }
