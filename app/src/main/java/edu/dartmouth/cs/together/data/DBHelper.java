@@ -38,6 +38,7 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL(EventJoinerTable.TABLE_CREATE_COMMAND);
         db.execSQL(JoinedEventTable.TABLE_CREATE_COMMAND);
         db.execSQL(AllEventTable.TABLE_CREATE_COMMAND);
+        db.execSQL(MessageTable.TABLE_CREATE_COMMAND);
     }
 
     @Override

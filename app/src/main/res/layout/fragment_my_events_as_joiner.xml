@@ -5,7 +5,11 @@
     tools:context="edu.dartmouth.cs.together.MyEventsAsJoiner">
 
     <ListView
+<<<<<<< HEAD
         android:id="@+id/joined_event_list"
+=======
+        android:id="@android:id/list"
+>>>>>>> origin/test
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
     </ListView>
