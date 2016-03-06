@@ -70,7 +70,7 @@ public class FilterActivity extends AppCompatActivity
         //Array Adapter, for multi choice list
          mListAdapter = new ArrayAdapter<String>(
                 this, android.R.layout.simple_list_item_multiple_choice,
-                Globals.interestList
+                Globals.categories
         );
         mInterestList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
         mInterestList.setAdapter(mListAdapter);

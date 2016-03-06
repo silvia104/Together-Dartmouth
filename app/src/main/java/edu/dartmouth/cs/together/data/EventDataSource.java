@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import edu.dartmouth.cs.together.utils.Globals;
+
 /**
  * Created by TuanMacAir on 3/1/16.
  */
@@ -30,6 +32,7 @@ public class EventDataSource  {
         mContext = context;
     }
     public void clearAllEvent(){
+        open();
         mDB.execSQL("DROP TABLE IF EXISTS " + AllEventTable.TABLE_NAME);
         mDB.execSQL(AllEventTable.TABLE_CREATE_COMMAND);
     }
@@ -56,6 +59,9 @@ public class EventDataSource  {
         try{
 
             ContentValues values = getEventDetails(event);
+            if (eventType == JOINED_EVENT){
+                values.put(UserTable.COLUMNS.USER_ID.colName(), Globals.currentUser.getId());
+            }
             i = mDB.insertWithOnConflict(getTableName(eventType), null, values,
                     SQLiteDatabase.CONFLICT_REPLACE);
             // return the row ID of the newly added row.
@@ -81,6 +87,9 @@ public class EventDataSource  {
         try{
             for (Event event:events) {
                 ContentValues values = getEventDetails(event);
+                if (eventType == JOINED_EVENT){
+                    values.put(UserTable.COLUMNS.USER_ID.colName(), Globals.currentUser.getId());
+                }
                 mDB.insertWithOnConflict(getTableName(eventType), null, values,
                         SQLiteDatabase.CONFLICT_REPLACE);
                 // return the row ID of the newly added row.
@@ -100,9 +109,16 @@ public class EventDataSource  {
         open();
         int count = 0;
         try {
-           count = mDB.delete(getTableName(eventType),
-                   BaseEventTable.COLUMNS.EVENT_ID.colName() + " = " + id, null);
-            deleteEventJoinerRelationByEventId(id);
+            if (eventType == JOINED_EVENT){
+                mDB.delete(getTableName(eventType),
+                        BaseEventTable.COLUMNS.EVENT_ID.colName() + " = " + id
+                        +" AND " + UserTable.COLUMNS.USER_ID.colName() + "="
+                        + Globals.currentUser.getId(), null);
+            }else {
+                count = mDB.delete(getTableName(eventType),
+                        BaseEventTable.COLUMNS.EVENT_ID.colName() + " = " + id, null);
+                deleteEventJoinerRelationByEventId(id);
+            }
             new QaDataSource(mContext).deletQaByEventId(id);
         } catch (SQLiteException e){
             e.printStackTrace();
@@ -187,12 +203,12 @@ public class EventDataSource  {
         return event;
     }
 
-    public List<Event> queryOwnedEvent(long id){
+    public List<Event> queryOwnedEvent(int eventType, long id){
         open();
         List<Event> events = new ArrayList<>();
         Cursor cursor =null;
         try {
-            cursor = mDB.query(getTableName(MY_OWN_EVENT),
+            cursor = mDB.query(getTableName(eventType),
                     null,  BaseEventTable.COLUMNS.OWNER_ID.colName() + "=?",
                     new String[]{String.valueOf(id)}, null, null, null, null);
             if (cursor.getCount()>0) {
@@ -212,43 +228,6 @@ public class EventDataSource  {
         return events;
     }
 
-    public List<Event> queryEventByJoinerId(long joinerId){
-        open();
-        List<Event> events = new ArrayList<>();
-        Cursor joinerCursor =null;
-        try {
-            joinerCursor = mDB.query(EventJoinerTable.TABLE_NAME,
-                    null,  EventJoinerTable.COLUMNS.JOINER_ID.colName() + "=?",
-                    new String[]{String.valueOf(joinerId)}, null, null, null, null);
-            joinerCursor.moveToFirst();
-            while(!joinerCursor.isAfterLast()) {
-                //there are more than one joiner, so we have to query event by eventID
-                // after we get eventID by joinerID in EventJoiner table
-                long eventId = joinerCursor.getLong(EventJoinerTable.COLUMNS.EVENT_ID.index());
-                Cursor eventCursor = mDB.query(getTableName(JOINED_EVENT), null,
-                        BaseEventTable.COLUMNS.EVENT_ID.colName() + "=?",
-                        new String[]{String.valueOf(eventId)}, null, null, null, null);
-                eventCursor.moveToFirst();
-                while (!eventCursor.isAfterLast()) {
-                    Event event = cursorToEvent(eventCursor);
-                    events.add(event);
-                    eventCursor.moveToNext();
-                }
-                if(eventCursor!=null) eventCursor.close();
-
-                joinerCursor.moveToNext();
-            }
-//                event = cursorToEvent(joinerCursor);
-        } catch (SQLiteException e){
-            e.printStackTrace();
-        }finally {
-            // Make sure to close the cursor
-            if (joinerCursor!=null) joinerCursor.close();
-        }
-        return events;
-
-    }
-
     public long insertEventJoinerRelation(long eventId, long joinerId){
         open();
         long id = -1;
@@ -256,7 +235,8 @@ public class EventDataSource  {
             ContentValues values = new ContentValues();
             values.put(EventJoinerTable.COLUMNS.EVENT_ID.colName(),eventId);
             values.put(EventJoinerTable.COLUMNS.JOINER_ID.colName(),joinerId);
-            id = mDB.insert(EventJoinerTable.TABLE_NAME, null, values);
+            id = mDB.insertWithOnConflict(EventJoinerTable.TABLE_NAME, null, values,
+                    SQLiteDatabase.CONFLICT_REPLACE);
         }catch (SQLiteException e){
             e.printStackTrace();
         }
@@ -347,5 +327,83 @@ public class EventDataSource  {
                 break;
         }
         return s;
+    }
+
+    public boolean queryEvenJoinerByPair(long eventId, long joinerId){
+        open();
+        Cursor cursor =null;
+        try {
+              cursor = mDB.query(EventJoinerTable.TABLE_NAME,
+                    null,  BaseEventTable.COLUMNS.EVENT_ID.colName() + "=?",
+                    new String[]{String.valueOf(joinerId)}, null, null, null, null);
+
+        } catch (SQLiteException e){
+            e.printStackTrace();
+        }finally {
+            // Make sure to close the cursor
+            if (cursor!=null) cursor.close();
+        }
+        return false;
+
+    }
+    /*
+
+    public List<Event> queryEventByJoinerId(long joinerId){
+        open();
+        List<Event> events = new ArrayList<>();
+        Cursor joinerCursor =null;
+        try {
+            joinerCursor = mDB.query(EventJoinerTable.TABLE_NAME,
+                    null, EventJoinerTable.COLUMNS.JOINER_ID.colName() + "=?",
+                    new String[]{String.valueOf(joinerId)}, null, null, null, null);
+            if (joinerCursor.getCount()>0) {
+                joinerCursor.moveToFirst();
+                while(!joinerCursor.isAfterLast()) {
+                    long eventId = joinerCursor.getLong(EventJoinerTable.COLUMNS.EVENT_ID.index());
+                    Cursor eventCursor = mDB.query(getTableName(this.ALL_EVENT), null,
+                            BaseEventTable.COLUMNS.EVENT_ID.colName() + "=?",
+                            new String[]{String.valueOf(eventId)}, null, null, null, null);
+                    eventCursor.moveToFirst();
+                    while (!eventCursor.isAfterLast()) {
+                        Event event = cursorToEvent(eventCursor);
+                        events.add(event);
+                        eventCursor.moveToNext();
+                    }
+                }
+//                event = cursorToEvent(joinerCursor);
+            }
+        } catch (SQLiteException e){
+            e.printStackTrace();
+        }finally {
+            // Make sure to close the cursor
+            if (joinerCursor!=null) joinerCursor.close();
+        }
+        return events;
+
+    }
+    */
+    public List<Event> queryEventByJoinerId(long joinerId){
+        open();
+        List<Event> events = new ArrayList<>();
+        Cursor joinerCursor =null;
+        try {
+                joinerCursor = mDB.query(JoinedEventTable.TABLE_NAME,
+                    null, UserTable.COLUMNS.USER_ID.colName() + "=?",
+                    new String[]{String.valueOf(joinerId)}, null, null, null, null);
+                if (joinerCursor.getCount()>0){
+                    joinerCursor.moveToFirst();
+                    while(!joinerCursor.isAfterLast()){
+                        events.add(cursorToEvent(joinerCursor));
+                        joinerCursor.moveToNext();
+                    }
+                }
+        } catch (SQLiteException e){
+            e.printStackTrace();
+        }finally {
+            // Make sure to close the cursor
+            if (joinerCursor!=null) joinerCursor.close();
+        }
+        return events;
+
     }
 }

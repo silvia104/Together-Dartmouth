@@ -56,7 +56,6 @@ public class MyEventsFragment extends Fragment {
         asJoinerFragment = new MyEventsAsJoiner();
         fragmentList.add(asStarterFragment);
         fragmentList.add(asJoinerFragment);
-
         mViewPageAdapter =new ActionTabsViewPagerAdapter(getChildFragmentManager(),
                 fragmentList);
 

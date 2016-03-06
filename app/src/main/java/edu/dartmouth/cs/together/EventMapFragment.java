@@ -12,6 +12,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -46,13 +47,16 @@ public class EventMapFragment extends Fragment implements OnMapReadyCallback {
     private GoogleMap mMap;
     private EventDataSource datasource;
     private List<Event> values;
+    private Map<Marker, Long> allMarkersMap = new HashMap<Marker, Long>();
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_eventmap, container, false);
         datasource = new EventDataSource(getContext());
         values= new ArrayList<Event>();
-        setMap();
+        new UpdateListAsyncTask(getContext()).execute();
+//        setMap();
         return v;
     }
 
@@ -66,46 +70,66 @@ public class EventMapFragment extends Fragment implements OnMapReadyCallback {
 
         }
     }
+
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         datasource = new EventDataSource(getContext());
-        datasource.open();
         values = datasource.queryEvents(EventDataSource.ALL_EVENT);
-        datasource.close();
+        //datasource.close();
         for(int i=0;i<values.size();i++){
             Event tmp=values.get(i);
             LatLng llg=tmp.getLatLng();
-            mMap.addMarker(new MarkerOptions().position(llg).title(tmp.getLocation()+" "+tmp.getCategotyName()));
+            Marker marker=mMap.addMarker(new MarkerOptions().position(llg).title(tmp.getCategotyName()));
+            allMarkersMap.put(marker, tmp.getEventId());
         }
         googleMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
 
             @Override
             public void onMapLongClick(LatLng latLng) {
                 Intent i = new Intent(getContext(), EventEditorActivity.class);
-                i.putExtra(Globals.MAP_LATITUDE,latLng.latitude);
-                i.putExtra(Globals.MAP_LONGITUDE,latLng.longitude);
+                i.putExtra(Globals.MAP_LATITUDE, latLng.latitude);
+                i.putExtra(Globals.MAP_LONGITUDE, latLng.longitude);
                 startActivity(i);
             }
         });
 
-//        datasource.open();
-//        List<Event> events=datasource.queryEvents(1);
-//        for(int i=0;i<events.size();i++){
-//            Event tmp=events.get(i);
-//            LatLng llg=tmp.getLatLng();
-//            mMap.addMarker(new MarkerOptions().position(llg).title("event"));
-//        }
-//        datasource.close();
-
-
-
         LatLng destination1 = new LatLng(43.7068109, -72.2735297);
-        mMap.addMarker(new MarkerOptions().position(destination1).title("Hanover, NH"));
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(destination1,
+                10));
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
 
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(destination1));
-        mMap.animateCamera(CameraUpdateFactory.zoomTo(6));
+            @Override
+            public boolean onMarkerClick(Marker arg0) {
+                Long eventid = allMarkersMap.get(arg0);
+                Intent i = new Intent(getContext(), EventDetailActivity.class);
+                i.putExtra("TAG", 2);
+                i.putExtra(Event.ID_KEY, eventid);
+                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                getContext().startActivity(i);
+                return true;
+            }
+
+        });
     }
 
+    class UpdateListAsyncTask extends AsyncTask<Void, Void, String> {
+        private Context context;
+
+        public UpdateListAsyncTask(Context context) {
+            this.context = context;
+        }
+
+        @Override
+        protected String doInBackground(Void... params) {
+            values = datasource.queryEvents(EventDataSource.ALL_EVENT);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String msg) {
+            setMap();
+        }
+    }
 
 }

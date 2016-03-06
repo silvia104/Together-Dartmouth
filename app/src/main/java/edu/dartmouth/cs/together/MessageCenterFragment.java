@@ -226,7 +226,6 @@ public class MessageCenterFragment extends ListFragment
                 i++;
             }
         }
-
         return msg;
     }
 
@@ -272,7 +271,7 @@ public class MessageCenterFragment extends ListFragment
         @Override
         public List<Message> loadInBackground() {
             //return mDB.getAllRecords();
-            return mDB.getAllRecords();
+            return mDB.getCurrentUserRecords();
         }
 
     }

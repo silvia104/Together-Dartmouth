@@ -16,6 +16,7 @@ public class Message {
     private long eventId;
     private long userId;
     private String userName;
+
     private String eventShortDesc;
     private int msgType;
     private long msgTime;
@@ -23,7 +24,7 @@ public class Message {
     private long qaId;
     private String question;
     private String answer;
-
+    private long ownerId;
 
 
 
@@ -39,6 +40,7 @@ public class Message {
         this.qaId = -1;
         this.question = "";
         this.answer = "";
+        this.ownerId = Globals.currentUser.getId();
     }
 
 

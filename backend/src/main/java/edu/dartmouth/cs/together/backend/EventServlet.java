@@ -94,7 +94,7 @@ public class EventServlet extends HttpServlet {
                 User newUser = UserDataSource.getUserFromEntity(userEntity);
 
 
-                newEvent.increaseJoiner(1);
+                newEvent.increaseJoiner(-1);
                 EventDataSource.update(newEvent);
                 userList.add((long) eventEntity.getProperty(Event.OWNER_KEY));
                 deviceList = UserDataSource.queryDeviceByUserId(userList);

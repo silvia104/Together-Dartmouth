@@ -7,10 +7,13 @@ import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,17 +50,29 @@ public class EventListFragment extends Fragment implements LoaderManager.LoaderC
     private List<Event> values;
     private EventDataSource datasource;
     private Context mContext;
+    private SwipeRefreshLayout swipelayout;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         final View view = inflater.inflate(R.layout.fragment_eventlist, container, false);
-        list = (ListView) view.findViewById(R.id.event_list);
-        datasource = new EventDataSource(getContext());
-        values= new ArrayList<Event>();
-        UpdateEvent();
-        dafaultFilter();
         mContext = getActivity().getApplicationContext();
+
+        list = (ListView) view.findViewById(R.id.event_list);
+        datasource = new EventDataSource(mContext);
+        values= new ArrayList<Event>();
+        swipelayout=(SwipeRefreshLayout)view.findViewById(R.id.swipe);
+        swipelayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                Log.e(getClass().getSimpleName(), "refresh");
+                UpdateEvent();
+            }
+        });
+
+        new UpdateListAsyncTask(getContext()).execute();
+        dafaultFilter();
         eventAdapter = new eventarrayAdapter(mContext, values);
         list.setAdapter(eventAdapter);
         list.setOnItemClickListener(new ListClickHandler());
@@ -67,6 +82,16 @@ public class EventListFragment extends Fragment implements LoaderManager.LoaderC
         // register receiver
         return view;
     }
+
+//    @Override
+//    public void onRefresh() {
+//        new Handler().postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                swipelayout.setRefreshing(false);
+//            }
+//        }, 5000);
+//    }
 
     public class eventarrayAdapter extends EventArrayAdapter<Event> {
         public eventarrayAdapter(Context context, List<Event> exercise) {
@@ -138,15 +163,15 @@ public class EventListFragment extends Fragment implements LoaderManager.LoaderC
 
     public void UpdateEvent(){
         Map<String, String> params = new HashMap<String, String>();
-        new AsyncTask<Void, Void, String>() {
+        new AsyncTask<Void, Void, List<Event>>() {
 
             @Override
             // Get history and upload it to the server.
-            protected String doInBackground(Void... arg0) {
+            protected List<Event> doInBackground(Void... arg0) {
                 JSONArray jarray=null;
                 String event=null;
-                datasource.open();
                 datasource.clearAllEvent();
+                values.clear();
 //            datasource.clearAllEvent();
                 try {
                     Map<String, String> params = new HashMap<String, String>();
@@ -191,29 +216,46 @@ public class EventListFragment extends Fragment implements LoaderManager.LoaderC
                             LatLng ll = new LatLng(Double.parseDouble(lat), Double.parseDouble(lng));
                             eobj.setLatLng(ll);
                             values.add(eobj);
-                            datasource.insertEvent(EventDataSource.ALL_EVENT, eobj);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
+                        datasource.insertEvents(EventDataSource.ALL_EVENT, values);
+
+                        SharedPreferences sharedPrefs = mContext.getSharedPreferences(
+                                mContext.getPackageName(), Context.MODE_PRIVATE );
+                        if(! sharedPrefs.getBoolean(Globals.FIRST_LOAD_ALL_EVENTS_KEY,false)){
+                            //get owned events
+                            List<Event> ownedEventsList = datasource.queryOwnedEvent(
+                                    EventDataSource.ALL_EVENT, Globals.currentUser.getId());
+                            datasource.insertEvents(EventDataSource.MY_OWN_EVENT, ownedEventsList);
+
+                            //get joined events
+
+
+                            //mofified shared preference, set boolean to not first time of loading data
+                            SharedPreferences.Editor editor = sharedPrefs.edit();
+                            editor.putBoolean(Globals.FIRST_LOAD_ALL_EVENTS_KEY, true);
+                            editor.commit();
+                        }
+
                     }
                 }
-                datasource.close();
-                return null;
+                //datasource.close();
+                return values;
             }
             @Override
-            protected void onPostExecute(String errString) {
-                updateList();
+            protected void onPostExecute(List<Event> events) {
+                list.setAdapter(new eventarrayAdapter(mContext, values));
+                swipelayout.setRefreshing(false);
             }
         }.execute();
     }
 
     public void updateList(){
 
-        datasource.open();
         values = datasource.queryEvents(EventDataSource.ALL_EVENT);
-        list.setAdapter(new eventarrayAdapter(mContext, values) {
-        });
-        datasource.close();
+        list.setAdapter(new eventarrayAdapter(mContext, values));
+        //datasource.close();
     }
 
     public void updateListfromvalues(){
@@ -249,5 +291,22 @@ public class EventListFragment extends Fragment implements LoaderManager.LoaderC
         }
 
     }
+    class UpdateListAsyncTask extends AsyncTask<Void, Void, String> {
+        private Context context;
 
+        public UpdateListAsyncTask(Context context) {
+            this.context = context;
+        }
+
+        @Override
+        protected String doInBackground(Void... params) {
+            values = datasource.queryEvents(EventDataSource.ALL_EVENT);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String msg) {
+            updateListfromvalues();
+        }
+    }
 }

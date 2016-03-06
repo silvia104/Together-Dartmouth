@@ -3,6 +3,7 @@ package edu.dartmouth.cs.together.cloud;
 import android.util.Log;
 
 import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -10,8 +11,11 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+
+import edu.dartmouth.cs.together.data.User;
 
 /**
  * Created by TuanMacAir on 2/20/16.
@@ -95,6 +99,63 @@ public class ServerUtilities {
             if (conn != null) {
                 conn.disconnect();
             }
+        }
+    }
+    public static String postImage(String uploadurl,byte[] bytes, long userId) throws IOException{
+        String crlf = "\r\n";
+        String twoHyphens = "--";
+        String boundary =  "*****";
+
+        HttpURLConnection conn =null;
+        URL url = null;
+        try {
+           url = new URL(uploadurl);
+        }catch (MalformedURLException e){
+            throw new IllegalArgumentException("invalid url: " + uploadurl);
+        }
+        try{
+            conn = (HttpURLConnection) url.openConnection();
+            conn.setUseCaches(false);
+            conn.setDoOutput(true);
+
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Connection", "Keep-Alive");
+            conn.setRequestProperty("Cache-Control", "no-cache");
+            conn.setRequestProperty(
+                    "Content-Type", "multipart/form-data;boundary=" + boundary);
+            conn.setRequestProperty("user_id=",""+userId);
+
+            DataOutputStream request;
+            request = new DataOutputStream(conn.getOutputStream());
+            request.writeBytes(twoHyphens + boundary + crlf);
+            request.writeBytes("Content-Disposition: form-data; name=\"" +
+                    "myFile" + "\";filename=\"" +
+                    userId+".jpg" + "\"" + crlf);
+            request.writeBytes(crlf);
+            request.write(bytes);
+            request.writeBytes(crlf);
+            request.writeBytes(twoHyphens + boundary +
+                    twoHyphens + crlf);
+            request.flush();
+            request.close();
+
+            // Get Response
+            InputStream is = conn.getInputStream();
+            BufferedReader rd = new BufferedReader(new InputStreamReader(is));
+            StringBuilder response = new StringBuilder();
+            String line  ="";
+            while ((line = rd.readLine()) != null) {
+                response.append(line);
+                response.append('\n');
+            }
+            rd.close();
+            return response.toString();
+
+        } finally {
+            if (conn != null) {
+                conn.disconnect();
+            }
+            return "";
         }
     }
 

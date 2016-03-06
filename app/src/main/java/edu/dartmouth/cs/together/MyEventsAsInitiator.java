@@ -104,7 +104,7 @@ public class MyEventsAsInitiator extends ListFragment implements
         // get all records in background as loader
         @Override
         public List<Event> loadInBackground() {
-            return mDB.queryOwnedEvent(EventDataSource.MY_OWN_EVENT);
+            return mDB.queryOwnedEvent(EventDataSource.MY_OWN_EVENT, Globals.currentUser.getId());
         }
 
 

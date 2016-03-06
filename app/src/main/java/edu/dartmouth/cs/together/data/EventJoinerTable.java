@@ -24,7 +24,8 @@ public class EventJoinerTable {
         static String createCommand() {
             return ID.colName + ID.command +", "
                     + EVENT_ID.colName + EVENT_ID.command +", "
-                    + JOINER_ID.colName + JOINER_ID.command;
+                    + JOINER_ID.colName + JOINER_ID.command + ","
+                    + "unique (" + EVENT_ID.colName  + "," +JOINER_ID.colName  +")";
         }
     }
     public static final String TABLE_CREATE_COMMAND = "create table "

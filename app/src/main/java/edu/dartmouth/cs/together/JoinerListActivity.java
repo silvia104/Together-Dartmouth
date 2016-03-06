@@ -20,6 +20,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import edu.dartmouth.cs.together.cloud.GetJoinerIntentService;
 import edu.dartmouth.cs.together.data.Event;
+import edu.dartmouth.cs.together.data.EventDataSource;
 import edu.dartmouth.cs.together.data.User;
 import edu.dartmouth.cs.together.data.UserDataSource;
 import edu.dartmouth.cs.together.utils.Globals;
@@ -32,6 +33,9 @@ public class JoinerListActivity extends BasePopoutActivity implements
     private List<User> mJoiners = new ArrayList<>();
     private long mEventId;
     private JoinerCardViewAdapter mAdapter;
+    private boolean mRefreshed = false;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,6 +54,7 @@ public class JoinerListActivity extends BasePopoutActivity implements
         mDateReloadReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
+                mRefreshed=true;
                 getLoaderManager().restartLoader(0,null,JoinerListActivity.this).forceLoad();
             }
         };
@@ -77,7 +82,7 @@ public class JoinerListActivity extends BasePopoutActivity implements
         mAdapter.updateAdapter(mJoiners);
         mProgress.setVisibility(View.GONE);
         mJoinerRecVew.setVisibility(View.VISIBLE);
-        if (data.size() == 0){
+        if (data.size() == 0 || !mRefreshed){
             downloadJoiners();
         }
     }
@@ -99,6 +104,7 @@ public class JoinerListActivity extends BasePopoutActivity implements
     static class JoinerLoader extends AsyncTaskLoader<List<User>>{
         private Context mContext;
         private long mEventId;
+
         public JoinerLoader(Context context, long eventId) {
             super(context);
             mContext = context;

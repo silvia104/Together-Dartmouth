@@ -1,5 +1,6 @@
 package edu.dartmouth.cs.together;
 
+import android.content.SharedPreferences;
 import android.content.IntentFilter;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -20,6 +21,8 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
 import edu.dartmouth.cs.together.cloud.GcmRegisterIntentService;
+import edu.dartmouth.cs.together.cloud.UploadPicIntentService;
+import edu.dartmouth.cs.together.data.User;
 import edu.dartmouth.cs.together.utils.Globals;
 
 
@@ -29,17 +32,22 @@ public class MainActivity extends AppCompatActivity
     private final int GET_RESULT_SUCCESS = -1;
     public int filterTime;
     public int filterDist;
-
+    private MessageCenterFragment.NewMessageReceiver receiver;
+    private SharedPreferences mSharedPreference;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-       /* if((Globals.DEVICE_ID =
-                getSharedPreferences(getPackageName(),MODE_PRIVATE)
-                        .getString(Globals.DEVICE_ID_PREF_KEY,null))==null) {*/
+        mSharedPreference = getSharedPreferences(getPackageName(),MODE_PRIVATE);
+        if (!Globals.isRegistered) {
             registerDevice();
-        //}
-        startActivity(new Intent(getApplicationContext(),LoginActivity.class));
+        }
         setContentView(R.layout.activity_main);
+        //startService(new Intent(getApplicationContext(), UploadPicIntentService.class));
+
+
+
+
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         /*
@@ -71,21 +79,20 @@ public class MainActivity extends AppCompatActivity
         addFabswitch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(isListFragment){
+                if (isListFragment) {
                     EventMapFragment efrag = new EventMapFragment();
                     android.support.v4.app.FragmentManager manager = getSupportFragmentManager();
                     android.support.v4.app.FragmentTransaction transaction = manager.beginTransaction();
                     transaction.replace(R.id.main_content_frame, efrag);
                     transaction.commit();
-                    isListFragment=!isListFragment;
-                }
-                else{
+                    isListFragment = !isListFragment;
+                } else {
                     EventListFragment efrag = new EventListFragment();
                     android.support.v4.app.FragmentManager manager = getSupportFragmentManager();
                     android.support.v4.app.FragmentTransaction transaction = manager.beginTransaction();
                     transaction.replace(R.id.main_content_frame, efrag);
                     transaction.commit();
-                    isListFragment=!isListFragment;
+                    isListFragment = !isListFragment;
                 }
             }
         });
@@ -114,20 +121,54 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        registerMessageReceiver();
+
     }
 
 
 
     private void registerMessageReceiver() {
         MessageCenterFragment msgCenterFragment = new MessageCenterFragment();
-        MessageCenterFragment.NewMessageReceiver receiver = msgCenterFragment.new NewMessageReceiver();
+        receiver = msgCenterFragment.new NewMessageReceiver();
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(Globals.ACTION_NEW_MESSAGE_FROM_SERVER);
         registerReceiver(receiver, intentFilter);
     }
 
-    //TODO: WHEN TO UNREGISTER THE RECEIVER?
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (!mSharedPreference.getBoolean(Globals.LOGIN_STATUS_KEY,false)) {
+            startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+        } else {
+            Globals.currentUser = new User();
+            Globals.currentUser.setId(mSharedPreference.getLong(User.ID_KEY,-1));
+            Globals.currentUser.setAccount(mSharedPreference.getString(User.ACCOUNT_KEY, "UNKNOWN"));
+        }
+    }
+
+
+    @Override
+    protected void onStart(){
+        super.onStart();
+        registerMessageReceiver();
+    }
+
+    @Override
+    protected void onStop(){
+        super.onStop();
+        unregisterReceiver(receiver);
+
+    }
+
+    protected void onDestroy(){
+        super.onDestroy();
+        SharedPreferences sharedPrefs = getSharedPreferences(getPackageName(), MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPrefs.edit();
+        //the first time load value is false util the app is launched a second time
+        editor.putBoolean(Globals.FIRST_LOAD_ALL_EVENTS_KEY, false);
+        editor.commit();
+    }
 
     @Override
     public void onBackPressed() {
@@ -143,6 +184,8 @@ public class MainActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
+        getMenuInflater().inflate(R.menu.logout, menu);
+
         return true;
     }
 
@@ -157,6 +200,11 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.action_settings) {
             Intent intent = new Intent(this, FilterActivity.class);
             startActivityForResult(intent,Globals.SETTING_FILTER);
+            return true;
+        }
+        if (id == R.id.action_logout) {
+            mSharedPreference.edit()
+                    .putBoolean(Globals.LOGIN_STATUS_KEY, false).commit();
             return true;
         }
 
@@ -234,4 +282,7 @@ public class MainActivity extends AppCompatActivity
         Intent i = new Intent(getApplicationContext(), GcmRegisterIntentService.class);
         startService(i);
     }
+
+
+
 }

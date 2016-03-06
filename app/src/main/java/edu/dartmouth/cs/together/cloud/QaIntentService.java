@@ -19,7 +19,6 @@ import edu.dartmouth.cs.together.data.Event;
 import edu.dartmouth.cs.together.data.Qa;
 import edu.dartmouth.cs.together.data.QaDataSource;
 import edu.dartmouth.cs.together.data.QaTable;
-import edu.dartmouth.cs.together.data.Qa;
 import edu.dartmouth.cs.together.utils.Globals;
 
 /**
@@ -96,16 +95,18 @@ public class QaIntentService extends BaseIntentSerice {
     }
     private List<Qa> parseJosonArray(String data){
         List<Qa> result = new ArrayList<>();
-        data = data.substring(0,data.length()-1);
-        try {
-            final JSONArray qas = new JSONArray(data);
-            final int n = qas.length();
-            for (int i = 0; i < n; ++i) {
-                final JSONObject qa = qas.getJSONObject(i);
-                result.add(new Qa(qa));
+        if (data.length() > 0) {
+            data = data.substring(0, data.length() - 1);
+            try {
+                final JSONArray qas = new JSONArray(data);
+                final int n = qas.length();
+                for (int i = 0; i < n; ++i) {
+                    final JSONObject qa = qas.getJSONObject(i);
+                    result.add(new Qa(qa));
+                }
+            } catch (org.json.JSONException e) {
+                e.printStackTrace();
             }
-        }catch (org.json.JSONException e){
-            e.printStackTrace();
         }
         return result;
     }
