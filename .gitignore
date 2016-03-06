@@ -14,3 +14,11 @@
 *.zip
 
 *.jar
+
+.idea/misc.xml
+
+.idea/misc.xml
+
+.idea/runConfigurations.xml
+
+.idea/vcs.xml
