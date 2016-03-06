@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import edu.dartmouth.cs.together.backend.data.Event;
+import edu.dartmouth.cs.together.backend.data.EventDataSource;
 import edu.dartmouth.cs.together.backend.data.EventJoinerDataSource;
 import edu.dartmouth.cs.together.backend.data.User;
 import edu.dartmouth.cs.together.backend.data.UserDataSource;
@@ -28,6 +29,8 @@ public class GetJoinerServlet extends HttpServlet {
         long eventId = Long.parseLong(req.getParameter(Event.ID_KEY));
         List<Long> userIds = EventJoinerDataSource.entitiesToUserId(
                 EventJoinerDataSource.queryByEventId(eventId));
+        //add owner to the top of the list;
+        userIds.add(0,(Long)EventDataSource.queryById(eventId).getProperty(Event.OWNER_KEY));
         List<User> userList = UserDataSource.queryByIdList(userIds);
         try {
             JSONArray userJsonArray = new JSONArray();
