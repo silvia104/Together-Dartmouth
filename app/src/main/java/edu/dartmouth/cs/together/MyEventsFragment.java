@@ -35,6 +35,11 @@ public class MyEventsFragment extends Fragment {
 
     }
 
+    public void onActivityCreated(Bundle savedInstanceState){
+        super.onActivityCreated(savedInstanceState);
+//        setRetainInstance(true);
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -47,22 +52,48 @@ public class MyEventsFragment extends Fragment {
 
         //Set up fragments of each tab
         fragmentList = new ArrayList<Fragment>();
-        asStarterFragment = new MyEventsAsStarter();
+        asStarterFragment = new MyEventsAsInitiator();
         asJoinerFragment = new MyEventsAsJoiner();
         fragmentList.add(asStarterFragment);
         fragmentList.add(asJoinerFragment);
 
-
-        mViewPageAdapter =new ActionTabsViewPagerAdapter(getFragmentManager(),
+        mViewPageAdapter =new ActionTabsViewPagerAdapter(getChildFragmentManager(),
                 fragmentList);
+
+
         mViewPager.setAdapter(mViewPageAdapter);
+
+        mViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+           @Override
+           public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+           }
+
+           @Override
+           public void onPageSelected(int position) {
+               Fragment fragment = ((ActionTabsViewPagerAdapter)mViewPager.getAdapter()).getFragment(position);
+
+               if (position ==1 && fragment != null)
+               {
+                   fragment.onResume();
+               }
+           }
+
+           @Override
+           public void onPageScrollStateChanged(int state) {
+
+           }
+       }
+
+        );
         mSlidingTabLayout.setDistributeEvenly(true);
         mSlidingTabLayout.setViewPager(mViewPager);
 
+
+
         return view;
-
-
     }
+
 
 
 

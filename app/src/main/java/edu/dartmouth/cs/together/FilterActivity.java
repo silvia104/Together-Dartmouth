@@ -21,6 +21,7 @@ import android.widget.AdapterView.OnItemClickListener;
 
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
+import edu.dartmouth.cs.together.utils.Globals;
 import java.util.ArrayList;
 
 public class FilterActivity extends AppCompatActivity

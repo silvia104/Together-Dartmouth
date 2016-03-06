@@ -1,14 +1,14 @@
 package edu.dartmouth.cs.together;
 
 
-import android.content.Context;
 import android.content.Intent;
-import android.support.v4.app.Fragment;
-import android.os.Bundle;
-import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
-import android.support.v4.content.AsyncTaskLoader;
+import android.content.Context;
 import android.support.v4.content.Loader;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.ListFragment;
+import android.os.Bundle;
+import android.support.v4.content.AsyncTaskLoader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,25 +25,28 @@ import edu.dartmouth.cs.together.utils.Globals;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MyEventsAsJoiner extends ListFragment
-    implements  LoaderManager.LoaderCallbacks<List<Event>>{
+public class MyEventsAsInitiator extends ListFragment implements
+        LoaderManager.LoaderCallbacks<List<Event>>{
 
-
-    private List<Event> mJoinedEventsList = new ArrayList<>();
+    private List<Event> mInitiatedEventsList = new ArrayList<>();
     private EventDataSource mDB;
-    private joinedEventsAdapter mAdapter;
+    private initiatedEventsAdapter mAdapter;
     private Context mContext;
 
-    public MyEventsAsJoiner() {
+
+
+    public MyEventsAsInitiator() {
         // Required empty public constructor
     }
 
-    @Override
     public void onActivityCreated (Bundle savedInstanceState){
         super.onActivityCreated(savedInstanceState);
         mContext = getActivity();
-        mAdapter = new joinedEventsAdapter(mContext,mJoinedEventsList);
+        mAdapter = new initiatedEventsAdapter(mContext,mInitiatedEventsList);
         setListAdapter(mAdapter);
+        if(savedInstanceState == null){
+            getLoaderManager().initLoader(0, null, this).forceLoad();
+        }
         mDB = new EventDataSource(mContext);
     }
 
@@ -51,39 +54,11 @@ public class MyEventsAsJoiner extends ListFragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_my_events_as_joiner, container, false);
+        View view =  inflater.inflate(R.layout.fragment_my_events_as_starter, container, false);
+
+        return view;
     }
 
-    @Override
-    public Loader<List<Event>> onCreateLoader(int id, Bundle args) {
-        return new joinedEventsLoader(mContext);
-    }
-
-    @Override
-    public void onLoadFinished(Loader<List<Event>> loader, List<Event> data) {
-        if(data == null){
-            data = new ArrayList<>();
-        }
-        mJoinedEventsList.clear();
-        mJoinedEventsList.addAll(data);
-        mAdapter.notifyDataSetChanged();
-    }
-
-    @Override
-    public void onLoaderReset(Loader<List<Event>> loader) {
-
-    }
-
-    @Override
-    public void setUserVisibleHint(boolean isVisible){
-        super.setUserVisibleHint(isVisible);
-        if(isVisible){
-            mJoinedEventsList.clear();
-            mAdapter.notifyDataSetChanged();
-            getLoaderManager().initLoader(0, null, this).forceLoad();
-        }
-
-    }
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
@@ -92,11 +67,32 @@ public class MyEventsAsJoiner extends ListFragment
         startActivity(i);
     }
 
+    @Override
+    public Loader<List<Event>> onCreateLoader(int id, Bundle args) {
+        return new initiatedEventsLoader(mContext);
 
-    static class joinedEventsLoader extends AsyncTaskLoader<List<Event>> {
+    }
+
+    @Override
+    public void onLoadFinished(Loader<List<Event>> loader, List<Event> data) {
+        if(data == null){
+            data = new ArrayList<>();
+        }
+        mInitiatedEventsList.addAll(data);
+        mAdapter.notifyDataSetChanged();
+    }
+
+
+
+    @Override
+    public void onLoaderReset(Loader<List<Event>> loader) {
+
+    }
+
+    static class initiatedEventsLoader extends AsyncTaskLoader<List<Event>> {
         private EventDataSource mDB;
 
-        public joinedEventsLoader(Context context) {
+        public initiatedEventsLoader(Context context) {
             super(context);
             mDB = new EventDataSource(context);
         }
@@ -104,19 +100,21 @@ public class MyEventsAsJoiner extends ListFragment
         // get all records in background as loader
         @Override
         public List<Event> loadInBackground() {
-            return mDB.queryEventByJoinerId(Globals.currentUser.getId());
+            return mDB.queryOwnedEvent(EventDataSource.MY_OWN_EVENT);
         }
+
+
     }
 
-    class joinedEventsAdapter extends EventArrayAdapter<Event>{
+    class initiatedEventsAdapter extends EventArrayAdapter<Event>{
 
         private int mListItemLayoutResId;
 
-        public joinedEventsAdapter(Context context, List<Event> ts) {
+        public initiatedEventsAdapter(Context context, List<Event> ts) {
             this(context, R.layout.event_list, ts);
         }
 
-        public joinedEventsAdapter(Context context, int listItemLayoutResourceId, List<Event> ts) {
+        public initiatedEventsAdapter(Context context, int listItemLayoutResourceId, List<Event> ts) {
             super(context, listItemLayoutResourceId, ts);
             this.context = context;
             mListItemLayoutResId = listItemLayoutResourceId;
