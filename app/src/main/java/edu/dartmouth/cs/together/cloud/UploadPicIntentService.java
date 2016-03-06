@@ -3,26 +3,12 @@ package edu.dartmouth.cs.together.cloud;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
-import android.util.Log;
 
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
+
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
+
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import edu.dartmouth.cs.together.R;
@@ -50,10 +36,10 @@ public class UploadPicIntentService extends BaseIntentSerice {
 
     public String getUrl(String endpoint, long userId)  throws IOException {
         Map<String, String> params = new HashMap<>();
-        params.put("myFile", userId+".bmp");
+        params.put("myFile", userId+".jpg");
         String res = ServerUtilities.post(Globals.SERVER_ADDR + "/geturl", params);
         if (res.length()>0) {
-            String newres = res.replace("TuanMacAirs-MacBook-Air.local", "10.0.0.30");
+            String newres = res.replace("http://TuanMacAirs-MacBook-Air.local:8080", Globals.SERVER_ADDR);
             return newres.substring(0, newres.length() - 1);
         }
         return "";

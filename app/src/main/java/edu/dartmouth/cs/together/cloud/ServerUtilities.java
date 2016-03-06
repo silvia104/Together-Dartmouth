@@ -130,7 +130,7 @@ public class ServerUtilities {
             request.writeBytes(twoHyphens + boundary + crlf);
             request.writeBytes("Content-Disposition: form-data; name=\"" +
                     "myFile" + "\";filename=\"" +
-                    userId+".bmp" + "\"" + crlf);
+                    userId+".jpg" + "\"" + crlf);
             request.writeBytes(crlf);
             request.write(bytes);
             request.writeBytes(crlf);
