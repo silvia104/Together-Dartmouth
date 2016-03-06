@@ -18,7 +18,8 @@ enum COLUMNS{
     USER_NAME(7, "user_name", " string"),
     QA_ID(8, "qa", " integer"),
     QUESTION(9, "q", " string"),
-    ANSWER(10, "a", " string");
+    ANSWER(10, "a", " string"),
+    OWNER_ID(11, "owner_id", " integer not null");
 
     private final int index;
     private final String colName;
@@ -43,7 +44,8 @@ enum COLUMNS{
                 + USER_NAME.colName + USER_NAME.command + ", "
                 + QA_ID.colName + QA_ID.command + ", "
                 + QUESTION.colName + QUESTION.command + ", "
-                + ANSWER.colName + ANSWER.command;
+                + ANSWER.colName + ANSWER.command + ", "
+                + OWNER_ID.colName + OWNER_ID.command;
     }
 }
     public static final String TABLE_CREATE_COMMAND = "create table "

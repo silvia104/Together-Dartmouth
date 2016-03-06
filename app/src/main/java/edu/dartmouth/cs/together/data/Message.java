@@ -24,6 +24,7 @@ public class Message {
     private long qaId;
     private String question;
     private String answer;
+    private long ownerId;
 
 
 
@@ -39,6 +40,7 @@ public class Message {
         this.qaId = -1;
         this.question = "";
         this.answer = "";
+        this.ownerId = Globals.currentUser.getId();
     }
 
 

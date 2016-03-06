@@ -7,8 +7,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.util.Log;
 
+import java.nio.channels.GatheringByteChannel;
 import java.util.ArrayList;
 import java.util.List;
+
+import edu.dartmouth.cs.together.utils.Globals;
 
 /**
  * Created by foxmac on 16/3/2.
@@ -57,12 +60,13 @@ public class MessageDataSource {
     }
 
 
-    public List<Message> getAllRecords() {
+    public List<Message> getCurrentUserRecords() {
         open();
         List<Message> records = new ArrayList<>();
 
         Cursor cursor = mDB.query(MessageTable.TABLE_NAME,
-                null, null, null, null, null, null);
+                null, MessageTable.COLUMNS.OWNER_ID.colName()  + "=?"
+                , new String[]{String.valueOf(Globals.currentUser.getId())}, null, null, null);
         if(cursor.getCount()>0) {
             cursor.moveToFirst();
         }
@@ -133,6 +137,7 @@ public class MessageDataSource {
 
         values.put(MessageTable.COLUMNS.USER_ID.colName(), message.getUserId());
         values.put(MessageTable.COLUMNS.USER_NAME.colName(), message.getUserName());
+        values.put(MessageTable.COLUMNS.OWNER_ID.colName(), Globals.currentUser.getId());
 
         return values;
     }

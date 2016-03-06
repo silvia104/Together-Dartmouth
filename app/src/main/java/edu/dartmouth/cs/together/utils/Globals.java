@@ -26,6 +26,7 @@ public class Globals {
     public static final int SETTING_FILTER = 0;
     public static final String ACTION_CODE = "code";
     public static final String LOGIN_STATUS_KEY ="login_status" ;
+    public static final String FIRST_LOAD_ALL_EVENTS_KEY = "first_load_all_events";
     public static String[] sports = {"Soccer","Skiing","Cycling","Jogging","Hiking",
             "Tennis","Dancing","Gym","Basketball","Swimming","Billiard"};
     public static String[] life = {"Movie","Party","Shopping","Dining", "Travel", "Study",
@@ -34,11 +35,7 @@ public class Globals {
     public static LatLng DARTMOUTH_GPS = new LatLng(43.726034, -72.142917);
     public static double RADIUS_50MILES = 80467.2;
 
-    public static String SERVER_ADDR = "http://10.0.0.30:8080";
-<<<<<<< HEAD
-    //public static String SERVER_ADDR = "https://together-1234.appspot.com";
-=======
->>>>>>> origin/test
+    public static String SERVER_ADDR = "http://192.168.2.7:8080";
     public static String DEVICE_ID;
     public static User currentUser;
     public static final String ACTION_ADD = "add";
