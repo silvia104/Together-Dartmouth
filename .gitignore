@@ -34,3 +34,7 @@ backend/build/exploded-app/WEB-INF/logging.properties
 backend/build/exploded-app/WEB-INF/appengine-web.xml
 
 backend/build/exploded-app/META-INF/MANIFEST.MF
+
+*.class
+
+backend/build/generated-source/endpoints/java/com/example/tuanmacair/myapplication/backend/messaging/Messaging.java
