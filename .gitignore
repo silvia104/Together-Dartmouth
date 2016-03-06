@@ -22,3 +22,15 @@
 .idea/runConfigurations.xml
 
 .idea/vcs.xml
+
+backend/build/exploded-app/WEB-INF/web.xml
+
+backend/build/exploded-app/WEB-INF/registration-v1-rpc.discovery
+
+*.discovery
+
+backend/build/exploded-app/WEB-INF/logging.properties
+
+backend/build/exploded-app/WEB-INF/appengine-web.xml
+
+backend/build/exploded-app/META-INF/MANIFEST.MF

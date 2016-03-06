@@ -97,6 +97,7 @@
         <service android:name=".cloud.JoinQuitEventIntentService"/>
         <service android:name=".cloud.GetJoinerIntentService"/>
         <service android:name=".cloud.QaIntentService"/>
+        <service android:name=".cloud.UploadPicIntentService"/>
     </application>
 
 </manifest>

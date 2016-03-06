@@ -21,6 +21,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
 import edu.dartmouth.cs.together.cloud.GcmRegisterIntentService;
+import edu.dartmouth.cs.together.cloud.UploadPicIntentService;
 import edu.dartmouth.cs.together.data.User;
 import edu.dartmouth.cs.together.utils.Globals;
 
@@ -40,6 +41,12 @@ public class MainActivity extends AppCompatActivity
             registerDevice();
         }
         setContentView(R.layout.activity_main);
+        startService(new Intent(getApplicationContext(), UploadPicIntentService.class));
+
+
+
+
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         /*
@@ -253,4 +260,7 @@ public class MainActivity extends AppCompatActivity
         Intent i = new Intent(getApplicationContext(), GcmRegisterIntentService.class);
         startService(i);
     }
+
+
+
 }
