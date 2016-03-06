@@ -241,7 +241,7 @@ public class EventListFragment extends Fragment implements LoaderManager.LoaderC
     }
 
     public void updateListfromvalues(){
-        list.setAdapter(new eventarrayAdapter(getActivity().getApplicationContext(), values) {
+        list.setAdapter(new eventarrayAdapter(mContext, values) {
         });
     }
 
