@@ -115,14 +115,16 @@ public class UserDataSource  {
     public static List<User> queryByIdList(List<Long> userIds) {
         List<User> result = new ArrayList<>();
         Query query = new Query(User.USER_ENTITY_NAME);
-        query.setFilter(new Query.FilterPredicate(User.ID_KEY,
-                Query.FilterOperator.IN,
-                userIds));
-        query.setAncestor(getKey());
+        if(userIds.size()>0) {
+            query.setFilter(new Query.FilterPredicate(User.ID_KEY,
+                    Query.FilterOperator.IN,
+                    userIds));
+            query.setAncestor(getKey());
 
-        PreparedQuery pq = mDatastore.prepare(query);
-        for(Entity entity : pq.asIterable()){
-            result.add(getUserFromEntity(entity));
+            PreparedQuery pq = mDatastore.prepare(query);
+            for (Entity entity : pq.asIterable()) {
+                result.add(getUserFromEntity(entity));
+            }
         }
 
         return result;
