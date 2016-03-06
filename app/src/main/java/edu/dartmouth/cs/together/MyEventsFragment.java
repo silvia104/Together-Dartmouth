@@ -56,11 +56,6 @@ public class MyEventsFragment extends Fragment {
         asJoinerFragment = new MyEventsAsJoiner();
         fragmentList.add(asStarterFragment);
         fragmentList.add(asJoinerFragment);
-
-<<<<<<< HEAD
-
-=======
->>>>>>> origin/test
         mViewPageAdapter =new ActionTabsViewPagerAdapter(getChildFragmentManager(),
                 fragmentList);
 

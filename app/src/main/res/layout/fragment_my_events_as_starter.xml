@@ -5,16 +5,8 @@
     tools:context=".MyEventsAsInitiator">
 
     <ListView
-<<<<<<< HEAD
         android:id="@+id/initiated_event_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
     </ListView>
-=======
-        android:id="@android:id/list"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-    </ListView>
-
->>>>>>> origin/test
 </FrameLayout>
