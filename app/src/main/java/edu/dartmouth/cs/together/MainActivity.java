@@ -1,5 +1,6 @@
 package edu.dartmouth.cs.together;
 
+import android.content.IntentFilter;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -112,7 +113,21 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        registerMessageReceiver();
     }
+
+
+
+    private void registerMessageReceiver() {
+        MessageCenterFragment msgCenterFragment = new MessageCenterFragment();
+        MessageCenterFragment.NewMessageReceiver receiver = msgCenterFragment.new NewMessageReceiver();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(Globals.ACTION_NEW_MESSAGE_FROM_SERVER);
+        registerReceiver(receiver, intentFilter);
+    }
+
+    //TODO: WHEN TO UNREGISTER THE RECEIVER?
 
     @Override
     public void onBackPressed() {

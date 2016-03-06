@@ -53,39 +53,61 @@ public class EventServlet extends HttpServlet {
                 long eventId = jsonObject.getLong(Event.ID_KEY);
                 long userId = jsonObject.getLong(User.ID_KEY);
                 Entity entity = EventDataSource.queryById(eventId);
-                if (noEvent(entity,eventId,resp)) return;
+                Entity userEntity = UserDataSource.queryById(userId);
+                if (noEvent(entity,eventId,resp)|| noEvent(userEntity, userId, resp)) return;
 
-
+                //get event and user from entity
                 Event newEvent = EventDataSource.getEventFromEntity(entity);
+                User newUser = UserDataSource.getUserFromEntity(userEntity);
+
                 if (newEvent.getJoinerCount() < newEvent.getLimit()) {
                     boolean ret = EventJoinerDataSource.add(eventId, userId);
                     if(ret) {
                         newEvent.increaseJoiner(1);
                         EventDataSource.update(newEvent);
                         PrintWriter writer = resp.getWriter();
-                        writer.print(newEvent.getJoinerCount()+"");
+                        writer.print(newEvent.getJoinerCount() + "");
                         writer.flush();
                         userList.add((long) entity.getProperty(Event.OWNER_KEY));
                         deviceList = UserDataSource.queryDeviceByUserId(userList);
 
-                        msg.sendMessage(deviceList, "Event Joined:" + eventId + ":" + userId);
+                        String eventShortDesc = newEvent.getShortdesc();
+                        String account = newUser.getAccount();
+
+                        msg.sendMessage(deviceList, "Event Joined:" + Globals.SPLITER
+                                + eventId + Globals.SPLITER
+                                + eventShortDesc + Globals.SPLITER
+                                + userId + Globals.SPLITER
+                                + account);
                     }
                 }
              } else if(actionString.equals(Globals.ACTION_QUIT)){
                 long eventId = jsonObject.getLong(Event.ID_KEY);
                 long userId = jsonObject.getLong(User.ID_KEY);
-                Entity entity = EventDataSource.queryById(eventId);
-                if (noEvent(entity,eventId,resp)) return;
+                Entity eventEntity = EventDataSource.queryById(eventId);
+                Entity userEntity = UserDataSource.queryById(userId);
+                if (noEvent(eventEntity,eventId,resp) || noEvent(userEntity, userId, resp))
+                    return;
 
                 boolean ret = EventJoinerDataSource.delete(eventId, userId);
-                Event newEvent = EventDataSource.getEventFromEntity(entity);
+                Event newEvent = EventDataSource.getEventFromEntity(eventEntity);
+                User newUser = UserDataSource.getUserFromEntity(userEntity);
+
+
                 newEvent.increaseJoiner(1);
                 EventDataSource.update(newEvent);
-
-
-                userList.add((long)entity.getProperty(Event.OWNER_KEY));
+                userList.add((long) eventEntity.getProperty(Event.OWNER_KEY));
                 deviceList = UserDataSource.queryDeviceByUserId(userList);
-                msg.sendMessage(deviceList, "Event Quited:" + eventId + ":" + userId);
+
+                String eventShortDesc = newEvent.getShortdesc();
+                String account = newUser.getAccount();
+
+                msg.sendMessage(deviceList, "Event Quited:" + Globals.SPLITER
+                        + eventId + Globals.SPLITER
+                        + eventShortDesc +  Globals.SPLITER
+                        + userId + Globals.SPLITER
+                        + account);
+//                msg.sendMessage(deviceList, "Event Quited:" + eventId + ":" + userId);
             } else{
                 Event event = new Event(jsonObject);
                 if (actionString.equals(Globals.ACTION_ADD)) {
@@ -102,7 +124,10 @@ public class EventServlet extends HttpServlet {
                         userList.addAll(EventJoinerDataSource.entitiesToUserId(
                                 EventJoinerDataSource.queryByEventId(event.getEventId())));
                         deviceList = UserDataSource.queryDeviceByUserId(userList);
-                        msg.sendMessage(deviceList, "Event Updated:" + event.getEventId());
+
+                        msg.sendMessage(deviceList, "Event Updated:" + Globals.SPLITER
+                                + event.getEventId() + Globals.SPLITER
+                                + event.getShortdesc());
                     }
                 }else if (actionString.equals(Globals.ACTION_DELETE)) {
                     long eventId = event.getEventId();
@@ -115,7 +140,9 @@ public class EventServlet extends HttpServlet {
                     QaDataSource.deleteByEventId(eventId);
                     EventJoinerDataSource.deleteByEventId(eventId);
 
-                    msg.sendMessage(deviceList, "Event Deleted:" + event.getEventId());
+                    msg.sendMessage(deviceList, "Event Deleted:" + Globals.SPLITER
+                            + event.getEventId() + Globals.SPLITER
+                            + event.getShortdesc());
                 }
             }
         } catch (JSONException e) {

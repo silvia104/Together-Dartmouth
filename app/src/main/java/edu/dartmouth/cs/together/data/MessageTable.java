@@ -5,24 +5,20 @@ package edu.dartmouth.cs.together.data;
  */
 public class MessageTable {
     public static final String TABLE_NAME = "message";
-//    private int msgId;
-//    private long eventId;
-//    private int msgType;
-//    private long msgTime;
-//    private String msgDescription;
-//    private boolean isRead;
-//    private int qaId;
+
+
 enum COLUMNS{
     ID (0,"_idx"," integer primary key autoincrement not null"),
     MSG_TYPE(1,"type"," int not null"),
     TIME(2,"time"," integer not null"),
-    DESCRIPTION(3, "description", " string not null"),
-    IS_READ(4, "read", " integer not null"),
-    EVENT_ID(5,"event_id"," integer not null"),
-    EVENT_SHORT_DESC(6, "event_short_desc", " string not null"),
-    QA_ID(7, "qa", " integer"),
-    QUESTION(8, "q", " string not null"),
-    ANSWER(9, "a", " string not null");
+    IS_READ(3, "read", " integer not null"),
+    EVENT_ID(4,"event_id"," integer not null"),
+    EVENT_SHORT_DESC(5, "event_short_desc", " string not null"),
+    USER_ID(6, "user_id", " integer"),
+    USER_NAME(7, "user_name", " string"),
+    QA_ID(8, "qa", " integer"),
+    QUESTION(9, "q", " string"),
+    ANSWER(10, "a", " string");
 
     private final int index;
     private final String colName;
@@ -40,10 +36,11 @@ enum COLUMNS{
         return ID.colName + ID.command +", "
                 + MSG_TYPE.colName + MSG_TYPE.command +", "
                 + TIME.colName + TIME.command +", "
-                + DESCRIPTION.colName + DESCRIPTION.command + ", "
                 + IS_READ.colName + IS_READ.command + ", "
                 + EVENT_ID.colName + EVENT_ID.command + ", "
                 + EVENT_SHORT_DESC.colName + EVENT_SHORT_DESC.command + ", "
+                + USER_ID.colName + USER_ID.command + ", "
+                + USER_NAME.colName + USER_NAME.command + ", "
                 + QA_ID.colName + QA_ID.command + ", "
                 + QUESTION.colName + QUESTION.command + ", "
                 + ANSWER.colName + ANSWER.command;

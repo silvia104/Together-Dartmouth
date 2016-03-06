@@ -33,7 +33,7 @@ public class Globals {
     public static double RADIUS_50MILES = 80467.2;
     public static String EVENT_INDEX_KEY="EVENT_INDEX_KEY";
 
-    public static String SERVER_ADDR = "http://192.168.2.7:8080";
+    public static String SERVER_ADDR = "http://192.168.1.143:8080";
     public static String DEVICE_ID;
     public static User currentUser;
     public static final String ACTION_ADD = "add";
@@ -65,10 +65,19 @@ public class Globals {
     public static String KEY_INTEREST_CATEGORY = "interest category";
     public static String KEY_MESSAGE_BUNDLE_MESSAGE = "new message";
     public static String KEY_MESSAGE_BUNDLE_TIME = "message time";
+    public static String KEY_MESSAGE_BUNDLE_TYPE  = "message type";
 
-    public static int MESSAGE_TYPE_NEW_JOIN = 0;
-    public static int MESSAGE_TYPE_NEW_QUESTION = 1;
-    public static int MESSAGE_TYPE_EVENT_CHANGE = 2;
+    public static String ACTION_NEW_MESSAGE_FROM_SERVER = "edu.dartmouth.cs.together.NEWMESSAGE";
+    public static final int MESSAGE_TYPE_NEW_QUESTION = 1;
+    public static final int MESSAGE_TYPE_NEW_ANSWER = 2;
+    public static final int MESSAGE_TYPE_NEW_JOIN = 3;
+    public static final int MESSAGE_TYPE_EVENT_QUIT = 4;
+    public static final int MESSAGE_TYPE_EVENT_CHANGE = 5;
+    public static final int MESSAGE_TYPE_EVENT_CANCEL = 6;
+    public static final String SPLITER = String.valueOf((char)30);
+
+
+
 
     static{
         for (String s : sports){

@@ -8,10 +8,14 @@ import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * Created by TuanMacAir on 2/20/16.
@@ -113,6 +117,23 @@ public class UserDataSource  {
 
         return entity;
     }
+
+    public static Entity queryById(long userId) {
+        Query query = new Query(User.USER_ENTITY_NAME);
+        Entity entity = null;
+        query.setFilter(new Query.FilterPredicate(User.ID_KEY,
+                Query.FilterOperator.EQUAL,
+                userId));
+        query.setAncestor(getKey());
+
+        PreparedQuery pq = mDatastore.prepare(query);
+        entity = pq.asSingleEntity();
+
+        return entity;
+    }
+
+
+
     public static List<User> queryByIdList(List<Long> userIds) {
         List<User> result = new ArrayList<>();
         Query query = new Query(User.USER_ENTITY_NAME);
@@ -130,7 +151,7 @@ public class UserDataSource  {
     }
 
     //if the record is already in,
-    private static User getUserFromEntity(Entity entity) {
+    public static User getUserFromEntity(Entity entity) {
 
         if (entity == null) {
             return null;
