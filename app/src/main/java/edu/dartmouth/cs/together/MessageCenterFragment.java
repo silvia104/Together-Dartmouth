@@ -49,79 +49,57 @@ public class MessageCenterFragment extends ListFragment
             }
 
     @Override
+    public void onActivityCreated(Bundle savedInstanceState){
+        super.onActivityCreated(savedInstanceState);
+        mContext = getActivity();
+        mAdapter = new msgRowAdapter();
+        setListAdapter(mAdapter);
+        mNewMessageReceiver = new NewMessageReceiver();
+        mDB = new MessageDataSource(mContext);
+
+    }
+
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState){
             //setRetainInstance(true);
-            mContext = getActivity();
-            mAdapter = new msgRowAdapter();
-            setListAdapter(mAdapter);
             if (savedInstanceState == null) {
-            getLoaderManager().initLoader(0, null, this).forceLoad();
+                getLoaderManager().initLoader(0, null, this).forceLoad();
             }
-            mDB = new MessageDataSource(mContext);
-            mNewMessageReceiver = new NewMessageReceiver();
-            //Message(Long eventId, int type, long time, String description ,boolean isRead, int qaId) {
-            //Message message1 = new Message(20L,1,89898998989898L, "is there?", false, 10L);
-            //mDB.insertMessage(message1);
             return  inflater.inflate(R.layout.fragment_message_center, container, false);
-            }
+    }
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
             Message message = (Message) mAdapter.getItem(position);
             if(message.getMsgType() == Globals.MESSAGE_TYPE_NEW_QUESTION) {
-            ArrayList<String> stringList = getStringList(message);
-            DialogFragment replyDialog = QuestionReplyDialogFragment.newInstance(stringList);
-            replyDialog.show(getChildFragmentManager(), "ReplyQuestion");
-            // TODO Handle item click
-            Toast.makeText(mContext,
-                    "Item " + position + " Clicked!", Toast.LENGTH_SHORT)
-            .show();
+//                ArrayList<String> stringList = getStringList(message);
+//                long[] idList = getIdList(message);
+                Bundle extras = new Bundle();
+                extras.putString("question", message.getQuestion());
+                extras.putString("eventDesc", message.getEventShortDesc());
+                extras.putLong("eventId", message.getEventId());
+                extras.putLong("qaId", message.getQaId());
+                extras.putString("time", message.getDateTimeString("dd/MM hh:mm"));
+
+                DialogFragment replyDialog = QuestionReplyDialogFragment.newInstance(extras);
+                replyDialog.show(getChildFragmentManager(), "ReplyQuestion");
             }
             //set isRead to true;
             if(!message.getIsRead()) {
-            message.setIsRead(true);
-            //update database
-            UpdateNewRecordTask updateTask = new UpdateNewRecordTask();
-            updateTask.doInBackground(message);
-    //            mDB.updateIsRead(message.getMsgId(), message);
-            ImageView blob = (ImageView) v.findViewById(R.id.message_type);
-            blob.setVisibility(View.INVISIBLE);
-            TextView eventName = (TextView) v.findViewById(R.id.message_event);
-            eventName.setTypeface(null, Typeface.NORMAL);
+                message.setIsRead(true);
+                //update database
+                UpdateNewRecordTask updateTask = new UpdateNewRecordTask();
+                updateTask.doInBackground(message);
+                ImageView blob = (ImageView) v.findViewById(R.id.message_type);
+                blob.setVisibility(View.INVISIBLE);
+                TextView eventName = (TextView) v.findViewById(R.id.message_event);
+                eventName.setTypeface(null, Typeface.NORMAL);
             }
 
-            }
+    }
 
-
-    private ArrayList<String> getStringList(Message message){
-            ArrayList<String> stringList = new ArrayList<>();
-
-            //TODO: Async query event by eventID
-            stringList.add("Event: "+String.valueOf(message.getEventId()));
-            stringList.add(message.getDateTimeString("dd/MM hh:mm"));
-            //TODO: Async query qa by qaID
-            stringList.add("Question: " +String.valueOf(message.getQaId()));
-            return stringList;
-            }
-
-
-    @Override
-    public Loader<List<Message>> onCreateLoader(int id, Bundle args) {
-            return new RecordLoader(getActivity());
-            }
-
-
-    @Override
-    public void onLoadFinished(Loader<List<Message>> loader, List<Message> data) {
-            mMessageList.addAll(data);
-            mAdapter.notifyDataSetChanged();
-            }
-
-    @Override
-    public void onLoaderReset(Loader<List<Message>> loader) {
-
-            }
 
     private class msgRowAdapter extends ArrayAdapter {
 
@@ -147,12 +125,19 @@ public class MessageCenterFragment extends ListFragment
             //set the image view invisible only if it's the same position
             if (!message.getIsRead() && (int)msgType.getTag() == position) {
                 eventName.setTypeface(null, Typeface.BOLD);
-                if (message.getMsgType() == Globals.MESSAGE_TYPE_NEW_QUESTION) {
+                if (message.getMsgType() == Globals.MESSAGE_TYPE_NEW_QUESTION
+                    || message.getMsgType() == Globals.MESSAGE_TYPE_NEW_ANSWER) {
+
                     msgType.setImageResource(R.drawable.ic_new_question);
-                } else  if (message.getMsgType() == Globals.MESSAGE_TYPE_NEW_JOIN){
+
+                } else  if (message.getMsgType() == Globals.MESSAGE_TYPE_NEW_JOIN
+                        || message.getMsgType() == Globals.MESSAGE_TYPE_EVENT_QUIT){
+
                     msgType.setImageResource(R.drawable.ic_new_joiner);
                 }
-                else{
+                else if (message.getMsgType() == Globals.MESSAGE_TYPE_EVENT_CHANGE
+                        ||message.getMsgType() == Globals.MESSAGE_TYPE_EVENT_CANCEL){
+
                     msgType.setImageResource(R.drawable.ic_new_event_change);
                 }
 
@@ -161,29 +146,13 @@ public class MessageCenterFragment extends ListFragment
             String time = message.getDateTimeString("dd/MM hh:mm");
             msgTime.setText(time);
             eventBrief.setText(message.getMsgContent());
-
-            //TODO: get event name from event id
-            eventName.setText(String.valueOf(message.getEventId()));
+            eventName.setText(String.valueOf(message.getEventShortDesc()));
             return convertView;
         }
     }
 
 
-    static class RecordLoader extends AsyncTaskLoader<List<Message>> {
-        private MessageDataSource mDB;
-        public RecordLoader(Context context) {
-            super(context);
-            mDB = new MessageDataSource(context);
-        }
 
-        // get all records in background as loader
-        @Override
-        public List<Message> loadInBackground() {
-            //return mDB.getAllRecords();
-            return mDB.getAllRecords();
-        }
-
-    }
 
     public class NewMessageReceiver extends BroadcastReceiver {
         @Override
@@ -193,32 +162,80 @@ public class MessageCenterFragment extends ListFragment
             Bundle extras = intent.getExtras();
             String message = extras.getString(Globals.KEY_MESSAGE_BUNDLE_MESSAGE);
             if (message == null) return;
-            String[] msgFields = message.split(",");
-            if(msgFields.length == 4) {
+            String[] msgFields = message.split(Globals.SPLITER);
+            //is msgFilds.length > 1, there must be a spliter inserted when the
+            // message was sent
+            if(msgFields.length > 1) {
+                Message messageToInsert = setupMessage(msgFields);
                 long time = extras.getLong(Globals.KEY_MESSAGE_BUNDLE_TIME);
-                Message messageToInsert = new Message();
-                messageToInsert = setupMessage(messageToInsert, time, msgFields);
+                int type = extras.getInt(Globals.KEY_MESSAGE_BUNDLE_TYPE);
+                messageToInsert.setMsgType(type);
+                messageToInsert.setMsgTime(time);
+                messageToInsert.setIsRead(false);
                 InsertNewMessage insertNewMessage = new InsertNewMessage();
                 insertNewMessage.doInBackground(messageToInsert);
+
 
             }
         }
     }
-        private Message setupMessage(Message msg, long time, String[] msgFields){
-            msg.setMsgTime(time);
-            msg.setIsRead(false);
-            msg.setMsgType(Integer.valueOf(msgFields[0]));
-            msg.setMsgDescription(msgFields[1]);
-            msg.setEventId((long)Long.parseLong(msgFields[2], 10));
-            msg.setQaId((long) Long.parseLong(msgFields[3], 10));
-            return msg;
+
+
+    private Message setupMessage( String[] msgFields){
+        Message msg = new Message();
+
+
+        if(msgFields[0].startsWith("Event")){
+            int i=1;
+            while(i<msgFields.length) {
+                switch (i) {
+                    case 1:
+                        msg.setEventId(Long.valueOf(msgFields[1]));
+                        break;
+                    case 2:
+                        msg.setEventShortDesc(msgFields[2]);
+                        break;
+                    case 3:
+                        msg.setUserId(Long.valueOf(msgFields[3]));
+                        break;
+                    case 4:
+                        msg.setUserName(msgFields[4]);
+                        break;
+                }
+                i++;
+            }
+        }else if(msgFields[0].startsWith("Question")){
+            int i=1;
+            while(i<msgFields.length) {
+                switch (i) {
+                    case 1:
+                        msg.setEventId(Long.valueOf(msgFields[1]));
+                        break;
+                    case 2:
+                        msg.setEventShortDesc(msgFields[2]);
+                        break;
+                    case 3:
+                        msg.setQaId(Long.valueOf(msgFields[3]));
+                        break;
+                    case 4:
+                        msg.setQuestion(msgFields[4]);
+                        break;
+                    case 5:
+                        msg.setAnswer(msgFields[5]);
+                }
+                i++;
+            }
         }
 
-    class InsertNewMessage extends AsyncTask<Message, Void, Long> {
+        return msg;
+    }
 
+    class InsertNewMessage extends AsyncTask<Message, Void, Long> {
+        private MessageDataSource mDB;
         // get the new record.
         @Override
         protected Long doInBackground(Message... msg) {
+            mDB = new MessageDataSource(getActivity());
             Long id = mDB.insertMessage(msg[0]);
             return id;
         }
@@ -242,5 +259,37 @@ public class MessageCenterFragment extends ListFragment
         protected void onPostExecute(Long id) {
             mAdapter.notifyDataSetChanged();
         }
+    }
+
+    static class RecordLoader extends AsyncTaskLoader<List<Message>> {
+        private MessageDataSource mDB;
+        public RecordLoader(Context context) {
+            super(context);
+            mDB = new MessageDataSource(context);
+        }
+
+        // get all records in background as loader
+        @Override
+        public List<Message> loadInBackground() {
+            //return mDB.getAllRecords();
+            return mDB.getAllRecords();
+        }
+
+    }
+    @Override
+    public Loader<List<Message>> onCreateLoader(int id, Bundle args) {
+        return new RecordLoader(getActivity());
+    }
+
+
+    @Override
+    public void onLoadFinished(Loader<List<Message>> loader, List<Message> data) {
+        mMessageList.addAll(data);
+        mAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onLoaderReset(Loader<List<Message>> loader) {
+
     }
 }

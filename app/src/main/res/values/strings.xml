@@ -69,14 +69,13 @@
     <string name="re_post">repost</string>
     <string name="quit">QUIT</string>
     <string name="join">join</string>
-<<<<<<< Updated upstream
     <string name="no_account">New User?</string>
     <string name="create_account">Create Account</string>
     <string name="prompt_password_new">password (>= 5 characters)</string>
     <string name="confirmation_code">Confirmation Code</string>
     <string name="get_code">get code</string>
     <string name="error_incorrect_mail">Account not found!</string>
-=======
+
 
     <string name="ui_profile_photo_picker_title">Photo</string>
     <string name="dialog_fragment_tag_photo_picker">photo_picker_dialog_fragment</string>
@@ -85,5 +84,4 @@
         <item>Take picture from camera</item>
         <item>Choose pictore from gallery</item>
     </string-array>
->>>>>>> Stashed changes
 </resources>
