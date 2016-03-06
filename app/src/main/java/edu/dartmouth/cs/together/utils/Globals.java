@@ -33,8 +33,12 @@ public class Globals {
     public static LatLng DARTMOUTH_GPS = new LatLng(43.726034, -72.142917);
     public static double RADIUS_50MILES = 80467.2;
 
+<<<<<<< Updated upstream
     public static String SERVER_ADDR = "http://192.168.0.104:8080";
     //public static String SERVER_ADDR = "https://together-1234.appspot.com";
+=======
+    public static String SERVER_ADDR = "http://192.168.2.7:8080";
+>>>>>>> Stashed changes
     public static String DEVICE_ID;
     public static User currentUser;
     public static final String ACTION_ADD = "add";

@@ -45,20 +45,26 @@ public class GcmIntentService extends BaseIntentSerice {
                 } else if (message.startsWith("Event Joined:")){
                     // Backend:
                     // msg.sendMessage(deviceList, "Event Joined:" + eventId + ":" + userId);
+                    // msg.sendMessage(deviceList, "Event Joined:" + EventShortDescription + ":" + UserName);
 
 
                 } else if (message.startsWith("Event Updated:")) {
                     //msg.sendMessage(deviceList, "Event Updated:" + event.getEventId());
+                    //msg.sendMessage(deviceList, "Event Updated:" + Item:XXX + "changed to" + "XXX" ##
+                    // Item:XXX + "is changed to" + "XXX" ... );
 
                 }else if(message.startsWith("Event Quited:")){
                     //msg.sendMessage(deviceList, "Event Quited:" + eventId + ":" + userId);
+                    //msg.sendMessage(deviceList, "Event Quited:" + EventShortDescription + ":" + UserName);
 
 
                 } else if (message.startsWith("Question Answered:")){
                     //message = "Question Posted:" + eventId + "," + questionId + "," + q;
+                    //message = "Question Posted:" + EventShortDescription + "," + q;
 
 
                 } else if(message.startsWith("Question Posted:")){
+                    //message = "Question Posted:" + EventShortDescription + "," + q;
 
                 }
                 showToast(message);
