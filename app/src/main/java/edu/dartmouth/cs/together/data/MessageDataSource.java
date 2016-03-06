@@ -34,8 +34,18 @@ public class MessageDataSource {
 
     public long insertMessage(Message message){
         open();
+        long id =  -1;
         ContentValues values = getMessageContent(message);
-        return mDB.insert(MessageTable.TABLE_NAME, null, values);
+        try {
+        id = mDB.insert(MessageTable.TABLE_NAME, null, values);
+        }catch (SQLiteException e){
+            e.printStackTrace();
+        }
+        finally {
+            close();
+            return id;
+        }
+
 
     }
 
@@ -53,8 +63,9 @@ public class MessageDataSource {
 
         Cursor cursor = mDB.query(MessageTable.TABLE_NAME,
                 null, null, null, null, null, null);
-
-        cursor.moveToFirst();
+        if(cursor.getCount()>0) {
+            cursor.moveToFirst();
+        }
         while (!cursor.isAfterLast()) {
             Message record = cursorToRecord(cursor);
             Log.d(getClass().getName(), "get comment = " + cursorToRecord(cursor).toString());
@@ -89,9 +100,17 @@ public class MessageDataSource {
         message.setMsgId(cursor.getLong(MessageTable.COLUMNS.ID.index()));
         message.setMsgType(cursor.getInt(MessageTable.COLUMNS.MSG_TYPE.index()));
         message.setMsgTime(cursor.getLong(MessageTable.COLUMNS.TIME.index()));
-        message.setMsgDescription(cursor.getString(MessageTable.COLUMNS.DESCRIPTION.index()));
         message.setIsRead(cursor.getInt(MessageTable.COLUMNS.IS_READ.index()) > 0);
+
+        message.setEventId(cursor.getInt(MessageTable.COLUMNS.EVENT_ID.index()));
+        message.setEventShortDesc(cursor.getString(MessageTable.COLUMNS.EVENT_SHORT_DESC.index()));
+
+        message.setUserId(cursor.getInt(MessageTable.COLUMNS.USER_ID.index()));
+        message.setUserName(cursor.getString(MessageTable.COLUMNS.USER_NAME.index()));
+
         message.setQaId(cursor.getInt(MessageTable.COLUMNS.QA_ID.index()));
+        message.setQuestion(cursor.getString(MessageTable.COLUMNS.QUESTION.index()));
+        message.setAnswer(cursor.getString(MessageTable.COLUMNS.ANSWER.index()));
 
         return message;
     }
@@ -100,12 +119,21 @@ public class MessageDataSource {
 
         ContentValues values = new ContentValues();
 
+        //These fields must not be null
         values.put(MessageTable.COLUMNS.MSG_TYPE.colName(), message.getMsgType());
         values.put(MessageTable.COLUMNS.TIME.colName(), message.getMsgTime());
-        values.put(MessageTable.COLUMNS.DESCRIPTION.colName(), message.getMsgContent());
         values.put(MessageTable.COLUMNS.IS_READ.colName(), (!message.getIsRead())?0:1);
         values.put(MessageTable.COLUMNS.EVENT_ID.colName(), message.getEventId());
+        values.put(MessageTable.COLUMNS.EVENT_SHORT_DESC.colName(), message.getEventShortDesc());
+
+        //these can be null, but here if there's no input for the fields, they'll be initial values
         values.put(MessageTable.COLUMNS.QA_ID.colName(), message.getQaId());
+        values.put(MessageTable.COLUMNS.QUESTION.colName(), message.getQuestion());
+        values.put(MessageTable.COLUMNS.ANSWER.colName(), message.getAnswer());
+
+        values.put(MessageTable.COLUMNS.USER_ID.colName(), message.getUserId());
+        values.put(MessageTable.COLUMNS.USER_NAME.colName(), message.getUserName());
+
         return values;
     }
 
