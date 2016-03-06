@@ -63,6 +63,12 @@ public class Globals {
     public static String KEY_TIME_RANGE = "time range";
     public static String KEY_DISTANCE_RANGE = "distance range";
     public static String KEY_INTEREST_CATEGORY = "interest category";
+    public static String KEY_MESSAGE_BUNDLE_MESSAGE = "new message";
+    public static String KEY_MESSAGE_BUNDLE_TIME = "message time";
+
+    public static int MESSAGE_TYPE_NEW_JOIN = 0;
+    public static int MESSAGE_TYPE_NEW_QUESTION = 1;
+    public static int MESSAGE_TYPE_EVENT_CHANGE = 2;
 
     static{
         for (String s : sports){

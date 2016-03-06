@@ -43,7 +43,23 @@ public class GcmIntentService extends BaseIntentSerice {
                     db.deleteEvent(EventDataSource.ALL_EVENT, id);
                     db.deleteEvent(EventDataSource.JOINED_EVENT,id);
                 } else if (message.startsWith("Event Joined:")){
+                    // Backend:
+                    // msg.sendMessage(deviceList, "Event Joined:" + eventId + ":" + userId);
+
+
                 } else if (message.startsWith("Event Updated:")) {
+                    //msg.sendMessage(deviceList, "Event Updated:" + event.getEventId());
+
+                }else if(message.startsWith("Event Quited:")){
+                    //msg.sendMessage(deviceList, "Event Quited:" + eventId + ":" + userId);
+
+
+                } else if (message.startsWith("Question Answered:")){
+                    //message = "Question Posted:" + eventId + "," + questionId + "," + q;
+
+
+                } else if(message.startsWith("Question Posted:")){
+
                 }
                 showToast(message);
             }

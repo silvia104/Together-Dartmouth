@@ -187,12 +187,12 @@ public class EventDataSource  {
         return event;
     }
 
-    public List<Event> queryEventByOwnerId(long id){
+    public List<Event> queryOwnedEvent(long id){
         open();
         List<Event> events = new ArrayList<>();
         Cursor cursor =null;
         try {
-            cursor = mDB.query(getTableName(ALL_EVENT),
+            cursor = mDB.query(getTableName(MY_OWN_EVENT),
                     null,  BaseEventTable.COLUMNS.OWNER_ID.colName() + "=?",
                     new String[]{String.valueOf(id)}, null, null, null, null);
             if (cursor.getCount()>0) {
@@ -222,8 +222,10 @@ public class EventDataSource  {
                     new String[]{String.valueOf(joinerId)}, null, null, null, null);
             joinerCursor.moveToFirst();
             while(!joinerCursor.isAfterLast()) {
+                //there are more than one joiner, so we have to query event by eventID
+                // after we get eventID by joinerID in EventJoiner table
                 long eventId = joinerCursor.getLong(EventJoinerTable.COLUMNS.EVENT_ID.index());
-                Cursor eventCursor = mDB.query(getTableName(this.ALL_EVENT), null,
+                Cursor eventCursor = mDB.query(getTableName(JOINED_EVENT), null,
                         BaseEventTable.COLUMNS.EVENT_ID.colName() + "=?",
                         new String[]{String.valueOf(eventId)}, null, null, null, null);
                 eventCursor.moveToFirst();
@@ -233,6 +235,7 @@ public class EventDataSource  {
                     eventCursor.moveToNext();
                 }
                 if(eventCursor!=null) eventCursor.close();
+
                 joinerCursor.moveToNext();
             }
 //                event = cursorToEvent(joinerCursor);
