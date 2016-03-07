@@ -6,6 +6,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.support.v4.app.NotificationCompat;
@@ -31,6 +32,7 @@ import edu.dartmouth.cs.together.utils.Globals;
 public class GcmIntentService extends BaseIntentSerice {
 
     private NotificationManager mNotificationManager;
+    private SharedPreferences mSharedPreference;
     private Vibrator mVibrator ;
 
     public GcmIntentService() {
@@ -58,37 +60,74 @@ public class GcmIntentService extends BaseIntentSerice {
 
                 String[] msgFields = message.split(Globals.SPLITER);
                 if(msgFields.length>1) {
+
+
                     Message messageToInsert = setupMessage(msgFields);
                     long time = System.currentTimeMillis();
                     messageToInsert.setMsgTime(time);
                     messageToInsert.setIsRead(false);
 
-                    if (msgFields[0].startsWith("Event Delete")) {
-//                    String[] parts = message.split(":");
+                    if (msgFields[0].startsWith("Event Delete")
+                            && mSharedPreference.getBoolean
+                            (Globals.KEY_SHARED_PREF_NOTE_EVENT_CANCEL, false)) {
                         long id = Long.parseLong(msgFields[1].trim());
                         EventDataSource db = new EventDataSource(getApplicationContext());
                         db.deleteEvent(EventDataSource.ALL_EVENT, id);
                         db.deleteEvent(EventDataSource.JOINED_EVENT, id);
 
                         messageToInsert.setMsgType(Globals.MESSAGE_TYPE_EVENT_CANCEL);
-                    } else if (message.startsWith("Event Joined:")) {
+                        MessageDataSource mDB = new MessageDataSource(getApplicationContext());
+                        showNotification(messageToInsert.getMsgContent());
+                        mDB.insertMessage(messageToInsert);
+
+                    } else if (message.startsWith("Event Joined:") &&
+                            mSharedPreference.getBoolean
+                                    (Globals.KEY_SHARED_PREF_NOTE_NEW_PEOPLE, false) ) {
 
                         messageToInsert.setMsgType(Globals.MESSAGE_TYPE_NEW_JOIN);
-                    } else if (message.startsWith("Event Updated:")) {
+                        MessageDataSource mDB = new MessageDataSource(getApplicationContext());
+                        showNotification(messageToInsert.getMsgContent());
+                        mDB.insertMessage(messageToInsert);
+
+
+                    } else if (message.startsWith("Event Updated:") &&
+                            mSharedPreference.getBoolean
+                                    (Globals.KEY_SHARED_PREF_NOTE_EVENT_CHANGE, false)) {
 
                         messageToInsert.setMsgType(Globals.MESSAGE_TYPE_EVENT_CHANGE);
-                    } else if (message.startsWith("Event Quited:")) {
+                        MessageDataSource mDB = new MessageDataSource(getApplicationContext());
+                        showNotification(messageToInsert.getMsgContent());
+                        mDB.insertMessage(messageToInsert);
+
+
+                    } else if (message.startsWith("Event Quited:") &&
+                            mSharedPreference.getBoolean
+                                    (Globals.KEY_SHARED_PREF_NOTE_QUIT_PEOPLE, false)) {
+
                         messageToInsert.setMsgType(Globals.MESSAGE_TYPE_EVENT_QUIT);
-                    } else if (message.startsWith("Question Answered:")) {
+                        MessageDataSource mDB = new MessageDataSource(getApplicationContext());
+                        showNotification(messageToInsert.getMsgContent());
+                        mDB.insertMessage(messageToInsert);
+
+                    } else if (message.startsWith("Question Answered:") &&
+                            mSharedPreference.getBoolean
+                                    (Globals.KEY_SHARED_PREF_NOTE_NEW_A, false)) {
+
                         messageToInsert.setMsgType(Globals.MESSAGE_TYPE_NEW_ANSWER);
-                    } else if (message.startsWith("Question Posted:")) {
+                        MessageDataSource mDB = new MessageDataSource(getApplicationContext());
+                        showNotification(messageToInsert.getMsgContent());
+                        mDB.insertMessage(messageToInsert);
+
+                    } else if (message.startsWith("Question Posted:") &&
+                            mSharedPreference.getBoolean
+                                    (Globals.KEY_SHARED_PREF_NOTE_NEW_Q, false)) {
+
                         messageToInsert.setMsgType(Globals.MESSAGE_TYPE_NEW_QUESTION);
+                        MessageDataSource mDB = new MessageDataSource(getApplicationContext());
+                        showNotification(messageToInsert.getMsgContent());
+                        mDB.insertMessage(messageToInsert);
                     }
 
-                    MessageDataSource mDB = new MessageDataSource(getApplicationContext());
-                    showNotification(messageToInsert.getMsgContent());
-                    mVibrator.vibrate(300);
-                    mDB.insertMessage(messageToInsert);
                 }
 
                 showToast(message);
@@ -155,14 +194,12 @@ public class GcmIntentService extends BaseIntentSerice {
                 .setContentTitle("Together: New Message")
                 .setContentText(text)
                 .setSmallIcon(R.drawable.ic_menu_messages)
+                .setVibrate(new long[]{300})
                 .setContentIntent(pi).build();
 
         mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
         notification.flags =  notification.FLAG_AUTO_CANCEL;
-        // clear the notice when user clicks on it
-//        notification.flags = notification.flags
-//                | Notification.FLAG_ONGOING_EVENT;
 
         mNotificationManager.notify(0, notification);
 

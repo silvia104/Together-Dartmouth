@@ -145,24 +145,24 @@ public class EventListFragment extends ListFragment implements LoaderManager.Loa
         String insterests=sharedPref.getString(edu.dartmouth.cs.together.utils.Globals.KEY_INTEREST_CATEGORY, null);
         List<Integer> filtint=null;
         List<Event> filter=null;
-        for(int i=0;i<values.size();i++){
-            Event tmp=values.get(i);
-            //filte event based on time and distance
-            Location eventlocat= new Location("");
-            eventlocat.setLatitude(tmp.getLatLng().latitude);
-            eventlocat.setLongitude(tmp.getLatLng().longitude);
-            Location dartmouth= new Location("");
-            dartmouth.setLatitude(edu.dartmouth.cs.together.utils.Globals.DARTMOUTH_GPS.latitude);
-            dartmouth.setLongitude(Globals.DARTMOUTH_GPS.longitude);
-            if(eventlocat.distanceTo(dartmouth)<dist){
-                Calendar curtime=Calendar.getInstance();
-                if(tmp.getcalender().get(Calendar.DAY_OF_YEAR) -curtime.get(Calendar.DAY_OF_YEAR)<time){
-                    if(filtint.contains(tmp.getEventId())){
-                        filter.add(tmp);
-                    }
-                }
-            }
-        }
+//        for(int i=0;i<values.size();i++){
+//            Event tmp=values.get(i);
+//            //filte event based on time and distance
+//            Location eventlocat= new Location("");
+//            eventlocat.setLatitude(tmp.getLatLng().latitude);
+//            eventlocat.setLongitude(tmp.getLatLng().longitude);
+//            Location dartmouth= new Location("");
+//            dartmouth.setLatitude(edu.dartmouth.cs.together.utils.Globals.DARTMOUTH_GPS.latitude);
+//            dartmouth.setLongitude(Globals.DARTMOUTH_GPS.longitude);
+//            if(eventlocat.distanceTo(dartmouth)<dist){
+//                Calendar curtime=Calendar.getInstance();
+//                if(tmp.getcalender().get(Calendar.DAY_OF_YEAR) -curtime.get(Calendar.DAY_OF_YEAR)<time){
+//                    if(filtint.contains(tmp.getEventId())){
+//                        filter.add(tmp);
+//                    }
+//                }
+//            }
+//        }
         updateListfromvalues();
     }
 

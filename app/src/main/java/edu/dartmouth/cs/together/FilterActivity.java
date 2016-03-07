@@ -65,9 +65,9 @@ public class FilterActivity extends AppCompatActivity
         mDistanceRangeSeekBar.setOnSeekBarChangeListener(this);
         // if the filter is set by the user, don't load shared preference
         // get shared preference for default distance, time and catefory
-        if(Globals.FILTER_TIME == -1 && Globals.FILTER_DISTANCE == -1 && Globals.FILTER_INTEREST == null) {
-            setDefaultFromSharedPref();
-        }
+//        setDefaultFromSharedPref();
+        setInitialValues();
+
     }
 
     private void setList() {
@@ -109,14 +109,24 @@ public class FilterActivity extends AppCompatActivity
         );
     }
 
+    private void setInitialValues(){
+        Intent intent = getIntent();
+        if((intent.getAction() != null && intent.getAction().equals("android.intent.action.VIEW"))||
+        (Globals.FILTER_TIME == 14 && Globals.FILTER_DISTANCE == 50 && Globals.FILTER_INTEREST.size()==20)){
+            setDefaultFromSharedPref();
+        }
+        else{
+            setWidgets(Globals.FILTER_TIME, Globals.FILTER_DISTANCE, Globals.FILTER_INTEREST);
+        }
+    }
+
     private void setDefaultFromSharedPref() {
         SharedPreferences sharedPreferences = getSharedPreferences(
-                Globals.KEY_SHARED_PREFERENCE_FILE, MODE_PRIVATE);
-        int time = sharedPreferences.getInt(Globals.KEY_TIME_RANGE, 0);
-        int distance = sharedPreferences.getInt(Globals.KEY_DISTANCE_RANGE, 0);
+                getPackageName(), MODE_PRIVATE);
+        int time = sharedPreferences.getInt(Globals.KEY_TIME_RANGE, 4);
+        int distance = sharedPreferences.getInt(Globals.KEY_DISTANCE_RANGE, 50);
         String[] interest = sharedPreferences.getString(Globals.KEY_INTEREST_CATEGORY, " ")
                 .split(" ");
-
         setWidgets(time, distance, interest);
 
     }
@@ -129,6 +139,22 @@ public class FilterActivity extends AppCompatActivity
             for (String str : interest) {
                 mInterestList.setItemChecked(Integer.valueOf(str), true);
             }
+        }
+    }
+
+    //set widgets from global values
+    private void setWidgets(int time, int distance, ArrayList<Integer> interest){
+        int spinnerPos  = 0;
+        for(int i=0; i<Globals.timeRangesInteger.length; i++){
+            if(Globals.timeRangesInteger[i] == time){
+                spinnerPos = i;
+            }
+        }
+        mTimeRangeSpinner.setSelection(spinnerPos);
+        mDistanceTextView.setText("In " + distance + " Miles");
+        mDistanceRangeSeekBar.setProgress(distance);
+        for (Integer i : interest) {
+            mInterestList.setItemChecked(i, true);
         }
 
     }

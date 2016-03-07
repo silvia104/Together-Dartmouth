@@ -20,6 +20,8 @@ import android.view.MenuItem;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
+import java.util.ArrayList;
+
 import edu.dartmouth.cs.together.cloud.GcmRegisterIntentService;
 import edu.dartmouth.cs.together.cloud.UploadPicIntentService;
 import edu.dartmouth.cs.together.data.User;
@@ -115,6 +117,28 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+
+        setGlobalsBySharedPref();
+
+    }
+
+    private void setGlobalsBySharedPref(){
+//        SharedPreferences sharedPreferences = getSharedPreferences(getPackageName(), MODE_PRIVATE);
+        //set up filter preference
+        if(Globals.FILTER_TIME == -1){
+            Globals.FILTER_TIME = mSharedPreference.getInt(Globals.KEY_TIME_RANGE, 14);
+        }
+        if(Globals.FILTER_DISTANCE == -1){
+            Globals.FILTER_DISTANCE = mSharedPreference.getInt(Globals.KEY_DISTANCE_RANGE, 50);
+        }
+        if(Globals.FILTER_INTEREST == null){
+            Globals.FILTER_INTEREST = new ArrayList<>();
+            for(int i = 0 ; i< Globals.categories.size();i++){
+                Globals.FILTER_INTEREST.add(i);
+            }
+        }
+
+
     }
 
 
@@ -125,7 +149,7 @@ public class MainActivity extends AppCompatActivity
             startActivity(new Intent(getApplicationContext(), LoginActivity.class));
         } else {
             Globals.currentUser = new User();
-            Globals.currentUser.setId(mSharedPreference.getLong(User.ID_KEY,-1));
+            Globals.currentUser.setId(mSharedPreference.getLong(User.ID_KEY, -1));
             Globals.currentUser.setAccount(mSharedPreference.getString(User.ACCOUNT_KEY, "UNKNOWN"));
         }
     }

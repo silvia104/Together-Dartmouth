@@ -9,6 +9,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.preference.PreferenceManager;
+import android.support.v7.preference.SwitchPreferenceCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,13 +47,14 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         pref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                startActivityForResult(preference.getIntent(), REQUEST_DEFAULT_FILTER);
+                Intent intent = preference.getIntent();
+                startActivityForResult(intent, REQUEST_DEFAULT_FILTER);
                 return true;
             }
         });
-/*
 
-        SwitchPreferenceCompat newPeople = (SwitchPreferenceCompat) findPreference("new_people");
+
+        SwitchPreferenceCompat newPeople = (SwitchPreferenceCompat) prefManager.findPreference("new_people");
         newPeople.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference,
@@ -135,7 +137,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 return true;
             }
         });
-*/
+
     }
 
 
@@ -157,7 +159,6 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                         int timeRange = (int)extras.get(Globals.KEY_TIME_RANGE);
                         int distanceRange = (int) extras.get(Globals.KEY_DISTANCE_RANGE);
                         ArrayList<Integer> selectedInterest = extras.getIntegerArrayList(Globals.KEY_INTEREST_CATEGORY);
-
                         writeSharedPreference(timeRange, distanceRange, selectedInterest);
                     }
 
@@ -167,9 +168,8 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
     private void writeSharedPreference(int time, int distance, ArrayList<Integer> interests){
 
-        SharedPreferences sharedPref = mContext.getSharedPreferences(
-                Globals.KEY_SHARED_PREFERENCE_FILE, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPref.edit();
+
+        SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.clear();
 
         editor.putInt(Globals.KEY_TIME_RANGE, time);

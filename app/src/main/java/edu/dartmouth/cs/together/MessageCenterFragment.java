@@ -69,18 +69,7 @@ public class MessageCenterFragment extends ListFragment
         setRetainInstance(true);
         //TODO: MODIFIED FINALS IN GLOBALS
         mSharedPreference = mContext.getSharedPreferences(mContext.getPackageName(), Context.MODE_PRIVATE);
-        mReceiveMessageType[Globals.MESSAGE_TYPE_NEW_JOIN] = mSharedPreference.getBoolean(
-                Globals.KEY_SHARED_PREF_NOTE_NEW_PEOPLE, false);
-        mReceiveMessageType[Globals.MESSAGE_TYPE_EVENT_QUIT] = mSharedPreference.getBoolean(
-                Globals.KEY_SHARED_PREF_NOTE_QUIT_PEOPLE,false);
-        mReceiveMessageType[Globals.MESSAGE_TYPE_EVENT_CHANGE] = mSharedPreference.getBoolean(
-                Globals.KEY_SHARED_PREF_NOTE_EVENT_CHANGE,false);
-        mReceiveMessageType[Globals.MESSAGE_TYPE_EVENT_CANCEL] = mSharedPreference.getBoolean(
-                Globals.KEY_SHARED_PREF_NOTE_EVENT_CANCEL,false);
-        mReceiveMessageType[Globals.MESSAGE_TYPE_NEW_QUESTION] = mSharedPreference.getBoolean(
-                Globals.KEY_SHARED_PREF_NOTE_NEW_Q,false);
-        mReceiveMessageType[Globals.MESSAGE_TYPE_NEW_ANSWER] = mSharedPreference.getBoolean(
-                Globals.KEY_SHARED_PREF_NOTE_NEW_A,false);
+
     }
 
 
