@@ -16,6 +16,7 @@
         android:layout_height="wrap_content"
         android:layout_toRightOf="@id/message_type"
         android:layout_alignTop="@+id/message_type"
+        android:textColor="@color/colorAccent"
         android:textSize="8pt"
         android:id="@+id/message_event"/>
 
@@ -24,6 +25,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignTop="@+id/message_event"
+        android:textColor="@color/colorAccent"
         android:layout_marginRight="20dp"
         android:id="@+id/message_time"/>
 
@@ -33,6 +35,7 @@
         android:layout_below="@+id/message_event"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
+        android:textColor="@color/colorAccent"
         android:id="@+id/message_brief"/>
 
 </RelativeLayout>

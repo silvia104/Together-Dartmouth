@@ -5,13 +5,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceFragment;
-import android.preference.SwitchPreference;
 import android.support.v4.app.Fragment;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.preference.PreferenceManager;
-import android.support.v7.preference.SwitchPreferenceCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,16 +47,6 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 startActivityForResult(preference.getIntent(), REQUEST_DEFAULT_FILTER);
-                return true;
-            }
-        });
-
-        Preference passwordReset = findPreference("pref_key_reset_password");
-        pref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                //build a dialog and send messsage here
-
                 return true;
             }
         });
@@ -169,7 +156,8 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                         Bundle extras = data.getExtras();
                         int timeRange = (int)extras.get(Globals.KEY_TIME_RANGE);
                         int distanceRange = (int) extras.get(Globals.KEY_DISTANCE_RANGE);
-                        String selectedInterest = extras.getString(Globals.KEY_INTEREST_CATEGORY);
+                        ArrayList<Integer> selectedInterest = extras.getIntegerArrayList(Globals.KEY_INTEREST_CATEGORY);
+
                         writeSharedPreference(timeRange, distanceRange, selectedInterest);
                     }
 
@@ -177,7 +165,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         }
     }
 
-    private void writeSharedPreference(int time, int distance, String interests){
+    private void writeSharedPreference(int time, int distance, ArrayList<Integer> interests){
 
         SharedPreferences sharedPref = mContext.getSharedPreferences(
                 Globals.KEY_SHARED_PREFERENCE_FILE, Context.MODE_PRIVATE);
@@ -186,7 +174,12 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
         editor.putInt(Globals.KEY_TIME_RANGE, time);
         editor.putInt(Globals.KEY_DISTANCE_RANGE, distance);
-        editor.putString(Globals.KEY_INTEREST_CATEGORY, interests);
+        String interest = "";
+        for(Integer i:interests){
+            interest = interest + i + " ";
+        }
+
+        editor.putString(Globals.KEY_INTEREST_CATEGORY, interest);
         editor.commit();
 
     }

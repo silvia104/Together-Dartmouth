@@ -22,6 +22,8 @@ import android.widget.AdapterView.OnItemClickListener;
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import edu.dartmouth.cs.together.utils.Globals;
+import edu.dartmouth.cs.together.utils.Helper;
+
 import java.util.ArrayList;
 
 public class FilterActivity extends AppCompatActivity
@@ -61,8 +63,11 @@ public class FilterActivity extends AppCompatActivity
         setSpinner();
         //set distance range
         mDistanceRangeSeekBar.setOnSeekBarChangeListener(this);
-        //get shared preference for default distance, time and catefory
-        setDefaultFromSharedPref();
+        // if the filter is set by the user, don't load shared preference
+        // get shared preference for default distance, time and catefory
+        if(Globals.FILTER_TIME == -1 && Globals.FILTER_DISTANCE == -1 && Globals.FILTER_INTEREST == null) {
+            setDefaultFromSharedPref();
+        }
     }
 
     private void setList() {
@@ -133,25 +138,23 @@ public class FilterActivity extends AppCompatActivity
         Intent intent = new Intent();
         Bundle extras = new Bundle();
 
-        extras.putInt(Globals.KEY_TIME_RANGE,
-                mSelectedTimeRange);
-        extras.putInt(Globals.KEY_DISTANCE_RANGE,
-                mSelectedDistanceRange);
 
-        //in convenience of write shared preference
-        //change integer arraylist into string
-        //when read shared pref
-        //use split(" ") to get the int array again
-        String interest = "";
+        //send parameters to calling activity
+        // int for days, int for distance in meters
+        // integer arraylist for interest category
+        extras.putInt(Globals.KEY_TIME_RANGE,
+                Globals.timeRangesInteger[mSelectedTimeRange]);
+        extras.putInt(Globals.KEY_DISTANCE_RANGE,
+                Helper.MileToMeters(mSelectedDistanceRange));
+        ArrayList<Integer> interest = new ArrayList<>();
         SparseBooleanArray checkedItemPositions = mInterestList.getCheckedItemPositions();
         int itemCount = mInterestList.getCount();
         for(int i=0; i<itemCount; i++){
             if(checkedItemPositions.get(i)){
-                interest = interest + i + " ";
+                interest.add(i);
             }
         }
-        extras.putString(Globals.KEY_INTEREST_CATEGORY,
-                interest);
+        extras.putIntegerArrayList(Globals.KEY_INTEREST_CATEGORY, interest);
         intent.putExtras(extras);
 
         FilterActivity.this.setResult(RESULT_OK, intent);
