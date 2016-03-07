@@ -24,30 +24,29 @@
         <SwitchPreference
             android:title="New Friend Joined"
             android:key = "new_people"/>
-            />
+
         <SwitchPreference
             android:title="Friend Quited"
             android:key = "quit_people"/>
-        />
+
         <SwitchPreference
             android:title="Event Changed"
             android:key = "event_change"/>
-        />
+
         <SwitchPreference
             android:title="Event Canceled"
             android:key = "event_cancel"/>
-        />
+
         <SwitchPreference
             android:title="New Question"
             android:key = "new_q"/>
-        />
+
         <SwitchPreference
             android:title="New Answer"
             android:key = "new_a"/>
-        />
+
     </PreferenceCategory>
 
-<<<<<<< HEAD
     <PreferenceCategory
         android:key = "pref_key_preference"
         android:title = "Preference">
@@ -62,9 +61,6 @@
 
 
     </PreferenceCategory>
-=======
-
->>>>>>> origin/test
 
 
     <PreferenceCategory
@@ -79,12 +75,6 @@
                 android:targetClass="edu.dartmouth.cs.together.ProfileActivity"/>
         </Preference>
 
-<<<<<<< HEAD
-=======
-
-
-
->>>>>>> origin/test
     </PreferenceCategory>
 
 

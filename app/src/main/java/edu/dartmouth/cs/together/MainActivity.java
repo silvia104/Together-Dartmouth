@@ -22,6 +22,8 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.util.List;
+
 import edu.dartmouth.cs.together.cloud.GcmRegisterIntentService;
 import edu.dartmouth.cs.together.cloud.UploadPicIntentService;
 import edu.dartmouth.cs.together.data.User;
@@ -35,6 +37,7 @@ public class MainActivity extends AppCompatActivity
     private final int GET_RESULT_SUCCESS = -1;
     public static int filterTime;
     public static int filterDist;
+    public static List<Integer> CateFilter;
     private static final String List_FRAGMENT_STATE_KEY = "saved_List";
     private static final String CUR_FRAG_KEY = "cur_frag";
 
@@ -56,9 +59,8 @@ public class MainActivity extends AppCompatActivity
 
         isListFragment=true;
 
-        SharedPreferences sharedPref = getSharedPreferences(edu.dartmouth.cs.together.utils.Globals.KEY_SHARED_PREFERENCE_FILE, Context.MODE_PRIVATE);
-        filterTime=sharedPref.getInt(edu.dartmouth.cs.together.utils.Globals.KEY_TIME_RANGE, 3);
-        filterDist=sharedPref.getInt(edu.dartmouth.cs.together.utils.Globals.KEY_DISTANCE_RANGE,50);
+        filterTime=Globals.FILTER_TIME;
+        filterDist=Globals.FILTER_DISTANCE;
 
         if (savedInstanceState != null) {
             isListFragment = savedInstanceState
@@ -297,14 +299,6 @@ public class MainActivity extends AppCompatActivity
                     transaction.replace(
                             R.id.main_content_frame, new SettingsFragment(), "SETTINGS"
                     );
-                    break;
-
-                case R.id.nav_recommended_events:
-
-                    transaction.replace(
-                            R.id.main_content_frame, new EventListFragment(), "EVENT_LIST_FRAG"
-                    );
-
                     break;
             }
 
