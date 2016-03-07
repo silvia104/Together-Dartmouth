@@ -44,3 +44,5 @@ backend/build/generated-source/endpoints/java/com/example/tuanmacair/myapplicati
 *.zip
 
 app/src/main/java/edu/dartmouth/cs/together/EventListFragment.java
+
+app/src/main/java/edu/dartmouth/cs/together/utils/Globals.java
