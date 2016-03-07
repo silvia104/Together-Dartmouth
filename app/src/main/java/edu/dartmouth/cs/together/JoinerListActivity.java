@@ -34,6 +34,7 @@ public class JoinerListActivity extends BasePopoutActivity implements
     private long mEventId;
     private JoinerCardViewAdapter mAdapter;
     private boolean mRefreshed = false;
+    private long mOwnerId;
 
 
     @Override
@@ -43,6 +44,7 @@ public class JoinerListActivity extends BasePopoutActivity implements
         ButterKnife.bind(this);
         Intent i = getIntent();
         mEventId = i.getLongExtra(Event.ID_KEY,-1);
+        mOwnerId = i.getLongExtra(User.ID_KEY,-1);
         mJoinerRecVew.setVisibility(View.GONE);
         mProgress.setVisibility(View.VISIBLE);
         mJoinerRecVew.setHasFixedSize(true);
@@ -73,7 +75,7 @@ public class JoinerListActivity extends BasePopoutActivity implements
 
     @Override
     public Loader<List<User>> onCreateLoader(int id, Bundle args) {
-        return new JoinerLoader(this, mEventId);
+        return new JoinerLoader(this, mEventId, mOwnerId);
     }
 
     @Override
@@ -104,16 +106,19 @@ public class JoinerListActivity extends BasePopoutActivity implements
     static class JoinerLoader extends AsyncTaskLoader<List<User>>{
         private Context mContext;
         private long mEventId;
-
-        public JoinerLoader(Context context, long eventId) {
+        private long mUserId;
+        public JoinerLoader(Context context, long eventId, long userId) {
             super(context);
             mContext = context;
             mEventId = eventId;
+            mUserId = userId;
         }
 
         @Override
         public List<User> loadInBackground() {
-            return new UserDataSource(mContext).queryJoiners(mEventId);
+            List<User> users =  new UserDataSource(mContext).queryJoiners(mEventId);
+            users.add (0,new UserDataSource(mContext).queryUserById(mUserId));
+            return users;
         }
     }
 
