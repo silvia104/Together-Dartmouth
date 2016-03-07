@@ -114,6 +114,10 @@ public class MyEventsAsInitiator extends ListFragment implements
         }
 
         @Override
+        public void dismiss(){
+        }
+
+        @Override
         public long getid(Event event) {
             return event.getEventId();
         }
@@ -124,8 +128,8 @@ public class MyEventsAsInitiator extends ListFragment implements
             return event.getLocation();
         }
         @Override
-        public String lineTwoText(Event event) {
-            return event.getTime();
+        public String lineTwoText(Event e) {
+            return e.getDate()+"  "+e.getTime();
         }
         @Override
         public String lineTreText(Event event) {

@@ -1,5 +1,6 @@
 package edu.dartmouth.cs.together;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.IntentFilter;
 import android.support.v4.app.Fragment;
@@ -30,8 +31,12 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     private boolean isListFragment;
     private final int GET_RESULT_SUCCESS = -1;
-    public int filterTime;
-    public int filterDist;
+    public static int filterTime;
+    public static int filterDist;
+    private static final String List_FRAGMENT_STATE_KEY = "saved_List";
+    private static final  String FILTER_TIME_KEY="filter_time";
+    private static final  String FILTER_DISTANCE_KEY="filter_dist";
+
     private MessageCenterFragment.NewMessageReceiver receiver;
     private SharedPreferences mSharedPreference;
     @Override
@@ -45,22 +50,22 @@ public class MainActivity extends AppCompatActivity
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        /*
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View edu.dartmouth.cs.together.view) {
-                Snackbar.make(edu.dartmouth.cs.together.view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-        */
+
         isListFragment=true;
-        EventListFragment efrag = new EventListFragment();
-        FragmentManager manager = getSupportFragmentManager();
-        FragmentTransaction transaction = manager.beginTransaction();
-        transaction.replace(R.id.main_content_frame, efrag, "EVENT_LIST_FRAG");
-        transaction.commit();
+
+        SharedPreferences sharedPref = getSharedPreferences(edu.dartmouth.cs.together.utils.Globals.KEY_SHARED_PREFERENCE_FILE, Context.MODE_PRIVATE);
+        filterTime=sharedPref.getInt(edu.dartmouth.cs.together.utils.Globals.KEY_TIME_RANGE, 3);
+        filterDist=sharedPref.getInt(edu.dartmouth.cs.together.utils.Globals.KEY_DISTANCE_RANGE,50);
+
+        if (savedInstanceState != null) {
+            isListFragment = savedInstanceState
+                    .getBoolean(List_FRAGMENT_STATE_KEY);
+            filterTime=savedInstanceState.getInt(FILTER_TIME_KEY);
+            filterDist=savedInstanceState.getInt(FILTER_DISTANCE_KEY);
+        }
+
+        startFragment();
+
         ImageButton addFab = (ImageButton) findViewById(R.id.fab_image_button);
         ImageButton addFabswitch = (ImageButton) findViewById(R.id.fab_image_button2);
         addFab.setOnClickListener(new View.OnClickListener() {
@@ -71,26 +76,15 @@ public class MainActivity extends AppCompatActivity
         });
 
         final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+
         addFabswitch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (isListFragment) {
-                    EventMapFragment efrag = new EventMapFragment();
-                    android.support.v4.app.FragmentManager manager = getSupportFragmentManager();
-                    android.support.v4.app.FragmentTransaction transaction = manager.beginTransaction();
-                    transaction.replace(R.id.main_content_frame, efrag);
-                    transaction.commit();
-                    isListFragment = !isListFragment;
-                } else {
-                    EventListFragment efrag = new EventListFragment();
-                    android.support.v4.app.FragmentManager manager = getSupportFragmentManager();
-                    android.support.v4.app.FragmentTransaction transaction = manager.beginTransaction();
-                    transaction.replace(R.id.main_content_frame, efrag);
-                    transaction.commit();
-                    isListFragment = !isListFragment;
-                }
+                isListFragment=!isListFragment;
+                startFragment();
             }
         });
+
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close){
             public void onDrawerOpened(View drawerView) {
@@ -119,7 +113,14 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        // Save the image capture uri before the activity goes into background
+        outState.putBoolean(List_FRAGMENT_STATE_KEY, isListFragment);
+        outState.putInt(FILTER_TIME_KEY, filterTime);
+        outState.putInt(FILTER_DISTANCE_KEY, filterDist);
+    }
 
     private void registerMessageReceiver() {
         MessageCenterFragment msgCenterFragment = new MessageCenterFragment();
@@ -219,7 +220,8 @@ public class MainActivity extends AppCompatActivity
                     filterDist = (int) extras.get(Globals.KEY_DISTANCE_RANGE);
                     String selectedInterest = extras.getString(Globals.KEY_INTEREST_CATEGORY);
                 }
-
+                Intent itt = new Intent("update");
+                sendBroadcast(itt);
             }
         }
     }
@@ -278,6 +280,22 @@ public class MainActivity extends AppCompatActivity
         startService(i);
     }
 
+    private void startFragment(){
+        if(!isListFragment){
+            EventMapFragment efrag = new EventMapFragment();
+            android.support.v4.app.FragmentManager manager = getSupportFragmentManager();
+            android.support.v4.app.FragmentTransaction transaction = manager.beginTransaction();
+            transaction.replace(R.id.main_content_frame, efrag);
+            transaction.commit();
+        }
+        else{
+            EventListFragment efrag = new EventListFragment();
+            android.support.v4.app.FragmentManager manager = getSupportFragmentManager();
+            android.support.v4.app.FragmentTransaction transaction = manager.beginTransaction();
+            transaction.replace(R.id.main_content_frame, efrag);
+            transaction.commit();
+        }
+    }
 
 
 }

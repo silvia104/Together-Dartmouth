@@ -1,5 +1,6 @@
 package edu.dartmouth.cs.together;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -54,12 +55,22 @@ public class EventListFragment extends ListFragment implements LoaderManager.Loa
     private Context mContext;
     private SwipeRefreshLayout swipelayout;
 
+    private BroadcastReceiver receiver= new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            // after receiver the id from gcm service, update the history fragment
+            new UpdateListAsyncTask(getContext()).execute();
+        }
+    };
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         final View view = inflater.inflate(R.layout.fragment_eventlist, container, false);
         mContext = getActivity().getApplicationContext();
+        list = (ListView) view.findViewById(R.id.list);
 
         //list = (ListView) view.findViewById(R.id.event_list);
         datasource = new EventDataSource(mContext);
@@ -72,11 +83,12 @@ public class EventListFragment extends ListFragment implements LoaderManager.Loa
             }
         });
 
-
-       // setRetainInstance(true);
-//        getLoaderManager().initLoader(1, null, this).forceLoad();
-
+        IntentFilter filter = new IntentFilter("update");
         // register receiver
+        getActivity().registerReceiver(receiver, filter);
+
+        new UpdateListAsyncTask(getContext()).execute();
+
         return view;
     }
 
@@ -89,19 +101,14 @@ public class EventListFragment extends ListFragment implements LoaderManager.Loa
         new UpdateListAsyncTask(getContext()).execute();
 
     }
-    //    @Override
-//    public void onRefresh() {
-//        new Handler().postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                swipelayout.setRefreshing(false);
-//            }
-//        }, 5000);
-//    }
 
     public class eventarrayAdapter extends EventArrayAdapter<Event> {
         public eventarrayAdapter(Context context, List<Event> exercise) {
             super(context, exercise, EventDataSource.ALL_EVENT);
+        }
+
+        @Override
+        public void dismiss(){
         }
 
         @Override
@@ -111,7 +118,7 @@ public class EventListFragment extends ListFragment implements LoaderManager.Loa
 
         @Override
         public String lineTwoText(Event e) {
-            return e.getTime();
+            return e.getDate()+"  "+e.getTime();
         }
 
         @Override
@@ -138,13 +145,10 @@ public class EventListFragment extends ListFragment implements LoaderManager.Loa
 
     public void dafaultFilter(){
         Calendar c = Calendar.getInstance();
-        SharedPreferences sharedPref = mContext.getSharedPreferences(
-                edu.dartmouth.cs.together.utils.Globals.KEY_SHARED_PREFERENCE_FILE, Context.MODE_PRIVATE);
-        int time=sharedPref.getInt(edu.dartmouth.cs.together.utils.Globals.KEY_TIME_RANGE, 3);
-        int dist=sharedPref.getInt(edu.dartmouth.cs.together.utils.Globals.KEY_DISTANCE_RANGE,50);
-        String insterests=sharedPref.getString(edu.dartmouth.cs.together.utils.Globals.KEY_INTEREST_CATEGORY, null);
+        int time=MainActivity.filterTime;
+        int dist=MainActivity.filterDist;
         List<Integer> filtint=null;
-        List<Event> filter=null;
+        List<Event> filter=new ArrayList<Event>();
         for(int i=0;i<values.size();i++){
             Event tmp=values.get(i);
             //filte event based on time and distance
@@ -152,18 +156,21 @@ public class EventListFragment extends ListFragment implements LoaderManager.Loa
             eventlocat.setLatitude(tmp.getLatLng().latitude);
             eventlocat.setLongitude(tmp.getLatLng().longitude);
             Location dartmouth= new Location("");
-            dartmouth.setLatitude(edu.dartmouth.cs.together.utils.Globals.DARTMOUTH_GPS.latitude);
+            dartmouth.setLatitude(Globals.DARTMOUTH_GPS.latitude);
             dartmouth.setLongitude(Globals.DARTMOUTH_GPS.longitude);
-            if(eventlocat.distanceTo(dartmouth)<dist){
+            float distdif=eventlocat.distanceTo(dartmouth);
+            if(distdif<dist*1609){
                 Calendar curtime=Calendar.getInstance();
-                if(tmp.getcalender().get(Calendar.DAY_OF_YEAR) -curtime.get(Calendar.DAY_OF_YEAR)<time){
-                    if(filtint.contains(tmp.getEventId())){
+                int timedif=tmp.getcalender().get(Calendar.DAY_OF_YEAR) -curtime.get(Calendar.DAY_OF_YEAR);
+                if(timedif<time){
+//                    if(filtint.contains(tmp.getEventId())){
+                    if(true){
                         filter.add(tmp);
                     }
                 }
             }
         }
-        updateListfromvalues();
+        values=filter;
     }
 
 
@@ -235,22 +242,15 @@ public class EventListFragment extends ListFragment implements LoaderManager.Loa
             }
             @Override
             protected void onPostExecute(List<Event> events) {
-               // list.setAdapter(new eventarrayAdapter(mContext, values));
-                eventAdapter.notifyDataSetChanged();
+                dafaultFilter();
+                updateListfromvalues();
                 swipelayout.setRefreshing(false);
             }
         }.execute();
     }
-/*
-    public void updateList(){
 
-        values = datasource.queryEvents(EventDataSource.ALL_EVENT);
-        list.setAdapter(new eventarrayAdapter(mContext, values));
-        //datasource.close();
-    }
-*/
     public void updateListfromvalues(){
-       // list.setAdapter(new eventarrayAdapter(mContext, values) {});
+//        list.setAdapter(new eventarrayAdapter(mContext, values) {});
        eventAdapter.notifyDataSetChanged();
     }
 
@@ -268,20 +268,7 @@ public class EventListFragment extends ListFragment implements LoaderManager.Loa
     public void onLoaderReset(Loader<Object> loader) {
 
     }
-/*
-    public class ListClickHandler implements AdapterView.OnItemClickListener {
 
-        @Override
-        public void onItemClick(AdapterView<?> adapter, View view, int position, long arg3) {
-            // TODO Auto-generated method stub
-            current = position;
-            Intent intent;
-            // display detail information of selected event
-            Intent i = new Intent(getActivity(),EventDetailActivity.class);
-            startActivity(i);
-        }
-
-    }*/
     class UpdateListAsyncTask extends AsyncTask<Void, Void, String> {
         private Context context;
 
@@ -298,6 +285,7 @@ public class EventListFragment extends ListFragment implements LoaderManager.Loa
         @Override
         protected void onPostExecute(String msg) {
             dafaultFilter();
+            updateListfromvalues();
         }
     }
 }

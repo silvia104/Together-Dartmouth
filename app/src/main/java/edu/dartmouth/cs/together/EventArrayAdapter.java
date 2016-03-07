@@ -51,6 +51,7 @@ public android.view.View getView(int position, View convertView, ViewGroup paren
                  @Override
                  public void onClick(View v) {
                          Intent i = null;
+                         dismiss();
                          if (intentType==EventDataSource.MY_OWN_EVENT) {
                              i = new Intent(getContext(), EventEditorActivity.class);
                          } else {
@@ -112,6 +113,8 @@ public android.view.View getView(int position, View convertView, ViewGroup paren
 
         return listItemView;
 }
+
+public abstract void dismiss();
 
 public abstract long getid(T t);
 
