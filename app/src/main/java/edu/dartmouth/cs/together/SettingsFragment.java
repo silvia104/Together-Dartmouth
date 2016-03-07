@@ -5,10 +5,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceFragment;
+import android.preference.SwitchPreference;
 import android.support.v4.app.Fragment;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.preference.PreferenceManager;
+import android.support.v7.preference.SwitchPreferenceCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,17 +28,22 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     private Context mContext;
     private final int REQUEST_DEFAULT_FILTER = 0;
     private final int GET_RESULT_SUCCESS = -1;
+    private SharedPreferences sharedPreferences;
+    private SharedPreferences.Editor mEditor;
 
     public SettingsFragment() {
         // Required empty public constructor
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState){
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mContext = getActivity();
         addPreferencesFromResource(R.xml.preferences);
         PreferenceManager prefManager = getPreferenceManager();
+        sharedPreferences = mContext.getSharedPreferences(mContext.getPackageName(), Context.MODE_PRIVATE);
+
+
 
         Preference pref = findPreference("default_filter");
         pref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
@@ -45,10 +53,108 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 return true;
             }
         });
+
+        Preference passwordReset = findPreference("pref_key_reset_password");
+        pref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                //build a dialog and send messsage here
+
+                return true;
+            }
+        });
+
+
+        SwitchPreferenceCompat newPeople = (SwitchPreferenceCompat) findPreference("new_people");
+        newPeople.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference,
+                                              Object newValue) {
+                boolean switched = ((SwitchPreferenceCompat) preference)
+                        .isChecked();
+                mEditor = sharedPreferences.edit();
+                mEditor.putBoolean(Globals.KEY_SHARED_PREF_NOTE_NEW_PEOPLE, switched);
+                mEditor.commit();
+                return true;
+            }
+        });
+
+        SwitchPreferenceCompat quitPeople = (SwitchPreferenceCompat) findPreference("quit_people");
+        quitPeople.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference,
+                                              Object newValue) {
+                boolean switched = ((SwitchPreferenceCompat) preference)
+                        .isChecked();
+                mEditor = sharedPreferences.edit();
+                mEditor.putBoolean(Globals.KEY_SHARED_PREF_NOTE_QUIT_PEOPLE, switched);
+                mEditor.commit();
+                return true;
+            }
+        });
+
+        SwitchPreferenceCompat eventChange = (SwitchPreferenceCompat) findPreference("event_change");
+        eventChange.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference,
+                                              Object newValue) {
+                boolean switched = ((SwitchPreferenceCompat) preference)
+                        .isChecked();
+                mEditor = sharedPreferences.edit();
+                mEditor.putBoolean(Globals.KEY_SHARED_PREF_NOTE_EVENT_CHANGE, switched);
+                mEditor.commit();
+                return true;
+            }
+        });
+
+        SwitchPreferenceCompat eventCancel = (SwitchPreferenceCompat) findPreference("event_cancel");
+        eventCancel.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference,
+                                              Object newValue) {
+                boolean switched = ((SwitchPreferenceCompat) preference)
+                        .isChecked();
+                mEditor = sharedPreferences.edit();
+                mEditor.putBoolean(Globals.KEY_SHARED_PREF_NOTE_EVENT_CANCEL, switched);
+                mEditor.commit();
+                return true;
+            }
+        });
+
+        SwitchPreferenceCompat newQ = (SwitchPreferenceCompat) findPreference("new_q");
+        newQ.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference,
+                                              Object newValue) {
+                boolean switched = ((SwitchPreferenceCompat) preference)
+                        .isChecked();
+                mEditor = sharedPreferences.edit();
+                mEditor.putBoolean(Globals.KEY_SHARED_PREF_NOTE_NEW_Q, switched);
+                mEditor.commit();
+                return true;
+            }
+        });
+
+        SwitchPreferenceCompat newA = (SwitchPreferenceCompat) findPreference("new_a");
+        newA.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference,
+                                              Object newValue) {
+                boolean switched = ((SwitchPreferenceCompat) preference)
+                        .isChecked();
+                mEditor = sharedPreferences.edit();
+                mEditor.putBoolean(Globals.KEY_SHARED_PREF_NOTE_NEW_A, switched);
+                mEditor.commit();
+                return true;
+            }
+        });
+
     }
+
 
     @Override
     public void onCreatePreferences(Bundle bundle, String s) {
+
     }
 
 

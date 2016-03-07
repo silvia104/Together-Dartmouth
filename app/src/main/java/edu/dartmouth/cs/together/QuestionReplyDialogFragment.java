@@ -41,7 +41,6 @@ public class QuestionReplyDialogFragment extends DialogFragment {
     private String question;
     private String time;
 
-
     public QuestionReplyDialogFragment() {
         // Required empty public constructor
 

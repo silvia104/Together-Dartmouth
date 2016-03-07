@@ -122,7 +122,7 @@ public class MyEventsAsJoiner extends ListFragment
         }
 
         public joinedEventsAdapter(Context context, int listItemLayoutResourceId, List<Event> ts) {
-            super(context, listItemLayoutResourceId, ts);
+            super(context, listItemLayoutResourceId, ts, EventDataSource.JOINED_EVENT);
             this.context = context;
             mListItemLayoutResId = listItemLayoutResourceId;
         }
