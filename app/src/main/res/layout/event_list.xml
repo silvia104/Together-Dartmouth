@@ -8,27 +8,32 @@
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:weightSum="1"
+            android:background="#ffffff">
 
             <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="2">
+                android:layout_weight="0.7"
+                android:padding="8dp">
 
-            <ImageView
-                android:layout_width="67dp"
-                android:layout_height="67dp"
-                android:id="@+id/imageView2"
-                android:background="@drawable/bicycle" />
+                <ImageView
+                    android:layout_width="52dp"
+                    android:layout_height="52dp"
+                    android:id="@+id/imageView2"
+                    android:src="@drawable/movie"
+                    android:padding="12dp"
+                    android:scaleType="fitCenter"
+                    android:background="@drawable/circle_category_icon_background" />
 
                 <TextView android:id="@+id/etext5"
                     android:textSize="15dp"
-                    android:textStyle="bold"
+                    android:padding="2dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:textColor="#000000" />
+                    android:layout_weight="1"/>
 
                 <TextView android:id="@+id/etext6"
                     android:textSize="15dp"
@@ -36,60 +41,67 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="bottom"
-                    android:textIsSelectable="true"
-                    android:textColor="#000000" />
+                    android:padding="2dp"/>
             </LinearLayout>
 
             <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginLeft="10dp">
+                android:layout_weight="0.3"
+                android:padding="8dp">
 
                 <TextView android:id="@+id/etext1"
-                    android:textSize="25sp"
+                    android:textSize="18dp"
                     android:textStyle="bold"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+<<<<<<< HEAD
+                    android:text="test"
+                    android:padding="2dp"/>
+=======
                     android:maxLines="2"
                     android:textColor="#000000" />
+>>>>>>> origin/test
 
                 <TextView android:id="@+id/etext2"
-                    android:textSize="25sp"
+                    android:textSize="18dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+<<<<<<< HEAD
+                    android:padding="2dp"/>
+=======
                     android:maxLines="1"
                     android:textColor="#000000" />
+>>>>>>> origin/test
 
                 <TextView android:id="@+id/etext3"
-                    android:textSize="25sp"
+                    android:textSize="16dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+<<<<<<< HEAD
+                    android:padding="2dp"/>
+=======
                     android:maxLines="1"
                     android:textColor="#000000" />
+>>>>>>> origin/test
 
                 <TextView android:id="@+id/etext4"
-                    android:textSize="25sp"
+                    android:textSize="16dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+<<<<<<< HEAD
+                    android:padding="2dp"/>
+=======
                     android:maxLines="1"
                     android:textColor="#000000" />
 
+>>>>>>> origin/test
             </LinearLayout>
-
-            <ImageButton
-                android:layout_width="40dp"
-                android:layout_height="39dp"
-                android:id="@+id/imageButton"
-                android:src="@drawable/add"
-                android:focusable="false"
-                android:background="#00ffffff" />
-
         </LinearLayout>
 
 </LinearLayout>

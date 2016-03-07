@@ -23,15 +23,21 @@
         android:layout_alignTop="@+id/questionText"
         android:layout_marginTop="3dp"
         android:layout_marginRight="3dp" />
-
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_below="@id/questionText"
+        android:background="@drawable/rectangle_answer_background"
+        android:weightSum="1"
+        android:id="@+id/answerLayout">
     <TextView
         android:id="@+id/answerText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="10dp"
         android:text=""
-        android:background="@drawable/rectangle_answer_background"
-        android:layout_below="@+id/questionText" />
+        android:layout_weight="0.9"/>
         <ImageButton
             android:id="@+id/editAnswer"
             android:layout_width="32dp"
@@ -39,10 +45,11 @@
             android:src="@drawable/ic_edit"
             android:scaleType="centerInside"
             android:layout_marginRight="3dp"
+            android:layout_gravity="right"
             android:padding="6dp"
             android:background="@null"
             android:layout_marginTop="2dp"
             android:layout_marginBottom="2dp"
-            android:layout_alignBottom="@+id/answerText"
-            android:layout_alignRight="@+id/answerText" />
+            android:layout_weight="0.1"/>
+    </LinearLayout>
 </RelativeLayout>

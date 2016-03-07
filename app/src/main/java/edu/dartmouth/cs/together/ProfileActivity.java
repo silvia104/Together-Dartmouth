@@ -26,6 +26,9 @@ import java.io.IOException;
 
 
 import com.soundcloud.android.crop.Crop;
+
+import org.w3c.dom.Text;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 import edu.dartmouth.cs.together.cloud.ServerUtilities;
 import edu.dartmouth.cs.together.cloud.UploadPicIntentService;
@@ -36,7 +39,7 @@ import edu.dartmouth.cs.together.utils.Globals;
 public class ProfileActivity extends AppCompatActivity {
 
     private TextView mEmail;
-
+    private TextView mName;
     private Uri mImageCaptureUri;
     private CircleImageView mProfileImageView;
     private boolean isTakenFromCamera;
@@ -48,6 +51,7 @@ public class ProfileActivity extends AppCompatActivity {
     private long mUserId ;
     private String mUserEmail;
     private String mUserName;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,8 +90,9 @@ public class ProfileActivity extends AppCompatActivity {
              findViewById(R.id.profile_save_button).setVisibility(View.GONE);
              findViewById(R.id.profile_cancel_button).setVisibility(View.GONE);
          }
-
-        mEmail = (EditText) findViewById(R.id.profile_email);
+        mName = (TextView) findViewById(R.id.profile_name);
+        mName.setText(mUserName);
+        mEmail = (TextView) findViewById(R.id.profile_email);
         mEmail.setText(mUserEmail);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);

@@ -117,7 +117,10 @@ public class JoinerListActivity extends BasePopoutActivity implements
         @Override
         public List<User> loadInBackground() {
             List<User> users =  new UserDataSource(mContext).queryJoiners(mEventId);
-            users.add (0,new UserDataSource(mContext).queryUserById(mUserId));
+            User owner =new UserDataSource(mContext).queryUserById(mUserId);
+            if (owner!=null){
+                users.add(0,owner);
+            }
             return users;
         }
     }
