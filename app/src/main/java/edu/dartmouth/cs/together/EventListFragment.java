@@ -280,7 +280,7 @@ public class EventListFragment extends ListFragment implements LoaderManager.Loa
 
     }
 
-    class UpdateListAsyncTask extends AsyncTask<Void, Void, String> {
+    class UpdateListAsyncTask extends AsyncTask<Void, Void, List<Event>> {
         private Context context;
 
         public UpdateListAsyncTask(Context context) {
@@ -288,14 +288,15 @@ public class EventListFragment extends ListFragment implements LoaderManager.Loa
         }
 
         @Override
-        protected String doInBackground(Void... params) {
-            values.clear();
-            values.addAll(datasource.queryEvents(EventDataSource.ALL_EVENT));
-            return null;
+        protected List<Event> doInBackground(Void... params) {
+           return datasource.queryEvents(EventDataSource.ALL_EVENT);
         }
 
         @Override
-        protected void onPostExecute(String msg) {
+        protected void onPostExecute(List<Event> events) {
+            super.onPostExecute(events);
+            values.clear();
+            values.addAll(events);
             dafaultFilter();
             updateListfromvalues();
         }

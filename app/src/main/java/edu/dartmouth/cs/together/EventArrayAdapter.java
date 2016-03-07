@@ -24,7 +24,7 @@ public abstract class EventArrayAdapter<T> extends ArrayAdapter<T> {
     ImageView imgView;
     int intentType;
     int itemPosition;
-
+    List<Event> mList;
     public EventArrayAdapter(Context context, List<T> ts, int intentType) {
         this(context, R.layout.event_list, ts, intentType);
     }
@@ -33,12 +33,13 @@ public abstract class EventArrayAdapter<T> extends ArrayAdapter<T> {
         super(context, listItemLayoutResourceId, ts);
         this.context = context;
         mListItemLayoutResId = listItemLayoutResourceId;
+        mList = (List<Event>)ts;
         this.intentType = intentType;
 
     }
 
     @Override
-    public android.view.View getView(int position, View convertView, ViewGroup parent) {
+    public android.view.View getView(final int position, View convertView, ViewGroup parent) {
 
 
         LayoutInflater inflater = (LayoutInflater) getContext()
@@ -59,7 +60,8 @@ public abstract class EventArrayAdapter<T> extends ArrayAdapter<T> {
                                                         i = new Intent(getContext(), EventDetailActivity.class);
                                                     }
                                                     T t = (T) getItem(itemPosition);
-                                                    final long id = getid(t);
+                                                    //final long id = getid(t);
+                                                    long id = mList.get(position).getEventId();
                                                     i.putExtra(Event.ID_KEY, id);
                                                     i.putExtra("TAG", intentType);
                                                     v.getContext().startActivity(i);
@@ -82,7 +84,7 @@ public abstract class EventArrayAdapter<T> extends ArrayAdapter<T> {
         TextView lineSixView = (TextView) listItemView.findViewById(
                 R.id.etext6);
         T t = (T) getItem(position);
-        final long id = getid(t);
+        //final long id = getid(t);
 
 
         imgView = (ImageView) listItemView.findViewById(
