@@ -63,10 +63,12 @@ public class MyEventsAsInitiator extends ListFragment implements
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l,v,position, id);
-        Intent i = new Intent(getActivity(),EventDetailActivity.class);
+        Intent i = new Intent(getActivity(),EventEditorActivity.class);
         Event event = mAdapter.getItem(position);
         long eventId = event.getEventId();
         i.putExtra(Event.ID_KEY, eventId);
+        i.putExtra(Globals.MAP_LATITUDE, event.getLatLng().latitude);
+        i.putExtra(Globals.MAP_LONGITUDE, event.getLatLng().longitude);
         i.putExtra("TAG",EventDataSource.MY_OWN_EVENT);
         startActivity(i);
     }
