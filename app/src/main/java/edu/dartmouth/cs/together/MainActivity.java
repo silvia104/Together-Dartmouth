@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity
     private final int GET_RESULT_SUCCESS = -1;
     public static int filterTime;
     public static int filterDist;
-    public static List<Integer> CateFilter;
+    public static List<Integer> CateFilter = new ArrayList<>();
     private static final String List_FRAGMENT_STATE_KEY = "saved_List";
     private static final String CUR_FRAG_KEY = "cur_frag";
 

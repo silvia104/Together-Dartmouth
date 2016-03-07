@@ -100,7 +100,6 @@ public class MyEventsAsJoiner extends ListFragment
 
     static class joinedEventsLoader extends AsyncTaskLoader<List<Event>> {
         private EventDataSource mDB;
-
         public joinedEventsLoader(Context context) {
             super(context);
             mDB = new EventDataSource(context);
