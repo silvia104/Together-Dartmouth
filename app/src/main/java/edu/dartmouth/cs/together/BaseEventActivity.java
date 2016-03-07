@@ -465,6 +465,7 @@ public class BaseEventActivity extends BasePopoutActivity implements
             if (qaList.size() == 0){
                 mList.add(new Qa("No Question Yet!"));
             } else {
+                mList.clear();
                 mList.addAll(qaList);
             }
             mIsEdit = isEdit;
@@ -479,12 +480,15 @@ public class BaseEventActivity extends BasePopoutActivity implements
         @Override
         public void onBindViewHolder(QaViewHolder holder, int i) {
             if (mList.get(i).getQuestion().equals("No Question Yet!")){
-                holder.mEditAnswer.setOnClickListener(null);
+                holder.mEditAnswer.setEnabled(false);
+            } else if (mIsEdit){
+                holder.mEditAnswer.setEnabled(true);
+
             }
             holder.mQuestion.setText(mList.get(i).getQuestion());
             holder.mAnswer.setText(mList.get(i).getAnswer());
-            holder.mAnswer.setVisibility(View.GONE);
-            holder.mEditAnswer.setVisibility(View.GONE);
+            holder.mAnswerLayout.setVisibility(View.GONE);
+           // holder.mEditAnswer.setVisibility(View.GONE);
             holder.mQuestion.setTag(mList.get(i).getId());
         }
 
@@ -507,6 +511,7 @@ public class BaseEventActivity extends BasePopoutActivity implements
             @Bind(R.id.expand_arrow)  ImageButton mControl;
             @Bind(R.id.answerText) TextView mAnswer;
             @Bind(R.id.editAnswer) ImageButton mEditAnswer;
+            @Bind(R.id.answerLayout) View mAnswerLayout;
             public QaViewHolder(View itemView) {
                 super(itemView);
                 ButterKnife.bind(this, itemView);
@@ -522,7 +527,7 @@ public class BaseEventActivity extends BasePopoutActivity implements
                 if (mControl.getTag().toString().equals("closed")){
                     mControl.setTag("open");
                     mControl.setImageResource(R.drawable.ic_expand_less);
-                    mAnswer.setVisibility(View.VISIBLE);
+                    mAnswerLayout.setVisibility(View.VISIBLE);
                     if (mIsEdit){
                         mEditAnswer.setVisibility(View.VISIBLE);
                     } else {
@@ -531,7 +536,7 @@ public class BaseEventActivity extends BasePopoutActivity implements
                 } else {
                     mControl.setTag("closed");
                     mControl.setImageResource(R.drawable.ic_expand_more);
-                    mAnswer.setVisibility(View.GONE);
+                    mAnswerLayout.setVisibility(View.GONE);
                     mEditAnswer.setVisibility(View.GONE);
                 }
             }

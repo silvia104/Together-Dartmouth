@@ -117,14 +117,14 @@ public class EventServlet extends HttpServlet {
                 if (actionString.equals(Globals.ACTION_ADD)) {
                     boolean ret = EventDataSource.add(event);
                     if(ret) {
-                        userList.add(event.getOwner());
+                        //userList.add(event.getOwner());
                         deviceList = UserDataSource.queryDeviceByUserId(userList);
                         msg.sendMessage(deviceList, "Event Added:" + event.getEventId());
                     }
                 } else if (actionString.equals(Globals.ACTION_UPDATE)) {
                     boolean ret = EventDataSource.update(event);
                     if(ret) {
-                        userList.add(event.getOwner());
+                        //userList.add(event.getOwner());
                         userList.addAll(EventJoinerDataSource.entitiesToUserId(
                                 EventJoinerDataSource.queryByEventId(event.getEventId())));
                         deviceList = UserDataSource.queryDeviceByUserId(userList);
@@ -135,7 +135,7 @@ public class EventServlet extends HttpServlet {
                     }
                 }else if (actionString.equals(Globals.ACTION_DELETE)) {
                     long eventId = event.getEventId();
-                    userList.add(event.getOwner());
+                    //userList.add(event.getOwner());
                     userList.addAll(EventJoinerDataSource.entitiesToUserId(
                             EventJoinerDataSource.queryByEventId(eventId)));
                     deviceList = UserDataSource.queryDeviceByUserId(userList);
