@@ -48,6 +48,7 @@ import edu.dartmouth.cs.together.data.Event;
 import edu.dartmouth.cs.together.data.EventDataSource;
 import edu.dartmouth.cs.together.data.Qa;
 import edu.dartmouth.cs.together.data.QaDataSource;
+import edu.dartmouth.cs.together.data.User;
 import edu.dartmouth.cs.together.data.UserDataSource;
 import edu.dartmouth.cs.together.utils.Globals;
 
@@ -152,7 +153,7 @@ public class BaseEventActivity extends BasePopoutActivity implements
                     case BottomSheetBehavior.STATE_HIDDEN:
                     case BottomSheetBehavior.STATE_SETTLING:
                     case BottomSheetBehavior.STATE_COLLAPSED:
-                        if (eventId!=-1){
+                        if (eventId != -1) {
                             mFab.show();
                         }
                         break;
@@ -173,7 +174,10 @@ public class BaseEventActivity extends BasePopoutActivity implements
     @OnClick(R.id.fab)
     public void onFabClick() {
         Intent i = new Intent(this, JoinerListActivity.class);
-        i.putExtra(Event.ID_KEY, mEvent.getEventId());
+        if (mEvent != null) {
+            i.putExtra(Event.ID_KEY, mEvent.getEventId());
+            i.putExtra(User.ID_KEY, mEvent.getOwner());
+        }
         startActivity(i);
     }
 

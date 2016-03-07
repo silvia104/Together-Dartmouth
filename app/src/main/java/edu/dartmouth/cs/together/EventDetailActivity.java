@@ -26,7 +26,6 @@ public class EventDetailActivity extends BaseEventActivity {
     private long mEventId=-1;
     private int mEventType;
     private boolean mRefreshed;
-    private boolean mJoined;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -63,7 +63,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 return true;
             }
         });
-
+/*
 
         SwitchPreferenceCompat newPeople = (SwitchPreferenceCompat) findPreference("new_people");
         newPeople.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
@@ -148,7 +148,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 return true;
             }
         });
-
+*/
     }
 
 

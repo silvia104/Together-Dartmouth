@@ -39,9 +39,9 @@ public class GetJoinerIntentService extends BaseIntentSerice {
             if(response.contains(":")) {
                 List<User> users = parseJosonArray(response);
                 new UserDataSource(getApplicationContext()).insertUsers(users);
-                for (User u : users) {
+                for (User user: users) {
                     new EventDataSource(getApplicationContext())
-                            .insertEventJoinerRelation(eventId, u.getId());
+                            .insertEventJoinerRelation(eventId, user.getId());
                 }
                 sendBroadcast(new Intent(Globals.RELOAD_JOINER_DATA));
             } else {

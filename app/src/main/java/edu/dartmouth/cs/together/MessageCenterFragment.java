@@ -185,7 +185,7 @@ public class MessageCenterFragment extends ListFragment
                 Message messageToInsert = setupMessage(msgFields);
                 long time = extras.getLong(Globals.KEY_MESSAGE_BUNDLE_TIME);
                 int type = extras.getInt(Globals.KEY_MESSAGE_BUNDLE_TYPE);
-                if(!mReceiveMessageType[type]) return;
+               // if(!mReceiveMessageType[type]) return;
                 messageToInsert.setMsgType(type);
                 messageToInsert.setMsgTime(time);
                 messageToInsert.setIsRead(false);
