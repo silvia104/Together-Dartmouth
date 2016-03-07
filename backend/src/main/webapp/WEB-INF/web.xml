@@ -69,7 +69,7 @@
 
     <servlet>
         <servlet-name>Upload</servlet-name>
-        <servlet-class>edu.dartmouth.cs.together.backend.Upload</servlet-class>
+        <servlet-class>edu.dartmouth.cs.together.backend.UploadImgServlet</servlet-class>
     </servlet>
 
     <servlet-mapping>

@@ -22,14 +22,16 @@ public class User {
     public static final String PHOTO_KEY = "photo";
     public static final String RATE_KEY = "rate";
     public static final String DEVICE_KEY = "device";
+    public static final String PHOTO_URL_KEY = "photo_url";
 
 
     private long mId;
     private String mEmail;
     private double mRate;
-    private Blob mPhoto;
+    private String mPhotoKey;
     private String mPassword;
     private String mDeviceId;
+    private String mPhotoUrl = "NA";
 
     public User(){}
 
@@ -41,8 +43,20 @@ public class User {
         mDeviceId = json.getString(DEVICE_KEY);
     }
 
-    public void setPhoto(){
-        //TODO;
+    public void setPhotoKey(String photoKey){
+        mPhotoKey = photoKey;
+    }
+
+    public String getPhotoKey(){
+        return mPhotoKey;
+    }
+
+    public void setPhotoUrl(String url){
+        mPhotoUrl = url;
+    }
+
+    public String getPhotoUrl (){
+        return mPhotoUrl;
     }
     public long getId() {
         return mId;
@@ -79,5 +93,20 @@ public class User {
     }
     public void setDevice(String device){
         mDeviceId = device;
+    }
+
+    public JSONObject userToJson(){
+        JSONObject jsonObject = new JSONObject();
+
+        try {
+            jsonObject.put(User.ID_KEY, mId);
+            jsonObject.put(User.ACCOUNT_KEY, mEmail);
+            jsonObject.put(User.RATE_KEY, mRate);
+            jsonObject.put(User.PHOTO_URL_KEY, mPhotoUrl);
+        } catch (JSONException e){
+            e.printStackTrace();
+        }
+        return jsonObject;
+
     }
 }

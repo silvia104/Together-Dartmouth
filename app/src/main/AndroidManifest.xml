@@ -4,8 +4,8 @@
 
     <uses-feature android:name="android.hardware.camera" />
 
-    <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+   <!--<uses-permission android:name="android.permission.CAMERA" />-->
+   <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use

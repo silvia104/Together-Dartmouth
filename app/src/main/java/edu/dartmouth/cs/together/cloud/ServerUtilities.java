@@ -1,5 +1,7 @@
 package edu.dartmouth.cs.together.cloud;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 
 import java.io.BufferedReader;
@@ -11,6 +13,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -53,7 +56,7 @@ public class ServerUtilities {
         while (iterator.hasNext()) {
             Map.Entry<String, String> param = iterator.next();
             bodyBuilder.append(param.getKey()).append('=')
-                    .append(param.getValue());
+                    .append(URLEncoder.encode(param.getValue(),"UTF-8"));
             if (iterator.hasNext()) {
                 bodyBuilder.append('&');
             }
@@ -123,8 +126,6 @@ public class ServerUtilities {
             conn.setRequestProperty("Cache-Control", "no-cache");
             conn.setRequestProperty(
                     "Content-Type", "multipart/form-data;boundary=" + boundary);
-            conn.setRequestProperty("user_id=",""+userId);
-
             DataOutputStream request;
             request = new DataOutputStream(conn.getOutputStream());
             request.writeBytes(twoHyphens + boundary + crlf);
@@ -155,8 +156,30 @@ public class ServerUtilities {
             if (conn != null) {
                 conn.disconnect();
             }
-            return "";
         }
+    }
+    public static Bitmap postForImg(String urlImage)
+            throws IOException {
+        Bitmap bitmap=null;
+
+        try {
+            // Download the image
+
+            URL url = new URL(urlImage);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setDoInput(true);
+            connection.connect();
+            InputStream is = connection.getInputStream();
+            // Decode image to get smaller image to save memory
+            final BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = false;
+            options.inSampleSize=2;
+            bitmap = BitmapFactory.decodeStream(is,null, options);
+            is.close();
+        } catch(IOException e){
+            e.printStackTrace();
+        }
+        return bitmap;
     }
 
 }

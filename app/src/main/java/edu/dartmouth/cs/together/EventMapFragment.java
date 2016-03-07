@@ -94,7 +94,7 @@ public class EventMapFragment extends Fragment implements OnMapReadyCallback {
             }
         });
 
-        LatLng destination1 = new LatLng(43.7068109, -72.2735297);
+        LatLng destination1 = Globals.DARTMOUTH_GPS;
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(destination1,
                 10));
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {

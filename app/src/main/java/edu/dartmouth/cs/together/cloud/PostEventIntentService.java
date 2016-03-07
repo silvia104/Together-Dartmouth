@@ -83,7 +83,7 @@ public class PostEventIntentService extends BaseIntentSerice {
                         db.deleteEvent(EventDataSource.JOINED_EVENT, eventId);
                         db.deleteEvent(EventDataSource.MY_OWN_EVENT, eventId);
                         Intent i = new Intent(Globals.UPDATE_EVENT_DETAIL);
-                        i.putExtra(Event.ID_KEY, 0L);
+                        i.putExtra(Event.ID_KEY, -1L);
                         sendBroadcast(i);
 
                         //FOR ADAPTER TO UPDATE TODO:

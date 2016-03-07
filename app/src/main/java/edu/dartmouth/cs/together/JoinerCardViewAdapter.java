@@ -1,6 +1,7 @@
 package edu.dartmouth.cs.together;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v7.widget.RecyclerView;
@@ -16,6 +17,7 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import edu.dartmouth.cs.together.data.User;
+import edu.dartmouth.cs.together.utils.Globals;
 import edu.dartmouth.cs.together.utils.Helper;
 
 /**
@@ -24,23 +26,16 @@ import edu.dartmouth.cs.together.utils.Helper;
 public class JoinerCardViewAdapter extends RecyclerView.Adapter<JoinerCardViewAdapter.JoinerCardViewHolder> {
         private final LayoutInflater mLayoutInflater;
         private final Context mContext;
-        private List<String> mNames = new ArrayList<>();
-        private Bitmap bitmap;
+        private List<User> mUsers = new ArrayList<>();
         public JoinerCardViewAdapter(Context context, List<User> userList) {
             mContext = context;
-            for (User user: userList){
-                mNames.add(user.getAccount());
-            }
+            mUsers.addAll(userList);
             mLayoutInflater = LayoutInflater.from(context);
-            bitmap = Helper.getRoundedShape(
-                    BitmapFactory.decodeResource(mContext.getResources(), R.drawable.test));
         }
 
         public void updateAdapter(List<User> userList){
-            mNames.clear();
-            for (User user: userList){
-                mNames.add(user.getAccount());
-            }
+            mUsers.clear();
+            mUsers.addAll(userList);
             notifyDataSetChanged();
         }
         @Override
@@ -51,19 +46,35 @@ public class JoinerCardViewAdapter extends RecyclerView.Adapter<JoinerCardViewAd
         }
 
         @Override
-        public void onBindViewHolder(JoinerCardViewHolder holder, int position) {
-            holder.mTextView.setText(mNames.get(position));
-            holder.mImageView.setImageBitmap(bitmap);
+        public void onBindViewHolder(JoinerCardViewHolder holder, final int position) {
+            holder.mRoot.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    User user = mUsers.get(position);
+                    Intent i = new Intent(mContext, ProfileActivity.class);
+                    i.putExtra(User.ID_KEY, user.getId());
+                    i.putExtra(User.ACCOUNT_KEY,user.getAccount());
+                    i.putExtra(User.NAME_KEY,user.getName());
+                    mContext.startActivity(i);
+                }
+            });
+            holder.mTextView.setText(mUsers.get(position).getName());
+            if (position==0) {
+                holder.mImageView.setImageResource(R.drawable.initiater);
+            } else {
+                holder.mImageView.setImageResource(R.drawable.follower);
+            }
         }
 
         @Override
         public int getItemCount() {
-            return mNames.size();
+            return mUsers.size();
         }
 
         public static class JoinerCardViewHolder extends RecyclerView.ViewHolder {
             @Bind(R.id.imageView) ImageView mImageView;
             @Bind(R.id.textView) TextView mTextView;
+            @Bind(R.id.joinerLayout) View mRoot;
             JoinerCardViewHolder(View view) {
                 super(view);
                 ButterKnife.bind(this, view);

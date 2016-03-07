@@ -23,10 +23,10 @@ import edu.dartmouth.cs.together.data.User;
 import edu.dartmouth.cs.together.utils.Globals;
 
 public class EventDetailActivity extends BaseEventActivity {
-    private long mEventId;
+    private long mEventId=-1;
     private int mEventType;
     private boolean mRefreshed;
-    private Menu mMemu;
+    private boolean mJoined;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,11 +45,9 @@ public class EventDetailActivity extends BaseEventActivity {
         mEventType = i.getIntExtra("TAG", EventDataSource.ALL_EVENT);
         if (mEventId != -1){
             new LoadEventAsyncTask(mEventType).execute(mEventId);
+            setBtmShtBehavior(mEventId);
         } else {
             finish();
-        }
-        if (mEventType == EventDataSource.JOINED_EVENT){
-           mJoinBtn.setVisibility(View.GONE);
         }
 
         mDateReloadReceiver = new BroadcastReceiver() {
@@ -76,6 +74,11 @@ public class EventDetailActivity extends BaseEventActivity {
                         mMenu.add(0, R.id.action_quit, 1, R.string.quit);
                     }
                     mJoinBtn.setVisibility(View.GONE);
+                } else {
+                    if(mMenu.size()>1){
+                        mMenu.removeItem(1);
+                    }
+                    mJoinBtn.setVisibility(View.VISIBLE);
                 }
                 new LoadEventAsyncTask(mEventType).execute(mEventId);
             }
@@ -84,7 +87,6 @@ public class EventDetailActivity extends BaseEventActivity {
             this.registerReceiver(mEventUpdateReceiver,
                     new IntentFilter(Globals.UPDATE_EVENT_DETAIL));
         }
-
     }
 
     @Override
@@ -97,11 +99,16 @@ public class EventDetailActivity extends BaseEventActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         mMenu = menu;
-        if (mEventType==EventDataSource.JOINED_EVENT) {
+        if (mIsJoined) {
             getMenuInflater().inflate(R.menu.quit, menu);
-            return true;
         }
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean("Joined",mIsJoined);
     }
 
     @Override

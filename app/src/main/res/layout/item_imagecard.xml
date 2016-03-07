@@ -19,7 +19,7 @@
             android:layout_width="38dp"
             android:layout_height="38dp"
             android:id="@+id/imageView"
-            android:padding="5dp"
+            android:padding="8dp"
             android:src="@drawable/movie"
             android:background="@drawable/circle_category_icon_background"
             android:scaleType="fitCenter"

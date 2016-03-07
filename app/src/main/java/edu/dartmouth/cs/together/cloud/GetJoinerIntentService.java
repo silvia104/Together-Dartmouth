@@ -29,16 +29,14 @@ public class GetJoinerIntentService extends BaseIntentSerice {
     @Override
     protected void onHandleIntent(Intent intent) {
         Log.d(this.getClass().getName(), "Service started");
-        String action = intent.getStringExtra(Globals.ACTION_KEY);
         long eventId = intent.getLongExtra(Event.ID_KEY, -1);
         String uploadState = "";
         try {
             Map<String, String> params = new HashMap<>();
             params.put(Event.ID_KEY, ""+eventId);
-            params.put("action",action);
             // post add request
             String response = ServerUtilities.post(Globals.SERVER_ADDR + "/getjoiner.do", params);
-            if(response.length()>0) {
+            if(response.contains(":")) {
                 List<User> users = parseJosonArray(response);
                 new UserDataSource(getApplicationContext()).insertUsers(users);
                 for (User u : users) {
@@ -46,6 +44,8 @@ public class GetJoinerIntentService extends BaseIntentSerice {
                             .insertEventJoinerRelation(eventId, u.getId());
                 }
                 sendBroadcast(new Intent(Globals.RELOAD_JOINER_DATA));
+            } else {
+                uploadState = response;
             }
         } catch (Exception e1) {
             uploadState = "Sync failed: " + e1.getMessage();

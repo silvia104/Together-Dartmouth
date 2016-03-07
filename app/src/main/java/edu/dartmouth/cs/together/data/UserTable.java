@@ -5,12 +5,13 @@ package edu.dartmouth.cs.together.data;
  */
 public class UserTable {
     public static final String TABLE_NAME = "users";
-    enum COLUMNS{
+    public enum COLUMNS{
         ID (0,"_idx"," integer primary key autoincrement not null"),
         EMAIL(1,"email"," string not null"),
         RATE(2,"rate"," real"),
-        PHOTO(3,"photo"," blob"),
-        USER_ID(4,"user_id"," integer unique not null");
+        PHOTO_URL(3,"photo_url"," string"),
+        USER_ID(4,"user_id"," integer unique not null"),
+        PHOTO(5,"photo"," blob");
         private final int index;
         private final String colName;
         private final String command;
@@ -27,8 +28,9 @@ public class UserTable {
             return ID.colName + ID.command +", "
                     + EMAIL.colName + EMAIL.command +", "
                     + RATE.colName + RATE.command +", "
-                    + PHOTO.colName + PHOTO.command + ", "
-                    + USER_ID.colName + USER_ID.command;
+                    + PHOTO_URL.colName + PHOTO_URL.command + ", "
+                    + USER_ID.colName + USER_ID.command +", "
+                    + PHOTO.colName() + PHOTO.command;
         }
     }
     public static final String TABLE_CREATE_COMMAND = "create table "

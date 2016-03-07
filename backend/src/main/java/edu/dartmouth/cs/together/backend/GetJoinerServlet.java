@@ -1,5 +1,6 @@
 package edu.dartmouth.cs.together.backend;
 
+import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.labs.repackaged.org.json.JSONArray;
 import com.google.appengine.labs.repackaged.org.json.JSONException;
 import com.google.appengine.labs.repackaged.org.json.JSONObject;
@@ -30,26 +31,23 @@ public class GetJoinerServlet extends HttpServlet {
         List<Long> userIds = EventJoinerDataSource.entitiesToUserId(
                 EventJoinerDataSource.queryByEventId(eventId));
         //add owner to the top of the list;
-        userIds.add(0,(Long)EventDataSource.queryById(eventId).getProperty(Event.OWNER_KEY));
-        List<User> userList = UserDataSource.queryByIdList(userIds);
-        try {
+        Entity entity = EventDataSource.queryById(eventId);
+        PrintWriter out = resp.getWriter();
+
+        if (entity!=null) {
+            userIds.add(0, (Long)entity.getProperty(Event.OWNER_KEY));
+            List<User> userList = UserDataSource.queryByIdList(userIds);
             JSONArray userJsonArray = new JSONArray();
             for (User user : userList) {
-                JSONObject jsonObject = new JSONObject();
-                jsonObject.put(User.ID_KEY, user.getId());
-                jsonObject.put(User.ACCOUNT_KEY, user.getAccount());
-                jsonObject.put(User.RATE_KEY, user.getRate());
-                //photo?
-                userJsonArray.put(jsonObject);
+                userJsonArray.put(user.userToJson());
             }
             resp.setContentType("application/json");
             resp.setCharacterEncoding("UTF-8");
-            PrintWriter out = resp.getWriter();
             out.print(userJsonArray.toString());
-            out.flush();
-        }catch (JSONException e){
-            e.printStackTrace();
+        } else {
+            out.print("Event no loner exists!");
         }
+        out.flush();
 
     }
 

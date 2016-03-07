@@ -39,7 +39,6 @@ public class NewUserServlet extends HttpServlet {
         String action = req.getParameter("action");
         String email = req.getParameter("mail");
         try {
-
             if (action.equals("code")) {
                 PrintWriter out = resp.getWriter();
                 if (UserDataSource.queryByAccount(email) == null) {
@@ -53,18 +52,15 @@ public class NewUserServlet extends HttpServlet {
                 String jsonString = req.getParameter("json");
                 JSONObject jsonObject = new JSONObject(jsonString);
                 User user = new User(jsonObject);
+                PrintWriter out = resp.getWriter();
+
                 boolean ret = UserDataSource.add(user);
                 if (!ret) {
-                    PrintWriter out = resp.getWriter();
                     out.print("user exists!");
-                    out.flush();
+                } else {
+                    out.print(user.userToJson().toString());
                 }
-                /*
-                    MessagingEndpoint msg = new MessagingEndpoint();
-                    List<String> deviceList = new ArrayList<>();
-                    deviceList.add(user.getDevice());
-                    msg.sendMessage(deviceList, "New User Added:" + ret);
-                */
+                out.flush();
             } else if (action.equals(Globals.ACTION_UPDATE)) {
                 String jsonString = req.getParameter("json");
                 JSONObject jsonObject = new JSONObject(jsonString);
@@ -82,20 +78,20 @@ public class NewUserServlet extends HttpServlet {
                 JSONObject jsonObject = new JSONObject(jsonString);
                 User user = new User(jsonObject);
                 Entity entity = UserDataSource.queryByAccount(user.getAccount());
+                PrintWriter out = resp.getWriter();
                 if (entity!=null){
-                    if (user.getPassword().equals(
-                            (String) entity.getProperty(User.PASSWORD_KEY))){
+                    user.setPhotoUrl((String)entity.getProperty(User.PHOTO_URL_KEY));
+                    if (user.getPassword().equals((String)entity.getProperty(User.PASSWORD_KEY))){
                         UserDataSource.add(user);
+                        out.print(user.userToJson().toString());
                     } else {
-                        PrintWriter out = resp.getWriter();
                         out.print("wrong password");
-                        out.flush();
                     }
                 } else {
-                    PrintWriter out = resp.getWriter();
                     out.print("user not found!");
-                    out.flush();
                 }
+                out.flush();
+
             }
         } catch (JSONException e) {
             log.warning(e.toString());

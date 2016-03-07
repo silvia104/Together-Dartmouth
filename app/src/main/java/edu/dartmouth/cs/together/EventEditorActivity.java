@@ -40,6 +40,7 @@ import com.google.android.gms.maps.model.LatLng;
 
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
@@ -61,7 +62,7 @@ public class EventEditorActivity extends BaseEventActivity implements DatePicker
     private int PLACE_PICKER_REQUEST = 1;
     private Calendar mNow = Calendar.getInstance();
     private Calendar mTime = Calendar.getInstance();
-    private long mEventId;
+    private long mEventId=-1;
 
     private boolean mRefreshed = false;
     @Override
@@ -80,8 +81,8 @@ public class EventEditorActivity extends BaseEventActivity implements DatePicker
         if (mEventId != -1){
             new LoadEventAsyncTask(EventDataSource.MY_OWN_EVENT).execute(mEventId);
         }
-        double lat = i.getDoubleExtra(Globals.MAP_LONGITUDE,0);
-        double lng = i.getDoubleExtra(Globals.MAP_LATITUDE,0);
+        double lat = i.getDoubleExtra(Globals.MAP_LATITUDE,0);
+        double lng = i.getDoubleExtra(Globals.MAP_LONGITUDE,0);
         if (lat!=0 && lng != 0){
             mLatLng = new LatLng(lat,lng);
             mLocationTv.setText(mLatLng.toString());
@@ -106,6 +107,7 @@ public class EventEditorActivity extends BaseEventActivity implements DatePicker
             mEvent = new Event();
             mFab.hide();
         }
+        setBtmShtBehavior(mEventId);
 
         mDateReloadReceiver = new BroadcastReceiver() {
             @Override
@@ -122,7 +124,7 @@ public class EventEditorActivity extends BaseEventActivity implements DatePicker
             @Override
             public void onReceive(Context context, Intent intent) {
                 long id = intent.getLongExtra(Event.ID_KEY, mEventId);
-                if (id == 0L) {
+                if (id == -1L) {
                     finish();
                     return;
                 }
@@ -185,6 +187,7 @@ public class EventEditorActivity extends BaseEventActivity implements DatePicker
         }
         outState.putInt(LIMIT_KEY, mLimitNum);
         outState.putString(DURATION_KEY, mDuration.getText().toString());
+        outState.putLong(Event.ID_KEY, mEventId);
         super.onSaveInstanceState(outState);
     }
 
@@ -223,7 +226,7 @@ public class EventEditorActivity extends BaseEventActivity implements DatePicker
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (Globals.currentUser.getId()==mEvent.getOwner()) {
+        if (mEvent !=null &&Globals.currentUser.getId()==mEvent.getOwner()) {
             getMenuInflater().inflate(R.menu.cancelevent, menu);
             super.onCreateOptionsMenu(menu);
         }
@@ -322,6 +325,7 @@ public class EventEditorActivity extends BaseEventActivity implements DatePicker
         mLimitNum = state.getInt(LIMIT_KEY,0);
         mLimitCount.setText(LIMIT_PREFIX+mLimitNum);
         mDuration.setText(state.getString(DURATION_KEY));
+        mEventId = state.getLong(Event.ID_KEY,-1);
     }
 
     private void setLimit() {
@@ -377,13 +381,9 @@ public class EventEditorActivity extends BaseEventActivity implements DatePicker
     private void setCategories() {
         mCategoryRecView.setLayoutManager(new GridLayoutManager(this, 5));
         mCategoryRecView.setHasFixedSize(true);
-        List<Integer> categoryIconList = new ArrayList<>();
-        for (int i = 0; i < Globals.categories.size(); i++) {
-            categoryIconList.add(R.drawable.movie);
-        }
+        List<Integer> categoryIconList = Arrays.asList(Globals.categoriIcons);
         mCategoryRecView.setAdapter(new CategoryAdapter(this, categoryIconList, R.layout.item_imagecard));
     }
-
 
     @Override
     public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {

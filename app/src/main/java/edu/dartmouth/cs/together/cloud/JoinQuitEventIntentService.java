@@ -52,9 +52,10 @@ public class JoinQuitEventIntentService extends BaseIntentSerice {
                     db.deleteEvent(EventDataSource.JOINED_EVENT, eventId);
                     showToast("Event is cancelled!");
                 } else {
+                    Intent i = new Intent(Globals.UPDATE_EVENT_DETAIL);
+
                     if (action.equals(Globals.ACTION_JOIN)) {
                         db.insertEventJoinerRelation(eventId, joinerId);
-                        Intent i = new Intent(Globals.UPDATE_EVENT_DETAIL);
                         i.putExtra(Globals.ACTION_JOIN, true);
                         if (resp.length() == 0) {
                             showToast("Already Joined!");
@@ -67,11 +68,20 @@ public class JoinQuitEventIntentService extends BaseIntentSerice {
                             db.insertEvent(EventDataSource.JOINED_EVENT, event);
                             i.putExtra(Event.ID_KEY, eventId);
                         }
-                        sendBroadcast(i);
                     } else if (action.equals(Globals.ACTION_QUIT)) {
-                        db.deleteEventJoinerRelation(eventId, joinerId);
-                        db.deleteEvent(EventDataSource.JOINED_EVENT, eventId);
+                        if (resp.length() == 0) {
+                            showToast("Already Joined!");
+                        } else {
+                            i.putExtra(Globals.ACTION_JOIN, false);
+                            int newCount = Integer.parseInt(resp.trim());
+                            ContentValues values = new ContentValues();
+                            values.put(BaseEventTable.COLUMNS.JOINER_COUNT.colName(), newCount);
+                            db.updateEvent(EventDataSource.ALL_EVENT, eventId, values);
+                            db.deleteEventJoinerRelation(eventId, joinerId);
+                            db.deleteEvent(EventDataSource.JOINED_EVENT, eventId);
+                        }
                     }
+                    sendBroadcast(i);
                 }
 
             } catch (Exception e1) {
