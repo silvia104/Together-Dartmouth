@@ -22,6 +22,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import edu.dartmouth.cs.together.cloud.GcmRegisterIntentService;
@@ -57,10 +58,13 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        setGlobalsBySharedPref();
+
         isListFragment=true;
 
         filterTime=Globals.FILTER_TIME;
         filterDist=Globals.FILTER_DISTANCE;
+        CateFilter=Globals.FILTER_INTEREST;
 
         if (savedInstanceState != null) {
             isListFragment = savedInstanceState
@@ -194,6 +198,23 @@ public class MainActivity extends AppCompatActivity
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void setGlobalsBySharedPref(){
+        SharedPreferences sharedPreferences = getSharedPreferences(getPackageName(), MODE_PRIVATE);
+        //set up filter preference
+        if(Globals.FILTER_TIME == -1){
+            Globals.FILTER_TIME = sharedPreferences.getInt(Globals.KEY_TIME_RANGE, 14);
+        }
+        if(Globals.FILTER_DISTANCE == -1){
+            Globals.FILTER_DISTANCE = sharedPreferences.getInt(Globals.KEY_DISTANCE_RANGE, 50);
+        }
+        if(Globals.FILTER_INTEREST == null){
+            Globals.FILTER_INTEREST = new ArrayList<>();
+            for(int i = 0 ; i< Globals.categories.size();i++){
+                Globals.FILTER_INTEREST.add(i);
+            }
+        }
     }
 
     @Override

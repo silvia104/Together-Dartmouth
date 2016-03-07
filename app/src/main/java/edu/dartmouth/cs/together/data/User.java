@@ -23,7 +23,7 @@ public class User {
 
     String mEmail;
     String mName;
-    double mRate;
+    String mRate;
     String mPhotoUrl;
     Bitmap mPhoto;
     String mPassword;
@@ -39,7 +39,7 @@ public class User {
         try {
             mUserID = json.getLong(User.ID_KEY);
             mEmail = json.getString(User.ACCOUNT_KEY);
-            mRate = json.getDouble(User.RATE_KEY);
+            mRate = json.getString(User.RATE_KEY);
             mPhotoUrl = json.getString(User.PHOTO_URL_KEY);
         }catch (JSONException e){
             e.printStackTrace();
@@ -67,7 +67,7 @@ public class User {
         mPassword = password;
     }
 
-    public void setRate(double i) {
+    public void setRate(String i) {
         mRate = i;
     }
 
@@ -77,7 +77,7 @@ public class User {
     public String getPassword(){
         return mPassword;
     }
-    public double getRate(){
+    public String getRate(){
         return mRate;
     }
 

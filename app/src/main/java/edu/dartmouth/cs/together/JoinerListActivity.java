@@ -84,7 +84,7 @@ public class JoinerListActivity extends BasePopoutActivity implements
         mAdapter.updateAdapter(mJoiners);
         mProgress.setVisibility(View.GONE);
         mJoinerRecVew.setVisibility(View.VISIBLE);
-        if (data.size() == 0 || !mRefreshed){
+        if (data.size() == 0 && !mRefreshed){
             downloadJoiners();
         }
     }
