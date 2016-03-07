@@ -35,6 +35,7 @@ public class JoinerListActivity extends BasePopoutActivity implements
     private JoinerCardViewAdapter mAdapter;
     private boolean mRefreshed = false;
     private long mOwnerId;
+    private int cateIdx;
 
 
     @Override
@@ -45,10 +46,11 @@ public class JoinerListActivity extends BasePopoutActivity implements
         Intent i = getIntent();
         mEventId = i.getLongExtra(Event.ID_KEY,-1);
         mOwnerId = i.getLongExtra(User.ID_KEY,-1);
+        cateIdx = i.getIntExtra("cate", 0);
         mJoinerRecVew.setVisibility(View.GONE);
         mProgress.setVisibility(View.VISIBLE);
         mJoinerRecVew.setHasFixedSize(true);
-        mAdapter = new JoinerCardViewAdapter(this,mJoiners);
+        mAdapter = new JoinerCardViewAdapter(this,mJoiners,cateIdx);
         mJoinerRecVew.setLayoutManager(new LinearLayoutManager(this));
 
         mJoinerRecVew.setAdapter(mAdapter);

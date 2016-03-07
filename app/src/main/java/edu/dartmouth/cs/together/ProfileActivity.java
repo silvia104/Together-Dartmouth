@@ -16,6 +16,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,6 +48,8 @@ public class ProfileActivity extends AppCompatActivity {
     public static final int REQUEST_CODE_TAKE_FROM_CAMERA = 0;
     public static final int REQUEST_CODE_SELECT_FROM_GALLERY = 1;
     private static final String CAMERA_CLICKED_KEY = "cameraClicked";
+    private static Float ratestar;
+    private static int cateIdx;
 
     private long mUserId ;
     private String mUserEmail;
@@ -59,6 +62,7 @@ public class ProfileActivity extends AppCompatActivity {
         setContentView(R.layout.activity_profile);
         mProfileImageView = (CircleImageView) findViewById(R.id.profile_image);
         mProfileImageView.setImageResource(R.drawable.default_profile_pic);
+        RatingBar Rating = (RatingBar)findViewById(R.id.ratingbar);
         Intent i = getIntent();
         mUserId = i.getLongExtra(User.ID_KEY, Globals.currentUser.getId());
 
@@ -90,6 +94,9 @@ public class ProfileActivity extends AppCompatActivity {
              findViewById(R.id.profile_save_button).setVisibility(View.GONE);
              findViewById(R.id.profile_cancel_button).setVisibility(View.GONE);
          }
+        ratestar = i.getFloatExtra(User.RATE_KEY, 0);
+        cateIdx=i.getIntExtra("rate",0);
+        Rating.setRating(ratestar);
         mName = (TextView) findViewById(R.id.profile_name);
         mName.setText(mUserName);
         mEmail = (TextView) findViewById(R.id.profile_email);

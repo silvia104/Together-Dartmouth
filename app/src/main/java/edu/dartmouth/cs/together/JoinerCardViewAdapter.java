@@ -26,9 +26,11 @@ import edu.dartmouth.cs.together.utils.Helper;
 public class JoinerCardViewAdapter extends RecyclerView.Adapter<JoinerCardViewAdapter.JoinerCardViewHolder> {
         private final LayoutInflater mLayoutInflater;
         private final Context mContext;
+        private final int midx;
         private List<User> mUsers = new ArrayList<>();
-        public JoinerCardViewAdapter(Context context, List<User> userList) {
+        public JoinerCardViewAdapter(Context context, List<User> userList, int idx) {
             mContext = context;
+            midx=idx;
             mUsers.addAll(userList);
             mLayoutInflater = LayoutInflater.from(context);
         }
@@ -55,6 +57,8 @@ public class JoinerCardViewAdapter extends RecyclerView.Adapter<JoinerCardViewAd
                     i.putExtra(User.ID_KEY, user.getId());
                     i.putExtra(User.ACCOUNT_KEY,user.getAccount());
                     i.putExtra(User.NAME_KEY,user.getName());
+                    i.putExtra(User.RATE_KEY,getrate(user, midx));
+                    i.putExtra("cate",midx);
                     mContext.startActivity(i);
                 }
             });
@@ -65,6 +69,20 @@ public class JoinerCardViewAdapter extends RecyclerView.Adapter<JoinerCardViewAd
                 holder.mImageView.setImageResource(R.drawable.follower);
             }
         }
+
+    public float getrate(User user, int index){
+        String rate = user.getRate();
+        String s[] = rate.split(",");
+        List<Integer>number=new ArrayList<Integer>();
+        List<Float>ratenum=new ArrayList<Float>();
+        for(int i=0;i<s.length/2;i++){
+            number.add(Integer.parseInt(s[i]));
+        }
+        for(int i=s.length/2;i<s.length;i++){
+            ratenum.add(Float.parseFloat(s[i]));
+        }
+        return ratenum.get(index);
+    }
 
         @Override
         public int getItemCount() {

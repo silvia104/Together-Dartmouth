@@ -175,6 +175,7 @@ public class BaseEventActivity extends BasePopoutActivity implements
     public void onFabClick() {
         Intent i = new Intent(this, JoinerListActivity.class);
         if (mEvent != null) {
+            i.putExtra("cate",mEvent.getCategoryIdx());
             i.putExtra(Event.ID_KEY, mEvent.getEventId());
             i.putExtra(User.ID_KEY, mEvent.getOwner());
         }
