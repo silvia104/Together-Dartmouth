@@ -161,13 +161,16 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    protected void onDestroy(){
-        super.onDestroy();
+    @Override
+    protected void onPause(){
+        super.onPause();
         SharedPreferences sharedPrefs = getSharedPreferences(getPackageName(), MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPrefs.edit();
         //the first time load value is false util the app is launched a second time
-        editor.putBoolean(Globals.FIRST_LOAD_ALL_EVENTS_KEY, false);
-        editor.commit();
+        if(sharedPrefs.getBoolean(Globals.FIRST_LOAD_ALL_EVENTS_KEY,false)) {
+            editor.putBoolean(Globals.FIRST_LOAD_ALL_EVENTS_KEY, false);
+            editor.commit();
+        }
     }
 
     @Override

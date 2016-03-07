@@ -55,11 +55,11 @@ public android.view.View getView(int position, View convertView, ViewGroup paren
                          final long id=getid(t);
                          i.putExtra(Event.ID_KEY,id);
                          i.putExtra("TAG", intentType);
-                         context.startActivity(i);
+                         i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                         v.getContext().startActivity(i);
                         }
-                }
-        );
-}
+                });
+        }
 
         // The ListItemLayout must use the standard text item IDs.
         TextView lineOneView = (TextView)listItemView.findViewById(
@@ -77,7 +77,6 @@ public android.view.View getView(int position, View convertView, ViewGroup paren
         T t = (T)getItem(position);
         final long id=getid(t);
 
-
         imgView=(ImageView)listItemView.findViewById(
                 R.id.imageView2);
         /*imgView.setOnClickListener(new View.OnClickListener() {
@@ -91,13 +90,8 @@ public android.view.View getView(int position, View convertView, ViewGroup paren
                         i.putExtra(Event.ID_KEY,id);
                         i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         v.getContext().startActivity(i);
-
                 }
         });*/
-
-
-
-
         lineOneView.setText(lineOneText(t));
         lineTwoView.setText(lineTwoText(t));
         lineTreView.setText(lineTreText(t));

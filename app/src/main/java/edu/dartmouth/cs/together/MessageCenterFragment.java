@@ -1,6 +1,8 @@
 package edu.dartmouth.cs.together;
 
 
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -12,8 +14,10 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
+import android.support.v7.preference.SwitchPreferenceCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,7 +48,7 @@ public class MessageCenterFragment extends ListFragment
     private static MessageDataSource mDB;
     private SharedPreferences mSharedPreference;
     private boolean[] mReceiveMessageType = new boolean[6];
-
+    Notification mNotification;
 
     public MessageCenterFragment() {
             // Required empty public constructor
@@ -185,11 +189,22 @@ public class MessageCenterFragment extends ListFragment
                 Message messageToInsert = setupMessage(msgFields);
                 long time = extras.getLong(Globals.KEY_MESSAGE_BUNDLE_TIME);
                 int type = extras.getInt(Globals.KEY_MESSAGE_BUNDLE_TYPE);
-                if(!mReceiveMessageType[type]) return;
+//                if(!mReceiveMessageType[type]) return;
+
                 messageToInsert.setMsgType(type);
                 messageToInsert.setMsgTime(time);
                 messageToInsert.setIsRead(false);
                 InsertNewMessage insertNewMessage = new InsertNewMessage();
+                NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(mContext)
+                        .setSmallIcon(R.drawable.ic_menu_messages)
+                        .setContentTitle("Together: New Message")
+                        .setAutoCancel(true)
+                        .setContentText(messageToInsert.getMsgContent());
+                NotificationManager notiManager = (NotificationManager) mContext.
+                        getSystemService(Context.NOTIFICATION_SERVICE);
+                notiManager.notify(0, mNotification);
+
+
                 insertNewMessage.doInBackground(messageToInsert);
             }
         }
