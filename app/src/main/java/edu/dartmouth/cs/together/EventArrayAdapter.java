@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import java.util.List;
 import edu.dartmouth.cs.together.data.Event;
+import edu.dartmouth.cs.together.data.EventDataSource;
 
 /**
  * Created by di on 2/27/2016.
@@ -20,36 +21,45 @@ public abstract class EventArrayAdapter<T> extends ArrayAdapter<T> {
 private int mListItemLayoutResId;
         Context context;
         ImageView imgView;
-public EventArrayAdapter(Context context, List<T> ts) {
-        this(context, R.layout.event_list, ts);
+        int intentType;
+        int itemPosition;
+
+public EventArrayAdapter(Context context, List<T> ts, int intentType) {
+        this(context, R.layout.event_list, ts,intentType );
         }
 
-public EventArrayAdapter(
-        Context context,
-        int listItemLayoutResourceId,
-        List<T> ts) {
+public EventArrayAdapter(Context context, int listItemLayoutResourceId, List<T> ts, int intentType) {
         super(context, listItemLayoutResourceId, ts);
         this.context=context;
         mListItemLayoutResId = listItemLayoutResourceId;
-        }
+        this.intentType = intentType;
+
+}
 
 @Override
-public android.view.View getView(
-        int position,
-        View convertView,
-        ViewGroup parent) {
+public android.view.View getView(int position, View convertView, ViewGroup parent) {
 
 
         LayoutInflater inflater = (LayoutInflater)getContext()
         .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         View listItemView = convertView;
+        this.itemPosition = position;
         if (null == convertView) {
-        listItemView = inflater.inflate(
-        mListItemLayoutResId,
-        parent,
-        false);
-        }
+        listItemView = inflater.inflate(mListItemLayoutResId, parent, false);
+        listItemView.setOnClickListener( new View.OnClickListener(){
+                 @Override
+                 public void onClick(View v) {
+                         Intent i = new Intent(getContext(),EventEditorActivity.class);
+                         T t = (T)getItem(itemPosition);
+                         final long id=getid(t);
+                         i.putExtra(Event.ID_KEY,id);
+                         i.putExtra("TAG", intentType);
+                         context.startActivity(i);
+                        }
+                }
+        );
+}
 
         // The ListItemLayout must use the standard text item IDs.
         TextView lineOneView = (TextView)listItemView.findViewById(
@@ -66,9 +76,11 @@ public android.view.View getView(
         R.id.etext6);
         T t = (T)getItem(position);
         final long id=getid(t);
+
+
         imgView=(ImageView)listItemView.findViewById(
                 R.id.imageView2);
-        imgView.setOnClickListener(new View.OnClickListener() {
+        /*imgView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                         // you just put your Logic here And use this custom adapter to
@@ -81,7 +93,9 @@ public android.view.View getView(
                         v.getContext().startActivity(i);
 
                 }
-        });
+        });*/
+
+
 
 
         lineOneView.setText(lineOneText(t));
@@ -92,7 +106,7 @@ public android.view.View getView(
         lineSixView.setText(lineSixText(t));
 
         return listItemView;
-        }
+}
 
 public abstract long getid(T t);
 
