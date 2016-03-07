@@ -12,25 +12,24 @@
     android:clickable="true"
     android:id="@+id/nav_header"
     android:theme="@style/ThemeOverlay.AppCompat.Dark">
-
+<!--
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
-        android:src="@android:drawable/sym_def_app_icon" />
+        android:src="@android:drawable/sym_def_app_icon" />-->
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
-        android:text="Android Studio"
+        android:id="@+id/user_name_nav_header"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
-    <TextView
-        android:id="@+id/textView"
+   <!-- <TextView
+        android:id="@+id/user_mail_header"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="android.studio@android.com" />
+        android:layout_height="wrap_content" />-->
 
 </LinearLayout>
