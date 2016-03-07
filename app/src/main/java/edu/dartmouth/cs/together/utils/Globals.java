@@ -43,6 +43,7 @@ public class Globals {
 
     public static String SERVER_ADDR = "http://10.31.34.68:8080";
     //public static String SERVER_ADDR = "https://together-1234.appspot.com";
+
     public static String DEVICE_ID;
     public static User currentUser;
     public static final String ACTION_ADD = "add";
@@ -58,6 +59,14 @@ public class Globals {
     public static String[] timeRanges = new String[]{
             "Any Time", "Today", "In 3 Days", "In 1 Week", "In 2 Weeks"
     };
+
+    public static int[] timeRangesInteger = new int[]{
+            14, 0, 3, 7, 14
+    };
+
+    public static int FILTER_TIME = -1;
+    public static int FILTER_DISTANCE = -1;
+    public static ArrayList<Integer> FILTER_INTEREST = null;
 
 
     //name of shared preference file

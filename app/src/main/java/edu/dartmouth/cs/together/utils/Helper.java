@@ -119,4 +119,8 @@ public class Helper {
         }
     }
 
+    public static int MileToMeters(int miles){
+        return (int) (miles * 1609.344);
+    }
+
 }

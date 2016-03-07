@@ -9,8 +9,6 @@
         android:layout_height="wrap_content"
         android:id="@+id/android:list"
         android:fastScrollEnabled="true">
-
-
     </ListView>
     <!--android.support.v7.widget.RecyclerView
         android:id="@+id/message_recycler_view"

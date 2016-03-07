@@ -1,5 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <PreferenceCategory
+        android:key = "pref_key_preference"
+        android:title = "Preference">
+        <Preference
+            android:key = "default_filter"
+            android:title= "Default Filter"
+            android:summary="Set Default Time/Distance Range and Interest Category">
+            <intent android:action="android.intent.action.VIEW"
+                android:targetPackage="edu.dartmouth.cs.together"
+                android:targetClass="edu.dartmouth.cs.together.FilterActivity" />
+        </Preference>
+
+    </PreferenceCategory>
+
+
+
     <PreferenceCategory
         android:title="Notification"
         android:key = "pref_key_notification">
@@ -29,6 +47,7 @@
         />
     </PreferenceCategory>
 
+<<<<<<< HEAD
     <PreferenceCategory
         android:key = "pref_key_preference"
         android:title = "Preference">
@@ -43,6 +62,9 @@
 
 
     </PreferenceCategory>
+=======
+
+>>>>>>> origin/test
 
 
     <PreferenceCategory
@@ -57,6 +79,12 @@
                 android:targetClass="edu.dartmouth.cs.together.ProfileActivity"/>
         </Preference>
 
+<<<<<<< HEAD
+=======
+
+
+
+>>>>>>> origin/test
     </PreferenceCategory>
 
 

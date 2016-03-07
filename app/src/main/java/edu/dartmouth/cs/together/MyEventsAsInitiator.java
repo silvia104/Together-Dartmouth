@@ -76,6 +76,15 @@ public class MyEventsAsInitiator extends ListFragment implements
     }
 
 
+//    @Override
+//    public void setUserVisibleHint(boolean isVisible){
+//        super.setUserVisibleHint(isVisible);
+//        if(isVisible){
+//            mInitiatedEventsList.clear();
+//            mAdapter.notifyDataSetChanged();
+//            getLoaderManager().initLoader(0, null, this).forceLoad();
+//        }
+//    }
 
     @Override
     public void onLoaderReset(Loader<List<Event>> loader) {
