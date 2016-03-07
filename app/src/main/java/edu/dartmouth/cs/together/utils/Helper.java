@@ -1,10 +1,13 @@
 package edu.dartmouth.cs.together.utils;
 
+import android.app.Activity;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Path;
 import android.graphics.Rect;
+import android.support.v4.app.ActivityCompat;
 import android.text.SpannableString;
 import android.text.style.UnderlineSpan;
 
@@ -20,6 +23,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
+
+import edu.dartmouth.cs.together.Manifest;
 
 /**
  * Created by TuanMacAir on 2/27/16.
@@ -91,6 +96,27 @@ public class Helper {
 
     public static long intToUnsignedLong(int i){
       return   0x00000000FFFFFFFFl & (long) i;
+    }
+    private static final int REQUEST_EXTERNAL_STORAGE = 1;
+    private static String[] PERMISSIONS_STORAGE = {
+            "android.permission.READ_EXTERNAL_STORAGE"
+    };
+    private static String[] PERMISSIONS_CAMERA = {
+            "android.permission.CAMERA"
+    };
+
+    public static void verifyStoragePermissions(Activity activity) {
+        // Check if we have write permission
+        int permission = ActivityCompat.checkSelfPermission(activity,"android.permission.READ_EXTERNAL_STORAGE" );
+
+        if (permission != PackageManager.PERMISSION_GRANTED) {
+            // We don't have permission so prompt the user
+            ActivityCompat.requestPermissions(
+                    activity,
+                    PERMISSIONS_STORAGE,
+                    REQUEST_EXTERNAL_STORAGE
+            );
+        }
     }
 
 }

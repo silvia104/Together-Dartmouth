@@ -1,8 +1,13 @@
 package edu.dartmouth.cs.together.cloud;
 
+import android.content.ContentValues;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 
@@ -11,7 +16,9 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import edu.dartmouth.cs.together.R;
+import edu.dartmouth.cs.together.data.User;
+import edu.dartmouth.cs.together.data.UserDataSource;
+import edu.dartmouth.cs.together.data.UserTable;
 import edu.dartmouth.cs.together.utils.Globals;
 
 /**
@@ -27,14 +34,24 @@ public class UploadPicIntentService extends BaseIntentSerice {
     protected void onHandleIntent(Intent intent) {
         super.onHandleIntent(intent);
         try {
-            String res = getUrl(Globals.SERVER_ADDR, Globals.currentUser.getId());
-            uploadImage(res,Globals.currentUser.getId());
-        } catch (IOException e) {
+            String res = getUrl(Globals.currentUser.getId());
+            String json = uploadImage(res,Globals.currentUser.getId());
+            if (json.length()>0){
+                String photoUrl = new JSONObject(json).getString(User.PHOTO_URL_KEY);
+                Globals.currentUser.setPhotoUrl(photoUrl);
+                ContentValues values = new ContentValues();
+                values.put(UserTable.COLUMNS.PHOTO_URL.colName(), photoUrl);
+                new UserDataSource(getApplicationContext()).updateUser(Globals.currentUser.getId(),
+                       values);
+            }
+        } catch (JSONException e){
+            e.printStackTrace();
+        }catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public String getUrl(String endpoint, long userId)  throws IOException {
+    public String getUrl(long userId)  throws IOException {
         Map<String, String> params = new HashMap<>();
         params.put("myFile", userId+".jpg");
         String res = ServerUtilities.post(Globals.SERVER_ADDR + "/geturl", params);
@@ -48,7 +65,7 @@ public class UploadPicIntentService extends BaseIntentSerice {
     public String uploadImage(String uploadUrl, long userId) throws IOException{
         if (uploadUrl.length() == 0) return "";
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-        Bitmap bitMap = BitmapFactory.decodeResource(getResources(), R.drawable.default_profile_pic);
+        Bitmap bitMap = BitmapFactory.decodeFile(getFileStreamPath("profile_photo.png").getPath());
 
         bitMap.compress(Bitmap.CompressFormat.JPEG, 100, outStream);
         outStream.flush();

@@ -5,10 +5,13 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -116,9 +119,7 @@ public class UserDataSource {
         user.setId(cursor.getLong(UserTable.COLUMNS.USER_ID.index()));
         user.setAccount(cursor.getString(UserTable.COLUMNS.EMAIL.index()));
         user.setRate(cursor.getDouble(UserTable.COLUMNS.RATE.index()));
-
-        //TODO: user photo
-
+        user.setPhotoUrl(cursor.getString(UserTable.COLUMNS.PHOTO_URL.index()));
         return user;
     }
 
@@ -126,7 +127,7 @@ public class UserDataSource {
         ContentValues values = new ContentValues();
         values.put(UserTable.COLUMNS.USER_ID.colName(), user.getId());
         values.put(UserTable.COLUMNS.EMAIL.colName(), user.getAccount());
-        //TODO: user photo
+        values.put(UserTable.COLUMNS.PHOTO_URL.colName(), user.getPhotoUrl());
         return values;
     }
 
@@ -158,5 +159,105 @@ public class UserDataSource {
 
         return result;
     }
+    public long insertBitmap(Bitmap bm, long userId)  {
+        open();
+        // Convert the image into byte array
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
 
+        bm.compress(Bitmap.CompressFormat.PNG, 100, out);
+
+        byte[] buffer=out.toByteArray();
+        // Open the database for writing
+
+        // Start the transaction.
+        mDB.beginTransaction();
+        ContentValues values;
+        long i=0;
+
+        /*
+        Write Code to actually insert the data, and return the id.
+         */
+        try{
+            values = new ContentValues();
+            values.put(UserTable.COLUMNS.PHOTO.colName(), buffer);
+            i = mDB.update(UserTable.TABLE_NAME, values, UserTable.COLUMNS.USER_ID + "="
+                    + userId, null);
+            // return the row ID of the newly added row.
+            mDB.setTransactionSuccessful();
+
+        }catch (SQLiteException e){
+            e.printStackTrace();
+        }finally
+        {
+            mDB.endTransaction();
+            // End the transaction.
+           // mDB.close();
+            // Close database
+        }
+        return i;
+    }
+
+    public Bitmap getBitmap(long id){
+        Bitmap bitmap = null;
+        // Open the database for reading
+        // Start the transaction.
+        mDB.beginTransaction();
+        Cursor cursor = null;
+        try
+        {
+            String selectQuery = "SELECT * FROM "+ UserTable.TABLE_NAME+" WHERE "+
+                    UserTable.COLUMNS.USER_ID.colName() +" = " + id;
+             cursor = mDB.rawQuery(selectQuery, null);
+            if(cursor.getCount() >0)
+            {
+                cursor.moveToNext();
+                // Convert blob data to byte array
+                byte[] blob = cursor.getBlob((UserTable.COLUMNS.PHOTO.index()));
+                // Convert the byte array to Bitmap
+                if (blob==null){
+                    return null;
+                }
+                bitmap= BitmapFactory.decodeByteArray(blob, 0, blob.length);
+
+            }
+            mDB.setTransactionSuccessful();
+        }
+        catch (SQLiteException e)
+        {
+            e.printStackTrace();
+
+        }
+        finally
+        {
+            mDB.endTransaction();
+            // End the transaction.
+            if (cursor!=null) {
+                cursor.close();
+            }
+        }
+        return bitmap;
+
+    }
+
+    public boolean queryJoiner(long eventId, long userid) {
+        open();
+        Cursor cursor=null;
+        try {
+            String selectQuery = "SELECT * FROM " + EventJoinerTable.TABLE_NAME + " WHERE " +
+                    EventJoinerTable.COLUMNS.JOINER_ID.colName() + " = " + userid + " AND "
+                    + EventJoinerTable.COLUMNS.EVENT_ID.colName() + "=" + eventId;
+             cursor = mDB.rawQuery(selectQuery, null);
+            if (cursor.getCount() > 0) {
+
+                return true;
+            }
+        }catch (SQLiteException e){
+            e.printStackTrace();
+        }finally {
+            if (cursor!=null){
+                cursor.close();
+            }
+        }
+        return false;
+    }
 }

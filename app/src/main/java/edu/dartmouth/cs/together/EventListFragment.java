@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -18,6 +19,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -42,12 +44,12 @@ import edu.dartmouth.cs.together.utils.Globals;
 /**
  * Created by di on 2/28/2016.
  */
-public class EventListFragment extends Fragment implements LoaderManager.LoaderCallbacks<Object> {
+public class EventListFragment extends ListFragment implements LoaderManager.LoaderCallbacks<Object> {
 
     private ListView list ;
     private EventArrayAdapter eventAdapter;
     private int current;
-    private List<Event> values;
+    private List<Event> values = new ArrayList<>();
     private EventDataSource datasource;
     private Context mContext;
     private SwipeRefreshLayout swipelayout;
@@ -59,9 +61,8 @@ public class EventListFragment extends Fragment implements LoaderManager.LoaderC
         final View view = inflater.inflate(R.layout.fragment_eventlist, container, false);
         mContext = getActivity().getApplicationContext();
 
-        list = (ListView) view.findViewById(R.id.event_list);
+        //list = (ListView) view.findViewById(R.id.event_list);
         datasource = new EventDataSource(mContext);
-        values= new ArrayList<Event>();
         swipelayout=(SwipeRefreshLayout)view.findViewById(R.id.swipe);
         swipelayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -71,19 +72,24 @@ public class EventListFragment extends Fragment implements LoaderManager.LoaderC
             }
         });
 
-        new UpdateListAsyncTask(getContext()).execute();
-        dafaultFilter();
-        eventAdapter = new eventarrayAdapter(mContext, values);
-        list.setAdapter(eventAdapter);
-        list.setOnItemClickListener(new ListClickHandler());
-        setRetainInstance(true);
+
+       // setRetainInstance(true);
 //        getLoaderManager().initLoader(1, null, this).forceLoad();
 
         // register receiver
         return view;
     }
 
-//    @Override
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        eventAdapter = new eventarrayAdapter(getActivity(), values);
+        setListAdapter(eventAdapter);
+        //list.setOnItemClickListener(new ListClickHandler());
+        new UpdateListAsyncTask(getContext()).execute();
+
+    }
+    //    @Override
 //    public void onRefresh() {
 //        new Handler().postDelayed(new Runnable() {
 //            @Override
@@ -132,7 +138,7 @@ public class EventListFragment extends Fragment implements LoaderManager.LoaderC
 
     public void dafaultFilter(){
         Calendar c = Calendar.getInstance();
-        SharedPreferences sharedPref = getContext().getSharedPreferences(
+        SharedPreferences sharedPref = mContext.getSharedPreferences(
                 edu.dartmouth.cs.together.utils.Globals.KEY_SHARED_PREFERENCE_FILE, Context.MODE_PRIVATE);
         int time=sharedPref.getInt(edu.dartmouth.cs.together.utils.Globals.KEY_TIME_RANGE, 3);
         int dist=sharedPref.getInt(edu.dartmouth.cs.together.utils.Globals.KEY_DISTANCE_RANGE,50);
@@ -229,22 +235,23 @@ public class EventListFragment extends Fragment implements LoaderManager.LoaderC
             }
             @Override
             protected void onPostExecute(List<Event> events) {
-                list.setAdapter(new eventarrayAdapter(mContext, values));
+               // list.setAdapter(new eventarrayAdapter(mContext, values));
+                eventAdapter.notifyDataSetChanged();
                 swipelayout.setRefreshing(false);
             }
         }.execute();
     }
-
+/*
     public void updateList(){
 
         values = datasource.queryEvents(EventDataSource.ALL_EVENT);
         list.setAdapter(new eventarrayAdapter(mContext, values));
         //datasource.close();
     }
-
+*/
     public void updateListfromvalues(){
-        list.setAdapter(new eventarrayAdapter(getActivity().getApplicationContext(), values) {
-        });
+       // list.setAdapter(new eventarrayAdapter(mContext, values) {});
+       eventAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -261,7 +268,7 @@ public class EventListFragment extends Fragment implements LoaderManager.LoaderC
     public void onLoaderReset(Loader<Object> loader) {
 
     }
-
+/*
     public class ListClickHandler implements AdapterView.OnItemClickListener {
 
         @Override
@@ -274,7 +281,7 @@ public class EventListFragment extends Fragment implements LoaderManager.LoaderC
             startActivity(i);
         }
 
-    }
+    }*/
     class UpdateListAsyncTask extends AsyncTask<Void, Void, String> {
         private Context context;
 
@@ -284,13 +291,13 @@ public class EventListFragment extends Fragment implements LoaderManager.LoaderC
 
         @Override
         protected String doInBackground(Void... params) {
-            values = datasource.queryEvents(EventDataSource.ALL_EVENT);
+            values.addAll(datasource.queryEvents(EventDataSource.ALL_EVENT));
             return null;
         }
 
         @Override
         protected void onPostExecute(String msg) {
-            updateListfromvalues();
+            dafaultFilter();
         }
     }
 }

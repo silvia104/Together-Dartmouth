@@ -27,12 +27,15 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import edu.dartmouth.cs.together.data.UserDataSource;
 import edu.dartmouth.cs.together.utils.Globals;
 import edu.dartmouth.cs.together.cloud.ServerUtilities;
 import edu.dartmouth.cs.together.data.User;
@@ -298,9 +301,15 @@ public class LoginActivity extends AppCompatActivity {
                                 params);
                         if (result.contains("exist") || result.contains("not found")){
                             return 2;
-                        } else if (result.contains("password")) {
+                        } else if (result.contains("wrong")) {
                             return 1;
-                        } else return 0;
+                        } else {
+                            User user = new User(new JSONObject(result.substring(0,result.length()-1)));
+                            List<User> users = new ArrayList<>();
+                            users.add(user);
+                            new UserDataSource(getApplicationContext()).insertUsers(users);
+                            return 0;
+                        }
                     } catch (Exception e1) {
                         uploadState = "Sync failed: " + e1.getMessage();
                         Log.e(this.getClass().getName(), "data posting error " + e1);
@@ -312,7 +321,7 @@ public class LoginActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
             } catch (Exception e) {
-                Log.e(this.getClass().getName(), e.getCause().toString());
+                e.printStackTrace();
             }
             return 3;
         }
@@ -323,6 +332,7 @@ public class LoginActivity extends AppCompatActivity {
             showProgress(false);
 
             if (status == 0) {
+
                 SharedPreferences.Editor editor = mSharedPreference.edit();
                 editor.putBoolean(Globals.LOGIN_STATUS_KEY, true);
                 editor.putLong(User.ID_KEY, Globals.currentUser.getId());

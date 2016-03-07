@@ -48,6 +48,8 @@ import edu.dartmouth.cs.together.data.Event;
 import edu.dartmouth.cs.together.data.EventDataSource;
 import edu.dartmouth.cs.together.data.Qa;
 import edu.dartmouth.cs.together.data.QaDataSource;
+import edu.dartmouth.cs.together.data.User;
+import edu.dartmouth.cs.together.data.UserDataSource;
 import edu.dartmouth.cs.together.utils.Globals;
 
 /**
@@ -90,7 +92,7 @@ public class BaseEventActivity extends BasePopoutActivity implements
     protected static final int LOCATION_DIALOG = 2;
     protected static final int QUESTION_DIALOG = 3;
     protected static final int ANSWER_DIALOG = 4;
-
+    protected boolean mIsJoined;
     protected QaRecVewAdapter mQaAdapter;
 
     protected BroadcastReceiver mDateReloadReceiver, mEventUpdateReceiver;
@@ -111,7 +113,6 @@ public class BaseEventActivity extends BasePopoutActivity implements
     public boolean onCreateOptionsMenu(Menu menu) {
         mMenu = menu;
         return super.onCreateOptionsMenu(menu);
-
     }
 
     @Override
@@ -140,10 +141,10 @@ public class BaseEventActivity extends BasePopoutActivity implements
     protected void setBottomSheet() {
         View bottomSheet = mCoordinatorLayout.findViewById(R.id.bottom_sheet);
         mBtmShtBehavior = BottomSheetBehavior.from(bottomSheet);
-        setBtmShtBehavior();
+       // setBtmShtBehavior();
     }
 
-    protected void setBtmShtBehavior() {
+    protected void setBtmShtBehavior(final long eventId) {
         mBtmShtBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
@@ -152,10 +153,13 @@ public class BaseEventActivity extends BasePopoutActivity implements
                     case BottomSheetBehavior.STATE_HIDDEN:
                     case BottomSheetBehavior.STATE_SETTLING:
                     case BottomSheetBehavior.STATE_COLLAPSED:
-                        mFab.show();
+                        if (eventId != -1) {
+                            mFab.show();
+                        }
                         break;
                     default:
                         mFab.hide();
+                        break;
                 }
             }
 
@@ -170,7 +174,10 @@ public class BaseEventActivity extends BasePopoutActivity implements
     @OnClick(R.id.fab)
     public void onFabClick() {
         Intent i = new Intent(this, JoinerListActivity.class);
-        i.putExtra(Event.ID_KEY, mEvent.getEventId());
+        if (mEvent != null) {
+            i.putExtra(Event.ID_KEY, mEvent.getEventId());
+            i.putExtra(User.ID_KEY, mEvent.getOwner());
+        }
         startActivity(i);
     }
 
@@ -405,6 +412,9 @@ public class BaseEventActivity extends BasePopoutActivity implements
             mId = ids[0];
             if (mId != -1) {
                 event = db.queryEventById(mEventType, mId);
+                mIsJoined = new UserDataSource(getApplicationContext()).
+                        queryJoiner(mId, Globals.currentUser.getId());
+
             }
             return event;
         }
@@ -421,16 +431,23 @@ public class BaseEventActivity extends BasePopoutActivity implements
                 mProgress.setVisibility(View.GONE);
                 mContentlayout.setVisibility(View.VISIBLE);
                 mEvent = event;
-                action = edu.dartmouth.cs.together.utils.Globals.ACTION_UPDATE;
                 if (Globals.currentUser.getId() == mEvent.getOwner()){
+                    mAddQuestion.setVisibility(View.GONE);
+                }
+                action = edu.dartmouth.cs.together.utils.Globals.ACTION_UPDATE;
+
+                displayEventValues(event);
+                mLimitCount.setText(mEvent.getmJoinerCount() + "/" + mEvent.getLimit());
+
+                if(mEvent.getmJoinerCount()>=mEvent.getLimit() || mIsJoined ){
                     mJoinBtn.setVisibility(View.GONE);
                 }
-                displayEventValues(event);
-                //TODO:待删
-                mLimitCount.setText(mEvent.getmJoinerCount()+"/" + mEvent.getLimit());
-
-                if(mEvent.getmJoinerCount()>=mEvent.getLimit()){
-                    mJoinBtn.setEnabled(false);
+                else {
+                    if (Globals.currentUser.getId() != mEvent.getOwner()) {
+                        mJoinBtn.setVisibility(View.VISIBLE);
+                    } else {
+                        mJoinBtn.setVisibility(View.GONE);
+                    }
                 }
                 getLoaderManager().initLoader(1,null,BaseEventActivity.this).forceLoad();
             }

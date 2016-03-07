@@ -3,27 +3,22 @@ package edu.dartmouth.cs.together;
 import android.app.DialogFragment;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.w3c.dom.Text;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -32,57 +27,87 @@ import java.io.IOException;
 
 import com.soundcloud.android.crop.Crop;
 import de.hdodenhof.circleimageview.CircleImageView;
+import edu.dartmouth.cs.together.cloud.ServerUtilities;
+import edu.dartmouth.cs.together.cloud.UploadPicIntentService;
+import edu.dartmouth.cs.together.data.User;
+import edu.dartmouth.cs.together.data.UserDataSource;
+import edu.dartmouth.cs.together.utils.Globals;
 
 public class ProfileActivity extends AppCompatActivity {
 
     private TextView mEmail;
-    private Bitmap mProfileImage;
-    private TextView mPhoneTextView;
 
     private Uri mImageCaptureUri;
-    private byte[] mProfilePictureArray;
-    //used library: https://github.com/ArthurHub/Android-Image-Cropper/wiki
     private CircleImageView mProfileImageView;
     private boolean isTakenFromCamera;
     private static final String URI_INSTANCE_STATE_KEY = "saved_uri";
     public static final int REQUEST_CODE_TAKE_FROM_CAMERA = 0;
     public static final int REQUEST_CODE_SELECT_FROM_GALLERY = 1;
     private static final String CAMERA_CLICKED_KEY = "cameraClicked";
-    public static final int REQUEST_CODE_CROP_PHOTO = 2;
-    private static final String IMAGE_UNSPECIFIED = "image/*";
+
+    private long mUserId ;
+    private String mUserEmail;
+    private String mUserName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
         mProfileImageView = (CircleImageView) findViewById(R.id.profile_image);
-//        mProfileImage = BitmapFactory.decodeResource(getResources(), R.drawable.default_profile_pic);
-//        Bitmap croppedImage = Helper.getRoundedShape(mProfileImage);
-//        mProfileImageView.setImageBitmap(croppedImage);
         mProfileImageView.setImageResource(R.drawable.default_profile_pic);
+        Intent i = getIntent();
+        mUserId = i.getLongExtra(User.ID_KEY, Globals.currentUser.getId());
 
-        mProfileImageView.setOnLongClickListener(
-                new View.OnLongClickListener(){
-                    public boolean onLongClick(View v){
-                        displayDialog(PhotoDialogFragment.DIALOG_ID_PHOTO_PICKER);
-//                        saveSnap();
-                        return true;
-                    }
-                }
-        );
+         if(savedInstanceState != null) {
+             mImageCaptureUri = savedInstanceState
+                    .getParcelable(URI_INSTANCE_STATE_KEY);
+             new LoadPicAsyncTask(false).execute(mUserId);
+         }
+         if (mUserId == Globals.currentUser.getId() || mUserId == -1) {
+             if (mImageCaptureUri != null) {
+                 mProfileImageView.setImageURI(mImageCaptureUri);
+             }else {
+                 loadPhoto();
+             }
+             mProfileImageView.setOnLongClickListener(
+                     new View.OnLongClickListener() {
+                         public boolean onLongClick(View v) {
+                             displayDialog(PhotoDialogFragment.DIALOG_ID_PHOTO_PICKER);
+                             return true;
+                         }
+                     }
+             );
+             mUserEmail = Globals.currentUser.getAccount();
+             mUserName = Globals.currentUser.getName();
+         } else {
+             mUserEmail = i.getStringExtra(User.ACCOUNT_KEY);
+             mUserName = i.getStringExtra(User.NAME_KEY);
+             new LoadPicAsyncTask(false).execute(mUserId);
+             findViewById(R.id.profile_save_button).setVisibility(View.GONE);
+             findViewById(R.id.profile_cancel_button).setVisibility(View.GONE);
+         }
+
         mEmail = (EditText) findViewById(R.id.profile_email);
-        mEmail.setText("get email address from account ");
+        mEmail.setText(mUserEmail);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        if(savedInstanceState == null || mImageCaptureUri == null || !savedInstanceState.getBoolean(CAMERA_CLICKED_KEY)) {
+    }
 
-            loadPhoto();
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.refresh, menu);
+        super.onCreateOptionsMenu(menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_refresh){
+            new LoadPicAsyncTask(true).execute(mUserId);
+            return true;
         }
-        if(savedInstanceState != null) {
-            mImageCaptureUri = savedInstanceState
-                    .getParcelable(URI_INSTANCE_STATE_KEY);
-            mProfileImageView.setImageURI(mImageCaptureUri);
-        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -112,7 +137,7 @@ public class ProfileActivity extends AppCompatActivity {
         try {
             FileOutputStream fos = openFileOutput(
                     "profile_photo.png", MODE_PRIVATE);
-            bmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+            bmap.compress(Bitmap.CompressFormat.JPEG, 50, fos);
             fos.flush();
             fos.close();
         } catch (IOException ioe) {
@@ -215,7 +240,6 @@ public class ProfileActivity extends AppCompatActivity {
             case Crop.REQUEST_CROP: //We changed the RequestCode to the one being used by the library.
                 // Update image view after image crop
                 handleCrop(resultCode, data);
-
                 // Delete temporary image taken by camera after crop.
                 if (isTakenFromCamera) {
                     File f = new File(mImageCaptureUri.getPath());
@@ -232,6 +256,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     public void OnSaveClicked(View view){
         saveSnap();
+        startService(new Intent(getApplicationContext(), UploadPicIntentService.class));
         finish();
     }
 
@@ -239,7 +264,54 @@ public class ProfileActivity extends AppCompatActivity {
         finish();
     }
 
+    class LoadPicAsyncTask extends AsyncTask<Long, Void, Bitmap> {
+        private boolean mIsRefresh;
+        public LoadPicAsyncTask(boolean isRefresh){
+            mIsRefresh = isRefresh;
+        }
+        @Override
+        protected Bitmap doInBackground(Long... userIds) {
+            UserDataSource db = new UserDataSource(getApplicationContext());
+            Bitmap bitmap = null;
+            User user = db.queryUserById(userIds[0]);
 
+            if (!mIsRefresh) {
+                bitmap=db.getBitmap(userIds[0]);
+                if (bitmap == null){
+                    return downloadBitmap(user);
+                } else {
+                    return bitmap;
+                }
+            } else {
+                return downloadBitmap(user);
+            }
 
+        }
+
+        private Bitmap downloadBitmap(User user){
+
+            try {
+                Bitmap bitmap = ServerUtilities.postForImg(user.getPhotoUrl());
+                if (bitmap != null) {
+                    new UserDataSource(getApplicationContext()).insertBitmap(bitmap,
+                            user.getId());
+                }
+                return bitmap;
+            }catch (IOException e){
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap bitmap) {
+            super.onPostExecute(bitmap);
+            if (bitmap == null){
+                mProfileImageView.setImageResource(R.drawable.default_profile_pic);
+            } else {
+                mProfileImageView.setImageBitmap(bitmap);
+            }
+        }
+    }
 
 }

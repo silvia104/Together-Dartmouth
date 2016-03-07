@@ -42,11 +42,6 @@ public class MainActivity extends AppCompatActivity
             registerDevice();
         }
         setContentView(R.layout.activity_main);
-        //startService(new Intent(getApplicationContext(), UploadPicIntentService.class));
-
-
-
-
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);

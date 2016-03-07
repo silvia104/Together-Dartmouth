@@ -130,7 +130,7 @@ public class EventDataSource  {
     public long updateEvent(int eventType, long id, Event event){
         open();
         if (id == -1) return id;
-        int updated = 1;
+        int updated = 0;
         try{
             ContentValues values = getEventDetails(event);
             updated =mDB.update(getTableName(eventType), values,
@@ -346,42 +346,6 @@ public class EventDataSource  {
         return false;
 
     }
-    /*
-
-    public List<Event> queryEventByJoinerId(long joinerId){
-        open();
-        List<Event> events = new ArrayList<>();
-        Cursor joinerCursor =null;
-        try {
-            joinerCursor = mDB.query(EventJoinerTable.TABLE_NAME,
-                    null, EventJoinerTable.COLUMNS.JOINER_ID.colName() + "=?",
-                    new String[]{String.valueOf(joinerId)}, null, null, null, null);
-            if (joinerCursor.getCount()>0) {
-                joinerCursor.moveToFirst();
-                while(!joinerCursor.isAfterLast()) {
-                    long eventId = joinerCursor.getLong(EventJoinerTable.COLUMNS.EVENT_ID.index());
-                    Cursor eventCursor = mDB.query(getTableName(this.ALL_EVENT), null,
-                            BaseEventTable.COLUMNS.EVENT_ID.colName() + "=?",
-                            new String[]{String.valueOf(eventId)}, null, null, null, null);
-                    eventCursor.moveToFirst();
-                    while (!eventCursor.isAfterLast()) {
-                        Event event = cursorToEvent(eventCursor);
-                        events.add(event);
-                        eventCursor.moveToNext();
-                    }
-                }
-//                event = cursorToEvent(joinerCursor);
-            }
-        } catch (SQLiteException e){
-            e.printStackTrace();
-        }finally {
-            // Make sure to close the cursor
-            if (joinerCursor!=null) joinerCursor.close();
-        }
-        return events;
-
-    }
-    */
     public List<Event> queryEventByJoinerId(long joinerId){
         open();
         List<Event> events = new ArrayList<>();

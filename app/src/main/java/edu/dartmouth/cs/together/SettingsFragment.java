@@ -63,93 +63,92 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 return true;
             }
         });
+/*
 
+        SwitchPreferenceCompat newPeople = (SwitchPreferenceCompat) findPreference("new_people");
+        newPeople.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference,
+                                              Object newValue) {
+                boolean switched = ((SwitchPreferenceCompat) preference)
+                        .isChecked();
+                mEditor = sharedPreferences.edit();
+                mEditor.putBoolean(Globals.KEY_SHARED_PREF_NOTE_NEW_PEOPLE, switched);
+                mEditor.commit();
+                return true;
+            }
+        });
 
-//        SwitchPreference newPeople = (SwitchPreference) findPreference("new_people");
-//
-//        newPeople.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-//            @Override
-//            public boolean onPreferenceChange(Preference preference,
-//                                              Object newValue) {
-//                boolean switched = ((SwitchPreferenceCompat) preference)
-//                        .isChecked();
-//                mEditor = sharedPreferences.edit();
-//                mEditor.putBoolean(Globals.KEY_SHARED_PREF_NOTE_NEW_PEOPLE, switched);
-//                mEditor.commit();
-//                return true;
-//            }
-//        });
-//
-//        SwitchPreferenceCompat quitPeople = (SwitchPreferenceCompat) findPreference("quit_people");
-//        quitPeople.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-//            @Override
-//            public boolean onPreferenceChange(Preference preference,
-//                                              Object newValue) {
-//                boolean switched = ((SwitchPreferenceCompat) preference)
-//                        .isChecked();
-//                mEditor = sharedPreferences.edit();
-//                mEditor.putBoolean(Globals.KEY_SHARED_PREF_NOTE_QUIT_PEOPLE, switched);
-//                mEditor.commit();
-//                return true;
-//            }
-//        });
-//
-//        SwitchPreferenceCompat eventChange = (SwitchPreferenceCompat) findPreference("event_change");
-//        eventChange.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-//            @Override
-//            public boolean onPreferenceChange(Preference preference,
-//                                              Object newValue) {
-//                boolean switched = ((SwitchPreferenceCompat) preference)
-//                        .isChecked();
-//                mEditor = sharedPreferences.edit();
-//                mEditor.putBoolean(Globals.KEY_SHARED_PREF_NOTE_EVENT_CHANGE, switched);
-//                mEditor.commit();
-//                return true;
-//            }
-//        });
-//
-//        SwitchPreferenceCompat eventCancel = (SwitchPreferenceCompat) findPreference("event_cancel");
-//        eventCancel.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-//            @Override
-//            public boolean onPreferenceChange(Preference preference,
-//                                              Object newValue) {
-//                boolean switched = ((SwitchPreferenceCompat) preference)
-//                        .isChecked();
-//                mEditor = sharedPreferences.edit();
-//                mEditor.putBoolean(Globals.KEY_SHARED_PREF_NOTE_EVENT_CANCEL, switched);
-//                mEditor.commit();
-//                return true;
-//            }
-//        });
-//
-//        SwitchPreferenceCompat newQ = (SwitchPreferenceCompat) findPreference("new_q");
-//        newQ.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-//            @Override
-//            public boolean onPreferenceChange(Preference preference,
-//                                              Object newValue) {
-//                boolean switched = ((SwitchPreferenceCompat) preference)
-//                        .isChecked();
-//                mEditor = sharedPreferences.edit();
-//                mEditor.putBoolean(Globals.KEY_SHARED_PREF_NOTE_NEW_Q, switched);
-//                mEditor.commit();
-//                return true;
-//            }
-//        });
-//
-//        SwitchPreferenceCompat newA = (SwitchPreferenceCompat) findPreference("new_a");
-//        newA.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-//            @Override
-//            public boolean onPreferenceChange(Preference preference,
-//                                              Object newValue) {
-//                boolean switched = ((SwitchPreferenceCompat) preference)
-//                        .isChecked();
-//                mEditor = sharedPreferences.edit();
-//                mEditor.putBoolean(Globals.KEY_SHARED_PREF_NOTE_NEW_A, switched);
-//                mEditor.commit();
-//                return true;
-//            }
-//        });
+        SwitchPreferenceCompat quitPeople = (SwitchPreferenceCompat) findPreference("quit_people");
+        quitPeople.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference,
+                                              Object newValue) {
+                boolean switched = ((SwitchPreferenceCompat) preference)
+                        .isChecked();
+                mEditor = sharedPreferences.edit();
+                mEditor.putBoolean(Globals.KEY_SHARED_PREF_NOTE_QUIT_PEOPLE, switched);
+                mEditor.commit();
+                return true;
+            }
+        });
 
+        SwitchPreferenceCompat eventChange = (SwitchPreferenceCompat) findPreference("event_change");
+        eventChange.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference,
+                                              Object newValue) {
+                boolean switched = ((SwitchPreferenceCompat) preference)
+                        .isChecked();
+                mEditor = sharedPreferences.edit();
+                mEditor.putBoolean(Globals.KEY_SHARED_PREF_NOTE_EVENT_CHANGE, switched);
+                mEditor.commit();
+                return true;
+            }
+        });
+
+        SwitchPreferenceCompat eventCancel = (SwitchPreferenceCompat) findPreference("event_cancel");
+        eventCancel.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference,
+                                              Object newValue) {
+                boolean switched = ((SwitchPreferenceCompat) preference)
+                        .isChecked();
+                mEditor = sharedPreferences.edit();
+                mEditor.putBoolean(Globals.KEY_SHARED_PREF_NOTE_EVENT_CANCEL, switched);
+                mEditor.commit();
+                return true;
+            }
+        });
+
+        SwitchPreferenceCompat newQ = (SwitchPreferenceCompat) findPreference("new_q");
+        newQ.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference,
+                                              Object newValue) {
+                boolean switched = ((SwitchPreferenceCompat) preference)
+                        .isChecked();
+                mEditor = sharedPreferences.edit();
+                mEditor.putBoolean(Globals.KEY_SHARED_PREF_NOTE_NEW_Q, switched);
+                mEditor.commit();
+                return true;
+            }
+        });
+
+        SwitchPreferenceCompat newA = (SwitchPreferenceCompat) findPreference("new_a");
+        newA.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference,
+                                              Object newValue) {
+                boolean switched = ((SwitchPreferenceCompat) preference)
+                        .isChecked();
+                mEditor = sharedPreferences.edit();
+                mEditor.putBoolean(Globals.KEY_SHARED_PREF_NOTE_NEW_A, switched);
+                mEditor.commit();
+                return true;
+            }
+        });
+*/
     }
 
 

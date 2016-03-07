@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import edu.dartmouth.cs.together.R;
 import edu.dartmouth.cs.together.data.Event;
 import edu.dartmouth.cs.together.data.User;
 
@@ -31,11 +32,20 @@ public class Globals {
             "Tennis","Dancing","Gym","Basketball","Swimming","Billiard"};
     public static String[] life = {"Movie","Party","Shopping","Dining", "Travel", "Study",
             "Music", "Pet", "Other"};
+    public static Integer[] categoriIcons={R.drawable.soccer, R.drawable.skiing,R.drawable.bicycle,
+            R.drawable.running,R.drawable.hiking,R.drawable.tennis,R.drawable.dancing,R.drawable.gym,
+            R.drawable.basketball,R.drawable.swimming,R.drawable.billard,R.drawable.movie,
+            R.drawable.party,R.drawable.shopping,R.drawable.dining,R.drawable.travel,R.drawable.study};
     public static List<String> categories = new ArrayList<>();
     public static LatLng DARTMOUTH_GPS = new LatLng(43.726034, -72.142917);
     public static double RADIUS_50MILES = 80467.2;
 
+<<<<<<< HEAD
+    public static String SERVER_ADDR = "http://10.0.0.30:8080";
+    //public static String SERVER_ADDR = "https://together-1234.appspot.com";
+=======
     public static String SERVER_ADDR = "http://10.0.0.70:8080";
+>>>>>>> origin/test
     public static String DEVICE_ID;
     public static User currentUser;
     public static final String ACTION_ADD = "add";

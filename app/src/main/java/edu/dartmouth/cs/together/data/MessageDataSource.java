@@ -45,7 +45,7 @@ public class MessageDataSource {
             e.printStackTrace();
         }
         finally {
-            close();
+            //close();
             return id;
         }
 
@@ -93,7 +93,7 @@ public class MessageDataSource {
         }catch (SQLiteException e){
             e.printStackTrace();
         }
-        close();
+        //close();
         if (updated>0) return id;
         else return -1;
     }

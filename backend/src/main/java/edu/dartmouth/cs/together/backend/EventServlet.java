@@ -90,23 +90,27 @@ public class EventServlet extends HttpServlet {
                     return;
 
                 boolean ret = EventJoinerDataSource.delete(eventId, userId);
-                Event newEvent = EventDataSource.getEventFromEntity(eventEntity);
-                User newUser = UserDataSource.getUserFromEntity(userEntity);
+                if (ret) {
+                    Event newEvent = EventDataSource.getEventFromEntity(eventEntity);
+                    User newUser = UserDataSource.getUserFromEntity(userEntity);
 
+                    newEvent.increaseJoiner(-1);
+                    EventDataSource.update(newEvent);
+                    PrintWriter writer = resp.getWriter();
+                    writer.print(newEvent.getJoinerCount() + "");
+                    writer.flush();
+                    userList.add((long) eventEntity.getProperty(Event.OWNER_KEY));
+                    deviceList = UserDataSource.queryDeviceByUserId(userList);
 
-                newEvent.increaseJoiner(-1);
-                EventDataSource.update(newEvent);
-                userList.add((long) eventEntity.getProperty(Event.OWNER_KEY));
-                deviceList = UserDataSource.queryDeviceByUserId(userList);
+                    String eventShortDesc = newEvent.getShortdesc();
+                    String account = newUser.getAccount();
 
-                String eventShortDesc = newEvent.getShortdesc();
-                String account = newUser.getAccount();
-
-                msg.sendMessage(deviceList, "Event Quited:" + Globals.SPLITER
-                        + eventId + Globals.SPLITER
-                        + eventShortDesc +  Globals.SPLITER
-                        + userId + Globals.SPLITER
-                        + account);
+                    msg.sendMessage(deviceList, "Event Quited:" + Globals.SPLITER
+                            + eventId + Globals.SPLITER
+                            + eventShortDesc + Globals.SPLITER
+                            + userId + Globals.SPLITER
+                            + account);
+                }
 //                msg.sendMessage(deviceList, "Event Quited:" + eventId + ":" + userId);
             } else{
                 Event event = new Event(jsonObject);

@@ -11,7 +11,10 @@ import com.google.appengine.api.datastore.Query;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -57,6 +60,8 @@ public class UserDataSource  {
         entity.setProperty(User.RATE_KEY, user.getRate());
         entity.setProperty(User.DEVICE_KEY, user.getDevice());
         entity.setProperty(User.ID_KEY, user.getId());
+        entity.setProperty(User.PHOTO_KEY, user.getPhotoKey());
+        entity.setProperty(User.PHOTO_URL_KEY,user.getPhotoUrl());
         mDatastore.put(entity);
         return true;
     }
@@ -67,13 +72,22 @@ public class UserDataSource  {
         mDatastore.put(entity);
         return true;
     }
+    public static boolean update(Entity entity, Map<String,String> pairs) {
+        if (entity==null) return false;
+        Iterator<Map.Entry<String,String>> iterator = pairs.entrySet().iterator();
+        while(iterator.hasNext()){
+            Map.Entry<String,String> entry = iterator.next();
+            entity.setProperty(entry.getKey(),entry.getValue());
+        }
+        mDatastore.put(entity);
+        return true;
+    }
 
     private static void setEntityFromUser(Entity entity, User user) {
         entity.setProperty(User.ID_KEY, user.getId());
         entity.setProperty(User.ACCOUNT_KEY, user.getAccount());
         entity.setProperty(User.RATE_KEY, user.getRate());
         entity.setProperty(User.DEVICE_KEY, user.getDevice());
-        //TODO: photo?
     }
 
     // delete record from datastore
@@ -163,7 +177,7 @@ public class UserDataSource  {
         user.setPassword((String) entity.getProperty(User.PASSWORD_KEY));
         user.setRate((Double) entity.getProperty(User.RATE_KEY));
         user.setDevice((String) entity.getProperty(User.DEVICE_KEY));
-        //TODO: add photo;
+        user.setPhotoUrl((String) entity.getProperty(User.PHOTO_URL_KEY));
         return user;
     }
 

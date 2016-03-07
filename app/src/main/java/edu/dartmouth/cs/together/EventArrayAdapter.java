@@ -50,12 +50,16 @@ public android.view.View getView(int position, View convertView, ViewGroup paren
         listItemView.setOnClickListener( new View.OnClickListener(){
                  @Override
                  public void onClick(View v) {
-                         Intent i = new Intent(getContext(),EventEditorActivity.class);
+                         Intent i = null;
+                         if (intentType==EventDataSource.MY_OWN_EVENT) {
+                             i = new Intent(getContext(), EventEditorActivity.class);
+                         } else {
+                             i = new Intent(getContext(),EventDetailActivity.class);
+                         }
                          T t = (T)getItem(itemPosition);
                          final long id=getid(t);
                          i.putExtra(Event.ID_KEY,id);
                          i.putExtra("TAG", intentType);
-                         i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                          v.getContext().startActivity(i);
                         }
                 });
