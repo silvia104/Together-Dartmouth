@@ -35,17 +35,14 @@ public class Globals {
     public static Integer[] categoriIcons={R.drawable.soccer, R.drawable.skiing,R.drawable.bicycle,
             R.drawable.running,R.drawable.hiking,R.drawable.tennis,R.drawable.dancing,R.drawable.gym,
             R.drawable.basketball,R.drawable.swimming,R.drawable.billard,R.drawable.movie,
-            R.drawable.party,R.drawable.shopping,R.drawable.dining,R.drawable.travel,R.drawable.study};
+            R.drawable.party,R.drawable.shopping,R.drawable.dining,R.drawable.travel,R.drawable.study,
+            R.drawable.movie,R.drawable.movie,R.drawable.movie};
     public static List<String> categories = new ArrayList<>();
     public static LatLng DARTMOUTH_GPS = new LatLng(43.726034, -72.142917);
     public static double RADIUS_50MILES = 80467.2;
 
-<<<<<<< HEAD
     public static String SERVER_ADDR = "http://10.0.0.30:8080";
     //public static String SERVER_ADDR = "https://together-1234.appspot.com";
-=======
-    public static String SERVER_ADDR = "http://10.0.0.70:8080";
->>>>>>> origin/test
     public static String DEVICE_ID;
     public static User currentUser;
     public static final String ACTION_ADD = "add";
