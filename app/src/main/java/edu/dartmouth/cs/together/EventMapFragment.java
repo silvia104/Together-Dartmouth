@@ -56,7 +56,7 @@ public class EventMapFragment extends Fragment implements OnMapReadyCallback {
 
     private GoogleMap mMap;
     private EventDataSource datasource;
-    private List<Event> values;
+    private List<Event> values= new ArrayList<Event>();
     private Map<Double, List<Integer>> allMarkersMap = new HashMap<Double, List<Integer>>();
     private PopupWindow mpopup;
     private LayoutInflater inflater;
@@ -80,9 +80,7 @@ public class EventMapFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_eventmap, container, false);
-        mContext = getActivity().getApplicationContext();
         datasource = new EventDataSource(mContext);
-        values= new ArrayList<Event>();
         this.inflater=inflater;
         isupdate=false;
         IntentFilter filter = new IntentFilter("update");
@@ -150,7 +148,7 @@ public class EventMapFragment extends Fragment implements OnMapReadyCallback {
 
                 View popUpView = inflater.inflate(R.layout.popup, null); // inflating popup layout
                 list = (ListView) popUpView.findViewById(R.id.mapevent_list);
-                eventAdapter = new eventarrayAdapter(mContext, popEvents);
+                eventAdapter = new eventarrayAdapter(getActivity(), popEvents);
 
                 list.setAdapter(eventAdapter);
                 list.setOnItemClickListener(new ListClickHandler());
@@ -201,7 +199,8 @@ public class EventMapFragment extends Fragment implements OnMapReadyCallback {
                 }
             }
         }
-        values=filter;
+        values.clear();
+        values.addAll(filter);
     }
 
     public class ListClickHandler implements AdapterView.OnItemClickListener {
@@ -219,7 +218,7 @@ public class EventMapFragment extends Fragment implements OnMapReadyCallback {
         }
     }
 
-    class UpdateListAsyncTask extends AsyncTask<Void, Void, String> {
+    class UpdateListAsyncTask extends AsyncTask<Void, Void, List<Event>> {
         private Context context;
 
         public UpdateListAsyncTask(Context context) {
@@ -227,13 +226,14 @@ public class EventMapFragment extends Fragment implements OnMapReadyCallback {
         }
 
         @Override
-        protected String doInBackground(Void... params) {
-            values = datasource.queryEvents(EventDataSource.ALL_EVENT);
-            return null;
+        protected List<Event> doInBackground(Void... params) {
+            return  datasource.queryEvents(EventDataSource.ALL_EVENT);
         }
 
         @Override
-        protected void onPostExecute(String msg) {
+        protected void onPostExecute(List<Event> events) {
+            values.clear();
+            values.addAll(events);
             dafaultFilter();
             if(!isupdate){
                 setMap();
@@ -257,40 +257,47 @@ public class EventMapFragment extends Fragment implements OnMapReadyCallback {
 
         @Override
         public void dismiss(){
-            mpopup.dismiss();
         }
 
         @Override
         public String lineOneText(Event e) {
-            return e.getLocation();
+            return e.getShortdesc();
         }
 
         @Override
         public String lineTwoText(Event e) {
+            String location = e.getLocation();
+            int linebreak = location.indexOf('\n');
+            if (linebreak>0) {
+                return location.substring(0, linebreak);
+            }else {
+                return location;
+            }
+        }
+
+        @Override
+        public long getid(Event e){return e.getEventId();}
+
+        @Override
+        public String lineTreText(Event e) {
             return e.getDate()+"  "+e.getTime();
         }
 
         @Override
-        public long getid(Event e){
-            return e.getEventId();
-        }
-
-        @Override
-        public String lineTreText(Event e) {
-            return "Duration:  "+e.getDuration();
-        }
-
-        @Override
-        public String lineFouText(Event e) {
-            return e.getShortdesc();
+        public String lineFouText(Event e){return "Duration:  "+e.getDuration() + " Hours";
         }
         @Override
         public String lineFivText(Event e) {
-            return "Joined number";
+            return "Joiner Count";
         }
         @Override
         public String lineSixText(Event e) {
             return e.getmJoinerCount()+"/"+e.getLimit();
+        }
+
+        @Override
+        public int setImage(Event e){
+            return Globals.categoriIcons[e.getCategoryIdx()];
         }
     }
 

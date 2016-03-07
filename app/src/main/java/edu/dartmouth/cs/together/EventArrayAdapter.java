@@ -13,74 +13,79 @@ import android.widget.TextView;
 import java.util.List;
 import edu.dartmouth.cs.together.data.Event;
 import edu.dartmouth.cs.together.data.EventDataSource;
+import edu.dartmouth.cs.together.utils.Globals;
 
 /**
  * Created by di on 2/27/2016.
  */
 public abstract class EventArrayAdapter<T> extends ArrayAdapter<T> {
-private int mListItemLayoutResId;
-        Context context;
-        ImageView imgView;
-        int intentType;
-        int itemPosition;
+    private int mListItemLayoutResId;
+    Context context;
+    ImageView imgView;
+    int intentType;
+    int itemPosition;
+    List<Event> mList;
+    public EventArrayAdapter(Context context, List<T> ts, int intentType) {
+        this(context, R.layout.event_list, ts, intentType);
+    }
 
-public EventArrayAdapter(Context context, List<T> ts, int intentType) {
-        this(context, R.layout.event_list, ts,intentType );
-        }
-
-public EventArrayAdapter(Context context, int listItemLayoutResourceId, List<T> ts, int intentType) {
+    public EventArrayAdapter(Context context, int listItemLayoutResourceId, List<T> ts, int intentType) {
         super(context, listItemLayoutResourceId, ts);
-        this.context=context;
+        this.context = context;
         mListItemLayoutResId = listItemLayoutResourceId;
+        mList = (List<Event>)ts;
         this.intentType = intentType;
 
-}
+    }
 
-@Override
-public android.view.View getView(int position, View convertView, ViewGroup parent) {
+    @Override
+    public android.view.View getView(final int position, View convertView, ViewGroup parent) {
 
 
-        LayoutInflater inflater = (LayoutInflater)getContext()
-        .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LayoutInflater inflater = (LayoutInflater) getContext()
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         View listItemView = convertView;
         this.itemPosition = position;
         if (null == convertView) {
-        listItemView = inflater.inflate(mListItemLayoutResId, parent, false);
-        listItemView.setOnClickListener( new View.OnClickListener(){
-                 @Override
-                 public void onClick(View v) {
-                         Intent i = null;
-                         dismiss();
-                         if (intentType==EventDataSource.MY_OWN_EVENT) {
-                             i = new Intent(getContext(), EventEditorActivity.class);
-                         } else {
-                             i = new Intent(getContext(),EventDetailActivity.class);
-                         }
-                         T t = (T)getItem(itemPosition);
-                         final long id=getid(t);
-                         i.putExtra(Event.ID_KEY,id);
-                         i.putExtra("TAG", intentType);
-                         v.getContext().startActivity(i);
-                        }
-                });
+            listItemView = inflater.inflate(mListItemLayoutResId, parent, false);
+            listItemView.setOnClickListener(new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View v) {
+                                                    Intent i = null;
+                                                    dismiss();
+                                                    if (intentType == EventDataSource.MY_OWN_EVENT) {
+                                                        i = new Intent(getContext(), EventEditorActivity.class);
+                                                    } else {
+                                                        i = new Intent(getContext(), EventDetailActivity.class);
+                                                    }
+                                                    T t = (T) getItem(itemPosition);
+                                                    //final long id = getid(t);
+                                                    long id = mList.get(position).getEventId();
+                                                    i.putExtra(Event.ID_KEY, id);
+                                                    i.putExtra("TAG", intentType);
+                                                    v.getContext().startActivity(i);
+                                                }
+                                            }
+            );
         }
 
         // The ListItemLayout must use the standard text item IDs.
-        TextView lineOneView = (TextView)listItemView.findViewById(
-        R.id.etext1);
-        TextView lineTwoView = (TextView)listItemView.findViewById(
-        R.id.etext2);
-        TextView lineTreView = (TextView)listItemView.findViewById(
-        R.id.etext3);
-        TextView lineFouView = (TextView)listItemView.findViewById(
-        R.id.etext4);
-        TextView lineFivView = (TextView)listItemView.findViewById(
-        R.id.etext5);
-        TextView lineSixView = (TextView)listItemView.findViewById(
-        R.id.etext6);
-        T t = (T)getItem(position);
-        final long id=getid(t);
+        TextView lineOneView = (TextView) listItemView.findViewById(
+                R.id.etext1);
+        TextView lineTwoView = (TextView) listItemView.findViewById(
+                R.id.etext2);
+        TextView lineTreView = (TextView) listItemView.findViewById(
+                R.id.etext3);
+        TextView lineFouView = (TextView) listItemView.findViewById(
+                R.id.etext4);
+        TextView lineFivView = (TextView) listItemView.findViewById(
+                R.id.etext5);
+        TextView lineSixView = (TextView) listItemView.findViewById(
+                R.id.etext6);
+        T t = (T) getItem(position);
+        //final long id = getid(t);
+
 
         imgView=(ImageView)listItemView.findViewById(
                 R.id.imageView2);
@@ -97,29 +102,33 @@ public android.view.View getView(int position, View convertView, ViewGroup paren
                         v.getContext().startActivity(i);
                 }
         });*/
+
         lineOneView.setText(lineOneText(t));
         lineTwoView.setText(lineTwoText(t));
         lineTreView.setText(lineTreText(t));
         lineFouView.setText(lineFouText(t));
         lineFivView.setText(lineFivText(t));
         lineSixView.setText(lineSixText(t));
-
+        imgView.setImageResource(setImage(t));
         return listItemView;
+    }
+
+    public abstract void dismiss();
+
+    public abstract long getid(T t);
+
+    public abstract String lineTreText(T t);
+
+    public abstract String lineFouText(T t);
+
+    public abstract String lineFivText(T t);
+
+    public abstract String lineSixText(T t);
+
+    public abstract String lineOneText(T t);
+
+    public abstract String lineTwoText(T t);
+
+    public abstract int setImage(T t);
 }
 
-public abstract void dismiss();
-
-public abstract long getid(T t);
-
-public abstract String lineTreText(T t);
-
-public abstract String lineFouText(T t);
-
-public abstract String lineFivText(T t);
-
-public abstract String lineSixText(T t);
-
-public abstract String lineOneText(T t);
-
-public abstract String lineTwoText(T t);
-        }

@@ -37,7 +37,6 @@ public class MainActivity extends AppCompatActivity
     private static final  String FILTER_TIME_KEY="filter_time";
     private static final  String FILTER_DISTANCE_KEY="filter_dist";
 
-    private MessageCenterFragment.NewMessageReceiver receiver;
     private SharedPreferences mSharedPreference;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -135,15 +134,6 @@ public class MainActivity extends AppCompatActivity
         outState.putBoolean(List_FRAGMENT_STATE_KEY, isListFragment);
         outState.putInt(FILTER_TIME_KEY, filterTime);
         outState.putInt(FILTER_DISTANCE_KEY, filterDist);
-    }
-
-    private void registerMessageReceiver() {
-        MessageCenterFragment msgCenterFragment = new MessageCenterFragment();
-        receiver = msgCenterFragment.new NewMessageReceiver();
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(Globals.ACTION_NEW_MESSAGE_FROM_SERVER);
-        registerReceiver(receiver, intentFilter);
-
     }
 
 

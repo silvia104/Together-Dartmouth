@@ -113,12 +113,18 @@ public class EventListFragment extends ListFragment implements LoaderManager.Loa
 
         @Override
         public String lineOneText(Event e) {
-            return e.getLocation();
+            return e.getShortdesc();
         }
 
         @Override
         public String lineTwoText(Event e) {
-            return e.getDate()+"  "+e.getTime();
+            String location = e.getLocation();
+            int linebreak = location.indexOf('\n');
+            if (linebreak>0) {
+                return location.substring(0, linebreak);
+            }else {
+                return location;
+            }
         }
 
         @Override
@@ -126,20 +132,24 @@ public class EventListFragment extends ListFragment implements LoaderManager.Loa
 
         @Override
         public String lineTreText(Event e) {
-            return "Duration:  "+e.getDuration();
+            return e.getDate()+"  "+e.getTime();
         }
 
         @Override
-        public String lineFouText(Event e) {
-            return e.getShortdesc();
+        public String lineFouText(Event e){return "Duration:  "+e.getDuration() + " Hours";
         }
         @Override
         public String lineFivText(Event e) {
-            return "Joined number";
+            return "Joiner Count";
         }
         @Override
         public String lineSixText(Event e) {
             return e.getmJoinerCount()+"/"+e.getLimit();
+        }
+
+        @Override
+        public int setImage(Event e){
+            return Globals.categoriIcons[e.getCategoryIdx()];
         }
     }
 
@@ -170,7 +180,8 @@ public class EventListFragment extends ListFragment implements LoaderManager.Loa
                 }
             }
         }
-        values=filter;
+        values.clear();
+        values.addAll(filter);
     }
 
 
@@ -269,7 +280,7 @@ public class EventListFragment extends ListFragment implements LoaderManager.Loa
 
     }
 
-    class UpdateListAsyncTask extends AsyncTask<Void, Void, String> {
+    class UpdateListAsyncTask extends AsyncTask<Void, Void, List<Event>> {
         private Context context;
 
         public UpdateListAsyncTask(Context context) {
@@ -277,13 +288,15 @@ public class EventListFragment extends ListFragment implements LoaderManager.Loa
         }
 
         @Override
-        protected String doInBackground(Void... params) {
-            values.addAll(datasource.queryEvents(EventDataSource.ALL_EVENT));
-            return null;
+        protected List<Event> doInBackground(Void... params) {
+           return datasource.queryEvents(EventDataSource.ALL_EVENT);
         }
 
         @Override
-        protected void onPostExecute(String msg) {
+        protected void onPostExecute(List<Event> events) {
+            super.onPostExecute(events);
+            values.clear();
+            values.addAll(events);
             dafaultFilter();
             updateListfromvalues();
         }
