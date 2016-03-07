@@ -118,35 +118,44 @@ public class MyEventsAsInitiator extends ListFragment implements
         }
 
         @Override
-        public long getid(Event event) {
-            return event.getEventId();
+        public String lineOneText(Event e) {
+            return e.getShortdesc();
         }
 
-        @Override
-        public String lineOneText(Event event) {
-//            return e.getShortdesc();
-            return event.getLocation();
-        }
         @Override
         public String lineTwoText(Event e) {
-            return e.getDate()+"  "+e.getTime();
-        }
-        @Override
-        public String lineTreText(Event event) {
-            return "Duration" + event.getDuration();
-        }
-        @Override
-        public String lineFouText(Event event) {
-            return event.getShortdesc();
-        }
-        @Override
-        public String lineFivText(Event event) {
-            return "Joined Number";
-        }
-        @Override
-        public String lineSixText(Event event) {
-            return event.getmJoinerCount() + "/" + event.getLimit();
+            String location = e.getLocation();
+            int linebreak = location.indexOf('\n');
+            if (linebreak>0) {
+                return location.substring(0, linebreak);
+            }else {
+                return location;
+            }
         }
 
+        @Override
+        public long getid(Event e){return e.getEventId();}
+
+        @Override
+        public String lineTreText(Event e) {
+            return e.getDate()+"  "+e.getTime();
+        }
+
+        @Override
+        public String lineFouText(Event e){return "Duration:  "+e.getDuration() + " Hours";
+        }
+        @Override
+        public String lineFivText(Event e) {
+            return "Joiner Count";
+        }
+        @Override
+        public String lineSixText(Event e) {
+            return e.getmJoinerCount()+"/"+e.getLimit();
+        }
+
+        @Override
+        public int setImage(Event e){
+            return Globals.categoriIcons[e.getCategoryIdx()];
+        }
     }
 }

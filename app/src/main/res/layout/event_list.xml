@@ -57,50 +57,29 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-<<<<<<< HEAD
                     android:text="test"
                     android:padding="2dp"/>
-=======
-                    android:maxLines="2"
-                    android:textColor="#000000" />
->>>>>>> origin/test
-
                 <TextView android:id="@+id/etext2"
                     android:textSize="18dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-<<<<<<< HEAD
                     android:padding="2dp"/>
-=======
-                    android:maxLines="1"
-                    android:textColor="#000000" />
->>>>>>> origin/test
 
                 <TextView android:id="@+id/etext3"
                     android:textSize="16dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-<<<<<<< HEAD
                     android:padding="2dp"/>
-=======
-                    android:maxLines="1"
-                    android:textColor="#000000" />
->>>>>>> origin/test
+
 
                 <TextView android:id="@+id/etext4"
                     android:textSize="16dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-<<<<<<< HEAD
                     android:padding="2dp"/>
-=======
-                    android:maxLines="1"
-                    android:textColor="#000000" />
-
->>>>>>> origin/test
             </LinearLayout>
         </LinearLayout>
 
