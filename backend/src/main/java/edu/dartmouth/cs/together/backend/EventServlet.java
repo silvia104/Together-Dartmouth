@@ -54,7 +54,8 @@ public class EventServlet extends HttpServlet {
                 long userId = jsonObject.getLong(User.ID_KEY);
                 Entity entity = EventDataSource.queryById(eventId);
                 Entity userEntity = UserDataSource.queryById(userId);
-                if (noEvent(entity,eventId,resp)|| noEvent(userEntity, userId, resp)) return;
+                if (noEvent(entity,eventId,resp)|| noEvent(userEntity, userId, resp)
+                || userId == (long)entity.getProperty(Event.OWNER_KEY)) return;
 
                 //get event and user from entity
                 Event newEvent = EventDataSource.getEventFromEntity(entity);

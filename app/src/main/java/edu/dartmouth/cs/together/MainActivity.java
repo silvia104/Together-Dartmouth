@@ -20,6 +20,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import edu.dartmouth.cs.together.cloud.GcmRegisterIntentService;
 import edu.dartmouth.cs.together.cloud.UploadPicIntentService;
@@ -29,11 +30,14 @@ import edu.dartmouth.cs.together.utils.Globals;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+    private int currentFragment;
     private boolean isListFragment;
     private final int GET_RESULT_SUCCESS = -1;
     public static int filterTime;
     public static int filterDist;
     private static final String List_FRAGMENT_STATE_KEY = "saved_List";
+    private static final String CUR_FRAG_KEY = "cur_frag";
+
     private static final  String FILTER_TIME_KEY="filter_time";
     private static final  String FILTER_DISTANCE_KEY="filter_dist";
 
@@ -61,6 +65,7 @@ public class MainActivity extends AppCompatActivity
                     .getBoolean(List_FRAGMENT_STATE_KEY);
             filterTime=savedInstanceState.getInt(FILTER_TIME_KEY);
             filterDist=savedInstanceState.getInt(FILTER_DISTANCE_KEY);
+            currentFragment = savedInstanceState.getInt(CUR_FRAG_KEY);
         }
 
         startFragment();
@@ -75,12 +80,6 @@ public class MainActivity extends AppCompatActivity
             }
         });
         */
-        isListFragment = true;
-        EventListFragment efrag = new EventListFragment();
-        FragmentManager manager = getSupportFragmentManager();
-        FragmentTransaction transaction = manager.beginTransaction();
-        transaction.replace(R.id.main_content_frame, efrag, "EVENT_LIST_FRAG");
-        transaction.commit();
         ImageButton addFab = (ImageButton) findViewById(R.id.fab_image_button);
         ImageButton addFabswitch = (ImageButton) findViewById(R.id.fab_image_button2);
         addFab.setOnClickListener(new View.OnClickListener() {
@@ -104,19 +103,10 @@ public class MainActivity extends AppCompatActivity
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
-                LinearLayout profile = (LinearLayout) drawerView.findViewById(R.id.nav_header);
-                profile.setOnClickListener(new View.OnClickListener() {
-
-                    @Override
-                    public void onClick(View v) {
-                        drawer.closeDrawers();
-                        Fragment profileFragment = new ProfileFragment();
-                        FragmentTransaction newTransaction = getSupportFragmentManager().beginTransaction();
-                        newTransaction.replace(R.id.main_content_frame, profileFragment);
-                        newTransaction.addToBackStack(null);
-                        newTransaction.commit();
-                    }
-                });
+                TextView userName = (TextView) findViewById(R.id.user_name_nav_header);
+                if (userName != null){
+                    userName.setText("Name: "+Globals.currentUser.getName());
+                }
             }
         };
         drawer.setDrawerListener(toggle);
@@ -134,8 +124,8 @@ public class MainActivity extends AppCompatActivity
         outState.putBoolean(List_FRAGMENT_STATE_KEY, isListFragment);
         outState.putInt(FILTER_TIME_KEY, filterTime);
         outState.putInt(FILTER_DISTANCE_KEY, filterDist);
+        outState.putInt(CUR_FRAG_KEY,currentFragment);
     }
-
 
     @Override
     protected void onResume() {
@@ -144,7 +134,7 @@ public class MainActivity extends AppCompatActivity
             startActivity(new Intent(getApplicationContext(), LoginActivity.class));
         } else {
             Globals.currentUser = new User();
-            Globals.currentUser.setId(mSharedPreference.getLong(User.ID_KEY,-1));
+            Globals.currentUser.setId(mSharedPreference.getLong(User.ID_KEY, -1));
             Globals.currentUser.setAccount(mSharedPreference.getString(User.ACCOUNT_KEY, "UNKNOWN"));
         }
     }
@@ -197,6 +187,7 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.action_logout) {
             mSharedPreference.edit()
                     .putBoolean(Globals.LOGIN_STATUS_KEY, false).commit();
+            finish();
             return true;
         }
 
@@ -230,24 +221,25 @@ public class MainActivity extends AppCompatActivity
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         Fragment fragment = null;
+        currentFragment = id;
         switch (id){
             case R.id.nav_my_events:
                 fragment = new MyEventsFragment();
                 transaction.replace(
-                        R.id.main_content_frame, fragment, "OTHER_FRAGS"
+                        R.id.main_content_frame, fragment, "MY_EVENTS"
                 );
                 break;
 
             case R.id.nav_message:
                 fragment = new MessageCenterFragment();
                 transaction.replace(
-                        R.id.main_content_frame, fragment, "OTHER_FRAGS"
+                        R.id.main_content_frame, fragment, "MESSAGES"
                 );
                 break;
             case R.id.nav_settings:
                 fragment = new SettingsFragment();
                 transaction.replace(
-                        R.id.main_content_frame, fragment, "OTHER_FRAGS"
+                        R.id.main_content_frame, fragment, "SETTINGS"
                 );
                 break;
 
@@ -277,20 +269,47 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void startFragment(){
-        if(!isListFragment){
-            EventMapFragment efrag = new EventMapFragment();
-            android.support.v4.app.FragmentManager manager = getSupportFragmentManager();
-            android.support.v4.app.FragmentTransaction transaction = manager.beginTransaction();
-            transaction.replace(R.id.main_content_frame, efrag);
-            transaction.commit();
+        FragmentManager manager = getSupportFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        if (currentFragment == R.id.nav_recommended_events) {
+
+            if (!isListFragment) {
+                EventMapFragment efrag = new EventMapFragment();
+                transaction.replace(R.id.main_content_frame, efrag);
+            } else {
+                EventListFragment efrag = new EventListFragment();
+                transaction.replace(R.id.main_content_frame, efrag);
+            }
+        } else {
+            switch (currentFragment){
+                case R.id.nav_my_events:
+                    transaction.replace(
+                            R.id.main_content_frame, new MyEventsFragment(), "MY_EVENTS"
+                    );
+                    break;
+
+                case R.id.nav_message:
+                    transaction.replace(
+                            R.id.main_content_frame, new MessageCenterFragment(), "MESSAGES"
+                    );
+                    break;
+                case R.id.nav_settings:
+                    transaction.replace(
+                            R.id.main_content_frame, new SettingsFragment(), "SETTINGS"
+                    );
+                    break;
+
+                case R.id.nav_recommended_events:
+
+                    transaction.replace(
+                            R.id.main_content_frame, new EventListFragment(), "EVENT_LIST_FRAG"
+                    );
+
+                    break;
+            }
+
         }
-        else{
-            EventListFragment efrag = new EventListFragment();
-            android.support.v4.app.FragmentManager manager = getSupportFragmentManager();
-            android.support.v4.app.FragmentTransaction transaction = manager.beginTransaction();
-            transaction.replace(R.id.main_content_frame, efrag);
-            transaction.commit();
-        }
+        transaction.commit();
     }
 
 

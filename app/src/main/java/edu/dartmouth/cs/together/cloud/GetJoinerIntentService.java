@@ -51,7 +51,7 @@ public class GetJoinerIntentService extends BaseIntentSerice {
             uploadState = "Sync failed: " + e1.getMessage();
             Log.e(this.getClass().getName(), "data posting error " + e1);
         }
-        if (uploadState.length() > 0) {
+        if (uploadState.length() > 4) {
             showToast(uploadState);
         }
 

@@ -44,7 +44,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         sharedPreferences = mContext.getSharedPreferences(mContext.getPackageName(), Context.MODE_PRIVATE);
 
 
-
+/*
         Preference pref = findPreference("default_filter");
         pref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override

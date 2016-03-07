@@ -70,7 +70,7 @@ public class JoinQuitEventIntentService extends BaseIntentSerice {
                         }
                     } else if (action.equals(Globals.ACTION_QUIT)) {
                         if (resp.length() == 0) {
-                            showToast("Already Joined!");
+                            showToast("Already Quited!");
                         } else {
                             i.putExtra(Globals.ACTION_JOIN, false);
                             int newCount = Integer.parseInt(resp.trim());
