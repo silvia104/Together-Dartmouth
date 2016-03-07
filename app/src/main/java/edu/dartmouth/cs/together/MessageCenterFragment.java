@@ -44,25 +44,29 @@ public class MessageCenterFragment extends ListFragment
     private Context mContext;
     private msgRowAdapter mAdapter;
     private List<Message> mMessageList = new ArrayList<>();;
-    private NewMessageReceiver mNewMessageReceiver;
     private static MessageDataSource mDB;
     private SharedPreferences mSharedPreference;
     private boolean[] mReceiveMessageType = new boolean[6];
-    Notification mNotification;
+
 
     public MessageCenterFragment() {
             // Required empty public constructor
             }
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mContext = getActivity().getApplicationContext();
+
+    }
+
+    @Override
     public void onActivityCreated(Bundle savedInstanceState){
         super.onActivityCreated(savedInstanceState);
-        mContext = getActivity();
         mAdapter = new msgRowAdapter();
         setListAdapter(mAdapter);
-        mNewMessageReceiver = new NewMessageReceiver();
         mDB = new MessageDataSource(mContext);
-
+        setRetainInstance(true);
         //TODO: MODIFIED FINALS IN GLOBALS
         mSharedPreference = mContext.getSharedPreferences(mContext.getPackageName(), Context.MODE_PRIVATE);
         mReceiveMessageType[Globals.MESSAGE_TYPE_NEW_JOIN] = mSharedPreference.getBoolean(
@@ -174,106 +178,9 @@ public class MessageCenterFragment extends ListFragment
 
 
 
-    public class NewMessageReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive (Context context,Intent intent) {
-
-            //write message in local database
-            Bundle extras = intent.getExtras();
-            String message = extras.getString(Globals.KEY_MESSAGE_BUNDLE_MESSAGE);
-            if (message == null) return;
-            String[] msgFields = message.split(Globals.SPLITER);
-            //is msgFilds.length > 1, there must be a spliter inserted when the
-            // message was sent
-            if(msgFields.length > 1) {
-                Message messageToInsert = setupMessage(msgFields);
-                long time = extras.getLong(Globals.KEY_MESSAGE_BUNDLE_TIME);
-                int type = extras.getInt(Globals.KEY_MESSAGE_BUNDLE_TYPE);
-                
-//                if(!mReceiveMessageType[type]) return;
-                messageToInsert.setMsgType(type);
-                messageToInsert.setMsgTime(time);
-                messageToInsert.setIsRead(false);
-                InsertNewMessage insertNewMessage = new InsertNewMessage();
-                NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(mContext)
-                        .setSmallIcon(R.drawable.ic_menu_messages)
-                        .setContentTitle("Together: New Message")
-                        .setAutoCancel(true)
-                        .setContentText(messageToInsert.getMsgContent());
-                NotificationManager notiManager = (NotificationManager) mContext.
-                        getSystemService(Context.NOTIFICATION_SERVICE);
-                notiManager.notify(0, mNotification);
 
 
-                insertNewMessage.doInBackground(messageToInsert);
-            }
-        }
-    }
 
-
-    private Message setupMessage( String[] msgFields){
-        Message msg = new Message();
-
-
-        if(msgFields[0].startsWith("Event")){
-            int i=1;
-            while(i<msgFields.length) {
-                switch (i) {
-                    case 1:
-                        msg.setEventId(Long.valueOf(msgFields[1]));
-                        break;
-                    case 2:
-                        msg.setEventShortDesc(msgFields[2]);
-                        break;
-                    case 3:
-                        msg.setUserId(Long.valueOf(msgFields[3]));
-                        break;
-                    case 4:
-                        msg.setUserName(msgFields[4]);
-                        break;
-                }
-                i++;
-            }
-        }else if(msgFields[0].startsWith("Question")){
-            int i=1;
-            while(i<msgFields.length) {
-                switch (i) {
-                    case 1:
-                        msg.setEventId(Long.valueOf(msgFields[1]));
-                        break;
-                    case 2:
-                        msg.setEventShortDesc(msgFields[2]);
-                        break;
-                    case 3:
-                        msg.setQaId(Long.valueOf(msgFields[3]));
-                        break;
-                    case 4:
-                        msg.setQuestion(msgFields[4]);
-                        break;
-                    case 5:
-                        msg.setAnswer(msgFields[5]);
-                }
-                i++;
-            }
-        }
-        return msg;
-    }
-
-    class InsertNewMessage extends AsyncTask<Message, Void, Long> {
-        private MessageDataSource mDB;
-        // get the new record.
-        @Override
-        protected Long doInBackground(Message... msg) {
-            mDB = new MessageDataSource(getActivity());
-            Long id = mDB.insertMessage(msg[0]);
-            return id;
-        }
-        // update ListView
-        public void onPostExecute(Message msg) {
-            mMessageList.add(msg);
-            mAdapter.notifyDataSetChanged();
-        }
-    }
 
     class UpdateNewRecordTask extends AsyncTask<Message, Message, Long> {
 

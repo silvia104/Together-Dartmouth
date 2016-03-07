@@ -32,12 +32,11 @@ public class MainActivity extends AppCompatActivity
     private final int GET_RESULT_SUCCESS = -1;
     public int filterTime;
     public int filterDist;
-    private MessageCenterFragment.NewMessageReceiver receiver;
     private SharedPreferences mSharedPreference;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mSharedPreference = getSharedPreferences(getPackageName(),MODE_PRIVATE);
+        mSharedPreference = getSharedPreferences(getPackageName(), MODE_PRIVATE);
         if (!Globals.isRegistered) {
             registerDevice();
         }
@@ -55,7 +54,7 @@ public class MainActivity extends AppCompatActivity
             }
         });
         */
-        isListFragment=true;
+        isListFragment = true;
         EventListFragment efrag = new EventListFragment();
         FragmentManager manager = getSupportFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
@@ -92,7 +91,7 @@ public class MainActivity extends AppCompatActivity
             }
         });
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close){
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
                 LinearLayout profile = (LinearLayout) drawerView.findViewById(R.id.nav_header);
@@ -116,17 +115,6 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-
-    }
-
-
-
-    private void registerMessageReceiver() {
-        MessageCenterFragment msgCenterFragment = new MessageCenterFragment();
-        receiver = msgCenterFragment.new NewMessageReceiver();
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(Globals.ACTION_NEW_MESSAGE_FROM_SERVER);
-        registerReceiver(receiver, intentFilter);
     }
 
 
@@ -142,19 +130,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-
-    @Override
-    protected void onStart(){
-        super.onStart();
-        registerMessageReceiver();
-    }
-
-    @Override
-    protected void onStop(){
-        super.onStop();
-        unregisterReceiver(receiver);
-
-    }
 
     @Override
     protected void onPause(){
