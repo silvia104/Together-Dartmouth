@@ -101,10 +101,35 @@ public class EventJoinerDataSource {
         return result;
     }
 
+    public static List<Entity> queryByUserId(long userId) {
+        List<Entity> result = new ArrayList<>();
+        Query query = new Query(EVENT_JOINER_ENTITY_NAME);
+        query.setFilter(new Query.FilterPredicate(User.ID_KEY,
+                Query.FilterOperator.EQUAL,
+                userId));
+        query.setAncestor(getKey());
+
+        PreparedQuery pq = mDatastore.prepare(query);
+        for(Entity entity : pq.asIterable()){
+            result.add(entity);
+        }
+        return result;
+    }
+
+
     public static List<Long> entitiesToUserId(List<Entity> entities){
         List<Long> result = new ArrayList<>();
         for (Entity e : entities){
             result.add((Long)e.getProperty(User.ID_KEY));
+        }
+        return result;
+    }
+
+
+    public static List<Long> entitiesToEventId(List<Entity> entities){
+        List<Long> result = new ArrayList<>();
+        for (Entity e : entities){
+            result.add((Long)e.getProperty(Event.ID_KEY));
         }
         return result;
     }

@@ -5,16 +5,28 @@
         android:key = "pref_key_notification">
         <SwitchPreference
             android:title="New Friend Joined"
-            android:key = "notify when new people join"/>
+            android:key = "new_people"/>
             />
-
         <SwitchPreference
-            android:title="Event Is Changed"
-            android:key = "notify evens are changed"/>
+            android:title="Friend Quited"
+            android:key = "quit_people"/>
         />
-
-
-
+        <SwitchPreference
+            android:title="Event Changed"
+            android:key = "event_change"/>
+        />
+        <SwitchPreference
+            android:title="Event Canceled"
+            android:key = "event_cancel"/>
+        />
+        <SwitchPreference
+            android:title="New Question"
+            android:key = "new_q"/>
+        />
+        <SwitchPreference
+            android:title="New Answer"
+            android:key = "new_a"/>
+        />
     </PreferenceCategory>
 
     <PreferenceCategory
@@ -48,14 +60,9 @@
 
         <Preference
             android:key = "pref_key_reset_password"
+
             android:title= "Reset Password">
         </Preference>
-
-        <Preference
-            android:key = "pref_key_log_out"
-            android:title= "Logout">
-        </Preference>
-
 
 
 

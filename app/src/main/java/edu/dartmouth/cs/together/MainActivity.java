@@ -32,6 +32,7 @@ public class MainActivity extends AppCompatActivity
     private final int GET_RESULT_SUCCESS = -1;
     public int filterTime;
     public int filterDist;
+    private MessageCenterFragment.NewMessageReceiver receiver;
     private SharedPreferences mSharedPreference;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +42,13 @@ public class MainActivity extends AppCompatActivity
             registerDevice();
         }
         setContentView(R.layout.activity_main);
+<<<<<<< HEAD
+=======
+        //startService(new Intent(getApplicationContext(), UploadPicIntentService.class));
+
+
+
+>>>>>>> origin/test
 
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -74,21 +82,20 @@ public class MainActivity extends AppCompatActivity
         addFabswitch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(isListFragment){
+                if (isListFragment) {
                     EventMapFragment efrag = new EventMapFragment();
                     android.support.v4.app.FragmentManager manager = getSupportFragmentManager();
                     android.support.v4.app.FragmentTransaction transaction = manager.beginTransaction();
                     transaction.replace(R.id.main_content_frame, efrag);
                     transaction.commit();
-                    isListFragment=!isListFragment;
-                }
-                else{
+                    isListFragment = !isListFragment;
+                } else {
                     EventListFragment efrag = new EventListFragment();
                     android.support.v4.app.FragmentManager manager = getSupportFragmentManager();
                     android.support.v4.app.FragmentTransaction transaction = manager.beginTransaction();
                     transaction.replace(R.id.main_content_frame, efrag);
                     transaction.commit();
-                    isListFragment=!isListFragment;
+                    isListFragment = !isListFragment;
                 }
             }
         });
@@ -117,20 +124,19 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        registerMessageReceiver();
+
     }
 
 
 
     private void registerMessageReceiver() {
         MessageCenterFragment msgCenterFragment = new MessageCenterFragment();
-        MessageCenterFragment.NewMessageReceiver receiver = msgCenterFragment.new NewMessageReceiver();
+        receiver = msgCenterFragment.new NewMessageReceiver();
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(Globals.ACTION_NEW_MESSAGE_FROM_SERVER);
         registerReceiver(receiver, intentFilter);
     }
 
-    //TODO: WHEN TO UNREGISTER THE RECEIVER?
 
     @Override
     protected void onResume() {
@@ -142,6 +148,29 @@ public class MainActivity extends AppCompatActivity
             Globals.currentUser.setId(mSharedPreference.getLong(User.ID_KEY,-1));
             Globals.currentUser.setAccount(mSharedPreference.getString(User.ACCOUNT_KEY, "UNKNOWN"));
         }
+    }
+
+
+    @Override
+    protected void onStart(){
+        super.onStart();
+        registerMessageReceiver();
+    }
+
+    @Override
+    protected void onStop(){
+        super.onStop();
+        unregisterReceiver(receiver);
+
+    }
+
+    protected void onDestroy(){
+        super.onDestroy();
+        SharedPreferences sharedPrefs = getSharedPreferences(getPackageName(), MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPrefs.edit();
+        //the first time load value is false util the app is launched a second time
+        editor.putBoolean(Globals.FIRST_LOAD_ALL_EVENTS_KEY, false);
+        editor.commit();
     }
 
     @Override

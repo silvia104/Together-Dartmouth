@@ -55,21 +55,10 @@ public class MyEventsAsInitiator extends ListFragment implements
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view =  inflater.inflate(R.layout.fragment_my_events_as_starter, container, false);
-
         return view;
     }
 
 
-    @Override
-    public void onListItemClick(ListView l, View v, int position, long id) {
-        super.onListItemClick(l,v,position, id);
-        Intent i = new Intent(getActivity(),EventDetailActivity.class);
-        Event event = mAdapter.getItem(position);
-        long eventId = event.getEventId();
-        i.putExtra(Event.ID_KEY, eventId);
-        i.putExtra("TAG",EventDataSource.MY_OWN_EVENT);
-        startActivity(i);
-    }
 
     @Override
     public Loader<List<Event>> onCreateLoader(int id, Bundle args) {
@@ -104,7 +93,7 @@ public class MyEventsAsInitiator extends ListFragment implements
         // get all records in background as loader
         @Override
         public List<Event> loadInBackground() {
-            return mDB.queryOwnedEvent(Globals.currentUser.getId());
+            return mDB.queryOwnedEvent(EventDataSource.MY_OWN_EVENT, Globals.currentUser.getId());
         }
 
 
@@ -119,7 +108,7 @@ public class MyEventsAsInitiator extends ListFragment implements
         }
 
         public initiatedEventsAdapter(Context context, int listItemLayoutResourceId, List<Event> ts) {
-            super(context, listItemLayoutResourceId, ts);
+            super(context, listItemLayoutResourceId, ts, EventDataSource.MY_OWN_EVENT);
             this.context = context;
             mListItemLayoutResId = listItemLayoutResourceId;
         }

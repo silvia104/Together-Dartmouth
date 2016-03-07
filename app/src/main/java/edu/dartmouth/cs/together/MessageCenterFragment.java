@@ -4,6 +4,7 @@ package edu.dartmouth.cs.together;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -20,7 +21,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +42,8 @@ public class MessageCenterFragment extends ListFragment
     private List<Message> mMessageList = new ArrayList<>();;
     private NewMessageReceiver mNewMessageReceiver;
     private static MessageDataSource mDB;
+    private SharedPreferences mSharedPreference;
+    private boolean[] mReceiveMessageType = new boolean[6];
 
 
     public MessageCenterFragment() {
@@ -57,6 +59,20 @@ public class MessageCenterFragment extends ListFragment
         mNewMessageReceiver = new NewMessageReceiver();
         mDB = new MessageDataSource(mContext);
 
+        //TODO: MODIFIED FINALS IN GLOBALS
+        mSharedPreference = mContext.getSharedPreferences(mContext.getPackageName(), Context.MODE_PRIVATE);
+        mReceiveMessageType[Globals.MESSAGE_TYPE_NEW_JOIN] = mSharedPreference.getBoolean(
+                Globals.KEY_SHARED_PREF_NOTE_NEW_PEOPLE, false);
+        mReceiveMessageType[Globals.MESSAGE_TYPE_EVENT_QUIT] = mSharedPreference.getBoolean(
+                Globals.KEY_SHARED_PREF_NOTE_QUIT_PEOPLE,false);
+        mReceiveMessageType[Globals.MESSAGE_TYPE_EVENT_CHANGE] = mSharedPreference.getBoolean(
+                Globals.KEY_SHARED_PREF_NOTE_EVENT_CHANGE,false);
+        mReceiveMessageType[Globals.MESSAGE_TYPE_EVENT_CANCEL] = mSharedPreference.getBoolean(
+                Globals.KEY_SHARED_PREF_NOTE_EVENT_CANCEL,false);
+        mReceiveMessageType[Globals.MESSAGE_TYPE_NEW_QUESTION] = mSharedPreference.getBoolean(
+                Globals.KEY_SHARED_PREF_NOTE_NEW_Q,false);
+        mReceiveMessageType[Globals.MESSAGE_TYPE_NEW_ANSWER] = mSharedPreference.getBoolean(
+                Globals.KEY_SHARED_PREF_NOTE_NEW_A,false);
     }
 
 
@@ -169,13 +185,12 @@ public class MessageCenterFragment extends ListFragment
                 Message messageToInsert = setupMessage(msgFields);
                 long time = extras.getLong(Globals.KEY_MESSAGE_BUNDLE_TIME);
                 int type = extras.getInt(Globals.KEY_MESSAGE_BUNDLE_TYPE);
+                if(!mReceiveMessageType[type]) return;
                 messageToInsert.setMsgType(type);
                 messageToInsert.setMsgTime(time);
                 messageToInsert.setIsRead(false);
                 InsertNewMessage insertNewMessage = new InsertNewMessage();
                 insertNewMessage.doInBackground(messageToInsert);
-
-
             }
         }
     }
@@ -226,7 +241,6 @@ public class MessageCenterFragment extends ListFragment
                 i++;
             }
         }
-
         return msg;
     }
 
@@ -272,7 +286,7 @@ public class MessageCenterFragment extends ListFragment
         @Override
         public List<Message> loadInBackground() {
             //return mDB.getAllRecords();
-            return mDB.getAllRecords();
+            return mDB.getCurrentUserRecords();
         }
 
     }

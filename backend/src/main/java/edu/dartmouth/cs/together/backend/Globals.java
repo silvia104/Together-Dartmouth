@@ -11,5 +11,7 @@ public class Globals {
     public static final String ACTION_QUIT = "quit";
     public static final String USERS_NAME = "users";
     public static final String ACTION_POLL = "poll";
+    public static final String UPDATE_ALL = "update_all";
+    public static final String UPDATE_USER_EVENTS = "update_user_events";
     public static final String SPLITER = String.valueOf((char)30);
 }

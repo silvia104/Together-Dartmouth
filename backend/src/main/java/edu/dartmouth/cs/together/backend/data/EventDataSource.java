@@ -3,12 +3,14 @@ package edu.dartmouth.cs.together.backend.data;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -148,5 +150,42 @@ public class EventDataSource {
         }
         return resultList;
     }
+
+    public static ArrayList<Event> queryEventByOwner(long ownerId){
+        ArrayList<Event> result = new ArrayList<>();
+        Query query = new Query(Event.Event_ENTITY_NAME);
+        query.setFilter(new Query.FilterPredicate(Event.OWNER_KEY,
+                Query.FilterOperator.EQUAL,
+                ownerId));
+        query.setAncestor(getKey());
+
+        PreparedQuery pq = mDatastore.prepare(query);
+        //get query results as a list of entity
+        for (Entity entity : pq.asIterable()) {
+            Event entry = getEventFromEntity(entity);
+            if (entry != null) {
+                result.add(entry);
+            }
+        }
+        return result;
+
+
+    }
+
+    public static ArrayList<Event> queryEventByJoiner(long joinerId){
+        ArrayList<Event> result = new ArrayList<>();
+        List<Entity> eventEntities = EventJoinerDataSource.queryByUserId(joinerId);
+        List<Long> eventID = EventJoinerDataSource.entitiesToEventId(eventEntities);
+        for(long id:eventID){
+            Entity temp = queryById(id);
+            Event event = getEventFromEntity(temp);
+            result.add(event);
+        }
+        return result;
+
+
+    }
+
+
 
 }

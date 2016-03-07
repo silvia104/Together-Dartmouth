@@ -203,12 +203,12 @@ public class EventDataSource  {
         return event;
     }
 
-    public List<Event> queryOwnedEvent(long id){
+    public List<Event> queryOwnedEvent(int eventType, long id){
         open();
         List<Event> events = new ArrayList<>();
         Cursor cursor =null;
         try {
-            cursor = mDB.query(getTableName(MY_OWN_EVENT),
+            cursor = mDB.query(getTableName(eventType),
                     null,  BaseEventTable.COLUMNS.OWNER_ID.colName() + "=?",
                     new String[]{String.valueOf(id)}, null, null, null, null);
             if (cursor.getCount()>0) {

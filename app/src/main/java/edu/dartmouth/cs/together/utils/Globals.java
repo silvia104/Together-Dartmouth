@@ -27,6 +27,7 @@ public class Globals {
     public static final int SETTING_FILTER = 0;
     public static final String ACTION_CODE = "code";
     public static final String LOGIN_STATUS_KEY ="login_status" ;
+    public static final String FIRST_LOAD_ALL_EVENTS_KEY = "first_load_all_events";
     public static String[] sports = {"Soccer","Skiing","Cycling","Jogging","Hiking",
             "Tennis","Dancing","Gym","Basketball","Swimming","Billiard"};
     public static String[] life = {"Movie","Party","Shopping","Dining", "Travel", "Study",
@@ -39,8 +40,12 @@ public class Globals {
     public static LatLng DARTMOUTH_GPS = new LatLng(43.726034, -72.142917);
     public static double RADIUS_50MILES = 80467.2;
 
+<<<<<<< HEAD
     public static String SERVER_ADDR = "http://10.0.0.30:8080";
     //public static String SERVER_ADDR = "https://together-1234.appspot.com";
+=======
+    public static String SERVER_ADDR = "http://10.0.0.70:8080";
+>>>>>>> origin/test
     public static String DEVICE_ID;
     public static User currentUser;
     public static final String ACTION_ADD = "add";
@@ -70,15 +75,21 @@ public class Globals {
     public static String KEY_MESSAGE_BUNDLE_TYPE  = "message type";
 
     public static String ACTION_NEW_MESSAGE_FROM_SERVER = "edu.dartmouth.cs.together.NEWMESSAGE";
-    public static final int MESSAGE_TYPE_NEW_QUESTION = 1;
-    public static final int MESSAGE_TYPE_NEW_ANSWER = 2;
-    public static final int MESSAGE_TYPE_NEW_JOIN = 3;
-    public static final int MESSAGE_TYPE_EVENT_QUIT = 4;
-    public static final int MESSAGE_TYPE_EVENT_CHANGE = 5;
-    public static final int MESSAGE_TYPE_EVENT_CANCEL = 6;
+    public static final int MESSAGE_TYPE_NEW_QUESTION = 0;
+    public static final int MESSAGE_TYPE_NEW_ANSWER = 1;
+    public static final int MESSAGE_TYPE_NEW_JOIN = 2;
+    public static final int MESSAGE_TYPE_EVENT_QUIT = 3;
+    public static final int MESSAGE_TYPE_EVENT_CHANGE = 4;
+    public static final int MESSAGE_TYPE_EVENT_CANCEL = 5;
     public static final String SPLITER = String.valueOf((char)30);
 
 
+    public static final String KEY_SHARED_PREF_NOTE_NEW_PEOPLE = "new_people";
+    public static final String KEY_SHARED_PREF_NOTE_QUIT_PEOPLE = "quit_people";
+    public static final String KEY_SHARED_PREF_NOTE_EVENT_CHANGE = "event_change";
+    public static final String KEY_SHARED_PREF_NOTE_EVENT_CANCEL = "event_cancel";
+    public static final String KEY_SHARED_PREF_NOTE_NEW_Q = "new_q";
+    public static final String KEY_SHARED_PREF_NOTE_NEW_A = "new_a";
 
 
     static {

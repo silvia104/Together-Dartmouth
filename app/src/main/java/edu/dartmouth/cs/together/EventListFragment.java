@@ -95,7 +95,7 @@ public class EventListFragment extends Fragment implements LoaderManager.LoaderC
 
     public class eventarrayAdapter extends EventArrayAdapter<Event> {
         public eventarrayAdapter(Context context, List<Event> exercise) {
-            super(context, exercise);
+            super(context, exercise, EventDataSource.ALL_EVENT);
         }
 
         @Override
@@ -175,7 +175,8 @@ public class EventListFragment extends Fragment implements LoaderManager.LoaderC
 //            datasource.clearAllEvent();
                 try {
                     Map<String, String> params = new HashMap<String, String>();
-                    event= ServerUtilities.post(edu.dartmouth.cs.together.utils.Globals.SERVER_ADDR + "/update.do", params);
+                    params.put("action", "update_all");
+                    event= ServerUtilities.post(Globals.SERVER_ADDR + "/update.do", params);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -220,6 +221,7 @@ public class EventListFragment extends Fragment implements LoaderManager.LoaderC
                             e.printStackTrace();
                         }
                         datasource.insertEvents(EventDataSource.ALL_EVENT, values);
+
                     }
                 }
                 //datasource.close();
