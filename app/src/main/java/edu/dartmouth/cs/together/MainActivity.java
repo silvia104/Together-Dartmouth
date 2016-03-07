@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mSharedPreference = getSharedPreferences(getPackageName(),MODE_PRIVATE);
+        mSharedPreference = getSharedPreferences(getPackageName(), MODE_PRIVATE);
         if (!Globals.isRegistered) {
             registerDevice();
         }
@@ -66,6 +66,22 @@ public class MainActivity extends AppCompatActivity
 
         startFragment();
 
+        /*
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View edu.dartmouth.cs.together.view) {
+                Snackbar.make(edu.dartmouth.cs.together.view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            }
+        });
+        */
+        isListFragment = true;
+        EventListFragment efrag = new EventListFragment();
+        FragmentManager manager = getSupportFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        transaction.replace(R.id.main_content_frame, efrag, "EVENT_LIST_FRAG");
+        transaction.commit();
         ImageButton addFab = (ImageButton) findViewById(R.id.fab_image_button);
         ImageButton addFabswitch = (ImageButton) findViewById(R.id.fab_image_button2);
         addFab.setOnClickListener(new View.OnClickListener() {
@@ -86,7 +102,7 @@ public class MainActivity extends AppCompatActivity
         });
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close){
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
                 LinearLayout profile = (LinearLayout) drawerView.findViewById(R.id.nav_header);
@@ -110,7 +126,6 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-
     }
 
     @Override
@@ -128,6 +143,7 @@ public class MainActivity extends AppCompatActivity
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(Globals.ACTION_NEW_MESSAGE_FROM_SERVER);
         registerReceiver(receiver, intentFilter);
+
     }
 
 
@@ -145,25 +161,15 @@ public class MainActivity extends AppCompatActivity
 
 
     @Override
-    protected void onStart(){
-        super.onStart();
-        registerMessageReceiver();
-    }
-
-    @Override
-    protected void onStop(){
-        super.onStop();
-        unregisterReceiver(receiver);
-
-    }
-
-    protected void onDestroy(){
-        super.onDestroy();
+    protected void onPause(){
+        super.onPause();
         SharedPreferences sharedPrefs = getSharedPreferences(getPackageName(), MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPrefs.edit();
         //the first time load value is false util the app is launched a second time
-        editor.putBoolean(Globals.FIRST_LOAD_ALL_EVENTS_KEY, false);
-        editor.commit();
+        if(sharedPrefs.getBoolean(Globals.FIRST_LOAD_ALL_EVENTS_KEY,false)) {
+            editor.putBoolean(Globals.FIRST_LOAD_ALL_EVENTS_KEY, false);
+            editor.commit();
+        }
     }
 
     @Override

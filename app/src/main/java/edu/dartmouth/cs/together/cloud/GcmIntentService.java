@@ -1,7 +1,12 @@
 package edu.dartmouth.cs.together.cloud;
 
+
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
@@ -9,7 +14,10 @@ import com.google.android.gms.gcm.GoogleCloudMessaging;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import edu.dartmouth.cs.together.R;
 import edu.dartmouth.cs.together.data.EventDataSource;
+import edu.dartmouth.cs.together.data.Message;
+import edu.dartmouth.cs.together.data.MessageDataSource;
 import edu.dartmouth.cs.together.utils.Globals;
 
 
@@ -38,44 +46,91 @@ public class GcmIntentService extends BaseIntentSerice {
                 Logger.getLogger("GCM_RECEIVED").log(Level.INFO, extras.toString());
                 String message = extras.getString("message");
 
-                //add message content to a new bundle
-                Bundle messageBundle = new Bundle();
-                long time = System.currentTimeMillis();
-                messageBundle.putLong(Globals.KEY_MESSAGE_BUNDLE_TIME, time);
+                //setup type and event
 
-                if (message.startsWith("Event Delete")) {
-                    String[] parts = message.split(":");
-                    long id = Long.parseLong(parts[1].trim());
+
+                String[] msgFields = message.split(Globals.SPLITER);
+                Message messageToInsert = setupMessage(msgFields);
+                long time = System.currentTimeMillis();
+                messageToInsert.setMsgTime(time);
+                messageToInsert.setIsRead(false);
+
+                if (msgFields[0].startsWith("Event Delete")) {
+//                    String[] parts = message.split(":");
+                    long id = Long.parseLong(msgFields[1].trim());
                     EventDataSource db = new EventDataSource(getApplicationContext());
                     db.deleteEvent(EventDataSource.ALL_EVENT, id);
                     db.deleteEvent(EventDataSource.JOINED_EVENT,id);
 
-                    messageBundle.putInt(Globals.KEY_MESSAGE_BUNDLE_TYPE, Globals.MESSAGE_TYPE_EVENT_CANCEL);
+                    messageToInsert.setMsgType(Globals.MESSAGE_TYPE_EVENT_CANCEL);
                 } else if (message.startsWith("Event Joined:")){
-                    // msg.sendMessage(deviceList, "Event Joined:"
-//                    + eventId + Globals.SPLITER
-//                            + eventShortDesc + Globals.SPLITER
-//                            +  Globals.JOIN + Globals.SPLITER
-//                            + account);
-                    messageBundle.putInt(Globals.KEY_MESSAGE_BUNDLE_TYPE, Globals.MESSAGE_TYPE_NEW_JOIN);
-                } else if (message.startsWith("Event Updated:")) {
-                    messageBundle.putInt(Globals.KEY_MESSAGE_BUNDLE_TYPE, Globals.MESSAGE_TYPE_EVENT_CHANGE);
-                }else if(message.startsWith("Event Quited:")){
-                    messageBundle.putInt(Globals.KEY_MESSAGE_BUNDLE_TYPE, Globals.MESSAGE_TYPE_EVENT_QUIT);
-                } else if (message.startsWith("Question Answered:")){
-                    messageBundle.putInt(Globals.KEY_MESSAGE_BUNDLE_TYPE, Globals.MESSAGE_TYPE_NEW_ANSWER);
-                } else if(message.startsWith("Question Posted:")){
-                    messageBundle.putInt(Globals.KEY_MESSAGE_BUNDLE_TYPE, Globals.MESSAGE_TYPE_NEW_QUESTION);
-                }
-                Intent sendMessageIntent = new Intent();
 
-                messageBundle.putString(Globals.KEY_MESSAGE_BUNDLE_MESSAGE, message);
-                sendMessageIntent.putExtras(messageBundle);
-                sendMessageIntent.setAction(Globals.ACTION_NEW_MESSAGE_FROM_SERVER);
-                sendBroadcast(sendMessageIntent);
+                    messageToInsert.setMsgType(Globals.MESSAGE_TYPE_NEW_JOIN);
+                } else if (message.startsWith("Event Updated:")) {
+
+                    messageToInsert.setMsgType(Globals.MESSAGE_TYPE_EVENT_CHANGE);
+                }else if(message.startsWith("Event Quited:")){
+                    messageToInsert.setMsgType(Globals.MESSAGE_TYPE_EVENT_QUIT);
+                } else if (message.startsWith("Question Answered:")){
+                    messageToInsert.setMsgType(Globals.MESSAGE_TYPE_NEW_ANSWER);
+                } else if(message.startsWith("Question Posted:")){
+                    messageToInsert.setMsgType(Globals.MESSAGE_TYPE_NEW_QUESTION);
+                }
+
+                MessageDataSource mDB = new MessageDataSource(getApplicationContext());
+                mDB.insertMessage(messageToInsert);
+
+
                 showToast(message);
             }
         }
         GcmBroadcastReceiver.completeWakefulIntent(intent);
     }
+
+    private Message setupMessage( String[] msgFields){
+        Message msg = new Message();
+        if(msgFields[0].startsWith("Event")){
+            int i=1;
+            while(i<msgFields.length) {
+                switch (i) {
+                    case 1:
+                        msg.setEventId(Long.valueOf(msgFields[1]));
+                        break;
+                    case 2:
+                        msg.setEventShortDesc(msgFields[2]);
+                        break;
+                    case 3:
+                        msg.setUserId(Long.valueOf(msgFields[3]));
+                        break;
+                    case 4:
+                        msg.setUserName(msgFields[4]);
+                        break;
+                }
+                i++;
+            }
+        }else if(msgFields[0].startsWith("Question")) {
+            int i = 1;
+            while (i < msgFields.length) {
+                switch (i) {
+                    case 1:
+                        msg.setEventId(Long.valueOf(msgFields[1]));
+                        break;
+                    case 2:
+                        msg.setEventShortDesc(msgFields[2]);
+                        break;
+                    case 3:
+                        msg.setQaId(Long.valueOf(msgFields[3]));
+                        break;
+                    case 4:
+                        msg.setQuestion(msgFields[4]);
+                        break;
+                    case 5:
+                        msg.setAnswer(msgFields[5]);
+                }
+                i++;
+            }
+        }
+        return msg;
+    }
+
 }

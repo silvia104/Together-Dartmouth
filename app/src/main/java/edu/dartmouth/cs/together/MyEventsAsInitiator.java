@@ -102,7 +102,6 @@ public class MyEventsAsInitiator extends ListFragment implements
     class initiatedEventsAdapter extends EventArrayAdapter<Event>{
 
         private int mListItemLayoutResId;
-
         public initiatedEventsAdapter(Context context, List<Event> ts) {
             this(context, R.layout.event_list, ts);
         }

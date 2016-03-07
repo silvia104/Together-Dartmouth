@@ -48,6 +48,7 @@ public abstract class EventArrayAdapter<T> extends ArrayAdapter<T> {
         View listItemView = convertView;
         this.itemPosition = position;
         if (null == convertView) {
+<<<<<<< HEAD
             listItemView = inflater.inflate(mListItemLayoutResId, parent, false);
             listItemView.setOnClickListener(new View.OnClickListener() {
                                                 @Override
@@ -88,6 +89,45 @@ public abstract class EventArrayAdapter<T> extends ArrayAdapter<T> {
 
 
         imgView = (ImageView) listItemView.findViewById(
+=======
+        listItemView = inflater.inflate(mListItemLayoutResId, parent, false);
+        listItemView.setOnClickListener( new View.OnClickListener(){
+                 @Override
+                 public void onClick(View v) {
+                         Intent i = null;
+                         dismiss();
+                         if (intentType==EventDataSource.MY_OWN_EVENT) {
+                             i = new Intent(getContext(), EventEditorActivity.class);
+                         } else {
+                             i = new Intent(getContext(),EventDetailActivity.class);
+                         }
+                         T t = (T)getItem(itemPosition);
+                         final long id=getid(t);
+                         i.putExtra(Event.ID_KEY,id);
+                         i.putExtra("TAG", intentType);
+                         v.getContext().startActivity(i);
+                        }
+                });
+        }
+
+        // The ListItemLayout must use the standard text item IDs.
+        TextView lineOneView = (TextView)listItemView.findViewById(
+        R.id.etext1);
+        TextView lineTwoView = (TextView)listItemView.findViewById(
+        R.id.etext2);
+        TextView lineTreView = (TextView)listItemView.findViewById(
+        R.id.etext3);
+        TextView lineFouView = (TextView)listItemView.findViewById(
+        R.id.etext4);
+        TextView lineFivView = (TextView)listItemView.findViewById(
+        R.id.etext5);
+        TextView lineSixView = (TextView)listItemView.findViewById(
+        R.id.etext6);
+        T t = (T)getItem(position);
+        final long id=getid(t);
+
+        imgView=(ImageView)listItemView.findViewById(
+>>>>>>> origin/test
                 R.id.imageView2);
         /*imgView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -100,11 +140,13 @@ public abstract class EventArrayAdapter<T> extends ArrayAdapter<T> {
                         i.putExtra(Event.ID_KEY,id);
                         i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         v.getContext().startActivity(i);
-
                 }
         });*/
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> origin/test
         lineOneView.setText(lineOneText(t));
         lineTwoView.setText(lineTwoText(t));
         lineTreView.setText(lineTreText(t));
