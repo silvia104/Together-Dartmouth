@@ -16,6 +16,7 @@ import butterknife.ButterKnife;
 
 /**
  * Created by TuanMacAir on 2/27/16.
+ * Recycler View adapter for image card views
  */
 public class ImageRecVewAdapter extends RecyclerView.Adapter<ImageRecVewAdapter.ImageCardViewHolder> {
     private final Context mContext;

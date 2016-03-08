@@ -12,6 +12,7 @@ import java.util.List;
 
 /**
  * Created by TuanMacAir on 3/1/16.
+ * DB operations for questions
  */
 public class QaDataSource {
     private static SQLiteDatabase mDB = null;

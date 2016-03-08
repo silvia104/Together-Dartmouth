@@ -15,8 +15,7 @@ import java.util.logging.Logger;
 
 /**
  * Created by TuanMacAir on 2/20/16.
- * Handles datastore operations.
- * keeps track of all registered devices and activities
+ * Handles datastore operations of questions
  *
  */
 public class QaDataSource {
@@ -31,9 +30,8 @@ public class QaDataSource {
     }
 
 
-    // add activity record to datastore
     public static boolean add(Qa Qa) {
-        // don't add record if it exists already
+        // don't add question if it exists already
         Entity found = queryById(Qa.getId());
         if (found !=null) {
             update(found, Qa);
@@ -57,11 +55,8 @@ public class QaDataSource {
         return true;
     }
 
-    // delete record from datastore
+    // delete question from datastore
     public static boolean delete(long id) {
-        // you can also use name to get key, then use the key to delete the
-        // entity from datastore directly
-        // because name is also the entity's key
 
         // query
         Query.Filter filter = new Query.FilterPredicate(Qa.ID_KEY,

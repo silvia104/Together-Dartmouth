@@ -22,6 +22,7 @@ import edu.dartmouth.cs.together.data.Qa;
 import edu.dartmouth.cs.together.data.User;
 import edu.dartmouth.cs.together.utils.Globals;
 
+// activity to show event details
 public class EventDetailActivity extends BaseEventActivity {
     private long mEventId=-1;
     private int mEventType;
@@ -49,6 +50,7 @@ public class EventDetailActivity extends BaseEventActivity {
             finish();
         }
 
+        // receive broadcast to update data
         mDateReloadReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {

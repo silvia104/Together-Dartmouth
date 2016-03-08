@@ -2,6 +2,7 @@ package edu.dartmouth.cs.together.data;
 
 /**
  * Created by TuanMacAir on 3/1/16.
+ * table to store event and joiner relations
  */
 public class EventJoinerTable {
     public static final String TABLE_NAME = "eventjoiner";

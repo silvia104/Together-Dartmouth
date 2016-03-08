@@ -20,7 +20,7 @@ import edu.dartmouth.cs.together.utils.Globals;
 
 /**
  * Created by TuanMacAir on 2/20/16.
- * intent service to upload record
+ * intent service to join or quit a event
  */
 public class JoinQuitEventIntentService extends BaseIntentSerice {
     public JoinQuitEventIntentService() {
@@ -34,8 +34,8 @@ public class JoinQuitEventIntentService extends BaseIntentSerice {
         long eventId = intent.getLongExtra(Event.ID_KEY, -1);
         long joinerId = intent.getLongExtra(User.ID_KEY, -1);
         String uploadState = "";
-        // Upload all entries in a json array
         try {
+            // provide event id and user id to server
                 JSONObject json = new JSONObject();
                 json.put(Event.ID_KEY,eventId);
                 json.put(User.ID_KEY,joinerId);
@@ -45,6 +45,7 @@ public class JoinQuitEventIntentService extends BaseIntentSerice {
                 params.put("action", action);
                 // post add request
                 String resp = ServerUtilities.post(Globals.SERVER_ADDR + "/eventops.do", params);
+               // update local db after getting response from server;
                 EventDataSource db = new EventDataSource(getApplicationContext());
                 if (resp.contains("failed")) {
                     db.deleteEventJoinerRelationByEventId(eventId);
@@ -60,6 +61,7 @@ public class JoinQuitEventIntentService extends BaseIntentSerice {
                         if (resp.length() == 0) {
                             showToast("Already Joined!");
                         } else {
+                            // update joiner count
                             int newCount = Integer.parseInt(resp.trim());
                             ContentValues values = new ContentValues();
                             values.put(BaseEventTable.COLUMNS.JOINER_COUNT.colName(), newCount);
@@ -72,6 +74,7 @@ public class JoinQuitEventIntentService extends BaseIntentSerice {
                         if (resp.length() == 0) {
                             showToast("Already Quited!");
                         } else {
+                            // delete related db records, update joiner count
                             i.putExtra(Globals.ACTION_JOIN, false);
                             int newCount = Integer.parseInt(resp.trim());
                             ContentValues values = new ContentValues();
@@ -81,6 +84,7 @@ public class JoinQuitEventIntentService extends BaseIntentSerice {
                             db.deleteEvent(EventDataSource.JOINED_EVENT, eventId);
                         }
                     }
+                    // send broadcast for event detail page to update information
                     sendBroadcast(i);
                 }
 
@@ -93,7 +97,7 @@ public class JoinQuitEventIntentService extends BaseIntentSerice {
             }
 
         } catch (JSONException e){
-            Log.e(this.getClass().getName(), e.getCause().toString());
+            e.printStackTrace();
         }
         
     }

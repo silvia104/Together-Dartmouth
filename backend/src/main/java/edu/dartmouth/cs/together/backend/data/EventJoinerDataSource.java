@@ -16,8 +16,7 @@ import java.util.logging.Logger;
 
 /**
  * Created by TuanMacAir on 2/20/16.
- * Handles datastore operations.
- * keeps track of all registered devices and activities
+ * Handles datastore operations for event joiner relation table
  *
  */
 public class EventJoinerDataSource {

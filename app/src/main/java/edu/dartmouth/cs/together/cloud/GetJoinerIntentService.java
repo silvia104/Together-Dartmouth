@@ -20,6 +20,7 @@ import edu.dartmouth.cs.together.utils.Globals;
 
 /**
  * Created by TuanMacAir on 3/3/16.
+ * intent service to get joiners from server side
  */
 public class GetJoinerIntentService extends BaseIntentSerice {
     public GetJoinerIntentService() {
@@ -34,15 +35,18 @@ public class GetJoinerIntentService extends BaseIntentSerice {
         try {
             Map<String, String> params = new HashMap<>();
             params.put(Event.ID_KEY, ""+eventId);
-            // post add request
+            // post get joiner request
             String response = ServerUtilities.post(Globals.SERVER_ADDR + "/getjoiner.do", params);
+            // the server shoudl return all joiners of a event in an json array
             if(response.contains(":")) {
+                // parse the json array to user list
                 List<User> users = parseJosonArray(response);
                 new UserDataSource(getApplicationContext()).insertUsers(users);
                 for (int i = 1; i < users.size(); i++) {
                     new EventDataSource(getApplicationContext())
                             .insertEventJoinerRelation(eventId, users.get(i).getId());
                 }
+                // send broadcast to ask Joiner activity to refresh data;
                 sendBroadcast(new Intent(Globals.RELOAD_JOINER_DATA));
             } else {
                 uploadState = response;
@@ -57,6 +61,7 @@ public class GetJoinerIntentService extends BaseIntentSerice {
 
     }
 
+    // helper function to parse JsonArray to user list;
     private List<User> parseJosonArray(String data){
         List<User> result = new ArrayList<>();
         if (data.length() > 0) {

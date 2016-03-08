@@ -17,6 +17,7 @@ import edu.dartmouth.cs.together.utils.Globals;
 
 /**
  * Created by TuanMacAir on 3/1/16.
+ * handles event relaed db operations
  */
 public class EventDataSource  {
     public static final int MY_OWN_EVENT = 0;
@@ -127,6 +128,7 @@ public class EventDataSource  {
         return -1;
     }
 
+    // update all event properties in table
     public long updateEvent(int eventType, long id, Event event){
         open();
         if (id == -1) return id;
@@ -144,6 +146,7 @@ public class EventDataSource  {
             return -1;
         }
     }
+    // only update desired properties of event in table
     public long updateEvent(int eventType, long id, ContentValues values){
         if (id == -1) return id;
         int updated = 0;
@@ -158,6 +161,7 @@ public class EventDataSource  {
         else return -1;
     }
 
+    // return all events in a specific table
     public List<Event> queryEvents(int eventType){
         open();
         List<Event> events = new ArrayList<>();
@@ -182,6 +186,7 @@ public class EventDataSource  {
         return events;
     }
 
+    //query a specific event
     public Event queryEventById(int eventType, long id){
         open();
         Event event = null;

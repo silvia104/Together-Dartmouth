@@ -22,8 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  * Created by TuanMacAir on 2/20/16.
- * Handles datastore operations.
- * keeps track of all registered devices and activities
+ * Handles datastore operations for users
  *
  */
 public class UserDataSource  {
@@ -38,7 +37,6 @@ public class UserDataSource  {
     }
 
 
-    // add activity record to datastore
     public static boolean add(User user) {
         // don't add record if it exists already
         Entity found = queryByAccount(user.getAccount());
@@ -90,13 +88,7 @@ public class UserDataSource  {
         entity.setProperty(User.DEVICE_KEY, user.getDevice());
     }
 
-    // delete record from datastore
     public static boolean delete(long id) {
-        // you can also use name to get key, then use the key to delete the
-        // entity from datastore directly
-        // because name is also the entity's key
-
-        // query
         Query.Filter filter = new Query.FilterPredicate(User.ID_KEY,
                 Query.FilterOperator.EQUAL, id);
 
@@ -187,11 +179,9 @@ public class UserDataSource  {
             return result;
         }
         Query query = new Query(User.USER_ENTITY_NAME);
-        // get every record from datastore, no filter
         query.setFilter(new Query.FilterPredicate(User.ID_KEY,
                 Query.FilterOperator.IN,
                 userIds));
-        // set query's ancestor to get strong consistency
         query.setAncestor(getKey());
 
         PreparedQuery pq = mDatastore.prepare(query);

@@ -117,6 +117,8 @@ public class BaseEventActivity extends BasePopoutActivity implements
         return super.onCreateOptionsMenu(menu);
     }
 
+    // refresh the event info and qa info
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -134,6 +136,7 @@ public class BaseEventActivity extends BasePopoutActivity implements
         return super.onOptionsItemSelected(item);
     }
 
+    //set the recyclerview of bottomsheet
     protected void setBottonRecView(RecyclerView.Adapter adapter) {
         mBottomRecView.setHasFixedSize(false);
         mBottomRecView.setLayoutManager(new LinearLayoutManager(this));
@@ -146,6 +149,7 @@ public class BaseEventActivity extends BasePopoutActivity implements
        // setBtmShtBehavior();
     }
 
+    //set up the booton sheet behavior
     protected void setBtmShtBehavior(final long eventId) {
         mBtmShtBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
@@ -173,6 +177,7 @@ public class BaseEventActivity extends BasePopoutActivity implements
         mBtmShtBehavior.setPeekHeight(80);
     }
 
+    // set floating action button
     @OnClick(R.id.fab)
     public void onFabClick() {
         Intent i = new Intent(this, JoinerListActivity.class);
@@ -221,6 +226,7 @@ public class BaseEventActivity extends BasePopoutActivity implements
         });
     }
 
+    // input dialog for various situations
     protected Dialog createInputDialog(int type) {
         View v = this.getLayoutInflater().inflate(R.layout.dialog_input, null);
         EditText shortDesc = (EditText) v.findViewById(R.id.editShortDesc);
@@ -273,6 +279,8 @@ public class BaseEventActivity extends BasePopoutActivity implements
         return builder.create();
     }
 
+
+    // set onclick listener for input dialog buttons
     protected void ShowInputDialog(final int type, final String... args) {
         final Dialog inputDialog = createInputDialog(type);
         inputDialog.setOnShowListener(new DialogInterface.OnShowListener() {
@@ -340,6 +348,8 @@ public class BaseEventActivity extends BasePopoutActivity implements
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
     }
 
+
+    // set input dialog for question and answers
     private void setQaDialog(Dialog inputDialog, int type, long qaId){
         String errorPrx ="", key ="";
         EditText editText = (EditText) inputDialog.findViewById(R.id.editLongDesc);
@@ -387,6 +397,7 @@ public class BaseEventActivity extends BasePopoutActivity implements
 
     }
 
+    //Async loader to load question and answers
     static  class QaLoader extends AsyncTaskLoader<List<Qa>> {
         private Context mContext;
         private long mEventId;
@@ -458,6 +469,7 @@ public class BaseEventActivity extends BasePopoutActivity implements
         }
     }
 
+    //recycler view adapter for qa
     class QaRecVewAdapter extends RecyclerView.Adapter<QaRecVewAdapter.QaViewHolder>{
         private Context mContext;
         private LayoutInflater mInflater;

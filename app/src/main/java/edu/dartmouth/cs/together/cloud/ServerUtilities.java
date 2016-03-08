@@ -104,6 +104,8 @@ public class ServerUtilities {
             }
         }
     }
+
+    // upload image to server
     public static String postImage(String uploadurl,byte[] bytes, long userId) throws IOException{
         String crlf = "\r\n";
         String twoHyphens = "--";
@@ -158,6 +160,8 @@ public class ServerUtilities {
             }
         }
     }
+
+    // download image from server;
     public static Bitmap postForImg(String urlImage)
             throws IOException {
         Bitmap bitmap=null;

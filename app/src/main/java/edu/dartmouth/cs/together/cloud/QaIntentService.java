@@ -23,6 +23,7 @@ import edu.dartmouth.cs.together.utils.Globals;
 
 /**
  * Created by TuanMacAir on 3/3/16.
+ * intent service to handle question/answer related operations
  */
 public class QaIntentService extends BaseIntentSerice {
     public QaIntentService() {
@@ -35,15 +36,16 @@ public class QaIntentService extends BaseIntentSerice {
         String a = intent.getStringExtra(Qa.A_KEY);
         long qaId = intent.getLongExtra(Qa.ID_KEY, -1);
         long eventId = intent.getLongExtra(Event.ID_KEY, -1);
-        List<Qa> qas = new ArrayList<>();
+        List<Qa> qas;
         String uploadState = "";
         try {
             Map<String, String> params = new HashMap<>();
-
+            // get qa list from server
             if (qaId == -1) {
                 params.put(Event.ID_KEY,eventId+"");
                 params.put("action",Globals.ACTION_POLL);
             } else {
+                // send qa info to server
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put(Qa.ID_KEY, qaId);
                 jsonObject.put(Event.ID_KEY, eventId);
@@ -58,11 +60,14 @@ public class QaIntentService extends BaseIntentSerice {
             }
             try {
                 String data = ServerUtilities.post(Globals.SERVER_ADDR + "/qa.do", params);
+
+                //update local db
                 QaDataSource db =  new QaDataSource(getApplicationContext());
                 if (data.length() > 0){
                     qas = parseJosonArray(data);
                     db.insertQas(qas);
                     if (qas.size() > 0){
+                        // reload qa data in event activities
                         sendBroadcast(new Intent(Globals.RELOAD_QUESTION_DATA_IN_DETAIL));
                     }
                 }else {
@@ -73,10 +78,13 @@ public class QaIntentService extends BaseIntentSerice {
                         qa.setEventId(eventId);
                         db.insertQa(qa);
                     } else {
+                        // update local db
                         ContentValues values = new ContentValues();
                         values.put(QaTable.COLUMNS.ANSWER.colName(),a);
                         db.updateQa(qaId,values);
                     }
+                    // reload qa data in event activities
+
                     sendBroadcast(new Intent(Globals.RELOAD_QUESTION_DATA_IN_DETAIL));
                 }
 
@@ -93,6 +101,8 @@ public class QaIntentService extends BaseIntentSerice {
             e.printStackTrace();
         }
     }
+
+    // parse json string to list of qas
     private List<Qa> parseJosonArray(String data){
         List<Qa> result = new ArrayList<>();
         if (data.length() > 0) {

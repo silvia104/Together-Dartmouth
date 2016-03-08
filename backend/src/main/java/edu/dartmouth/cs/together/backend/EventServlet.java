@@ -25,6 +25,7 @@ import edu.dartmouth.cs.together.backend.data.UserDataSource;
 
 /**
  * Created by TuanMacAir on 3/2/16.
+ * handles all event related request from client
  */
 public class EventServlet extends HttpServlet {
     @Override
@@ -112,20 +113,17 @@ public class EventServlet extends HttpServlet {
                             + userId + Globals.SPLITER
                             + account);
                 }
-//                msg.sendMessage(deviceList, "Event Quited:" + eventId + ":" + userId);
             } else{
                 Event event = new Event(jsonObject);
                 if (actionString.equals(Globals.ACTION_ADD)) {
                     boolean ret = EventDataSource.add(event);
                     if(ret) {
-                        //userList.add(event.getOwner());
                         deviceList = UserDataSource.queryDeviceByUserId(userList);
                         msg.sendMessage(deviceList, "Event Added:" + event.getEventId());
                     }
                 } else if (actionString.equals(Globals.ACTION_UPDATE)) {
                     boolean ret = EventDataSource.update(event, true);
                     if(ret) {
-                        //userList.add(event.getOwner());
                         userList.addAll(EventJoinerDataSource.entitiesToUserId(
                                 EventJoinerDataSource.queryByEventId(event.getEventId())));
                         deviceList = UserDataSource.queryDeviceByUserId(userList);
@@ -136,7 +134,6 @@ public class EventServlet extends HttpServlet {
                     }
                 }else if (actionString.equals(Globals.ACTION_DELETE)) {
                     long eventId = event.getEventId();
-                    //userList.add(event.getOwner());
                     userList.addAll(EventJoinerDataSource.entitiesToUserId(
                             EventJoinerDataSource.queryByEventId(eventId)));
                     deviceList = UserDataSource.queryDeviceByUserId(userList);

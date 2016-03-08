@@ -2,6 +2,7 @@ package edu.dartmouth.cs.together.data;
 
 /**
  * Created by TuanMacAir on 3/3/16.
+ * base data structure for event tables
  */
 public class BaseEventTable {
     public enum COLUMNS{

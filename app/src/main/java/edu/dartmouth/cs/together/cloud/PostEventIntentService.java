@@ -18,7 +18,7 @@ import edu.dartmouth.cs.together.utils.Globals;
 
 /**
  * Created by TuanMacAir on 2/20/16.
- * intent service to upload record
+ * intent service to handle event related operations
  */
 public class PostEventIntentService extends BaseIntentSerice {
     public PostEventIntentService() {
@@ -41,7 +41,8 @@ public class PostEventIntentService extends BaseIntentSerice {
             } else {
                 event = new EventDataSource(getApplicationContext()).queryEventById(
                         EventDataSource.MY_OWN_EVENT, eventId);
-                // Upload all entries in a json array
+
+                // upload event in an json array
                 JSONObject json = new JSONObject();
                 json.put(Event.ID_KEY, event.getEventId());
                 json.put(Event.CATEGORY_KEY, event.getCategoryIdx());
@@ -61,33 +62,39 @@ public class PostEventIntentService extends BaseIntentSerice {
                 String result = ServerUtilities.post(Globals.SERVER_ADDR + "/eventops.do", params);
 
                 EventDataSource db = new EventDataSource(getApplicationContext());
+                // add new event
                 if (action.equals(Globals.ACTION_ADD)) {
                     ContentValues values = new ContentValues();
                     values.put(BaseEventTable.COLUMNS.STATUS.colName(), Event.STATUS_POSTED);
+                    // insert to local db
                     db.updateEvent(EventDataSource.MY_OWN_EVENT, event.getEventId(),
                             values);
                 } else if (action.equals(Globals.ACTION_DELETE)) {
+                    // clear local db
                     db.deleteEvent(EventDataSource.MY_OWN_EVENT, eventId);
                     db.deleteEvent(EventDataSource.ALL_EVENT,eventId);
+                    // let any other controller to update data
                     sendBroadcast(new Intent(Globals.DELETE_EVENT));
-                    //FOR ADPTER TO UPDATE TODO:
                 } else if (action.equals(Globals.ACTION_POLL)){
                     if (result.contains(":")){
                         JSONObject json = new JSONObject(result.substring(0, result.length() - 1));
                         event = new Event(json);
+                        // update local database
                         db.updateEvent(EventDataSource.ALL_EVENT, eventId, event);
                         db.updateEvent(EventDataSource.JOINED_EVENT,eventId, event);
                         db.updateEvent(EventDataSource.MY_OWN_EVENT, eventId,event);
+                        // let event activities to update data
                         sendBroadcast(new Intent(Globals.UPDATE_EVENT_DETAIL));
                     } else {
+                        // update local database
                         db.deleteEvent(EventDataSource.ALL_EVENT, eventId);
                         db.deleteEvent(EventDataSource.JOINED_EVENT, eventId);
                         db.deleteEvent(EventDataSource.MY_OWN_EVENT, eventId);
                         Intent i = new Intent(Globals.UPDATE_EVENT_DETAIL);
+                        // update event detail activity
                         i.putExtra(Event.ID_KEY, -1L);
                         sendBroadcast(i);
-
-                        //FOR ADAPTER TO UPDATE TODO:
+                        // let other controllers to update data
                         sendBroadcast(new Intent(Globals.DELETE_EVENT));
                         showToast("Event no longer exists!");
                     }

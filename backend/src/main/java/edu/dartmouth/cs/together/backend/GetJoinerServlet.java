@@ -22,6 +22,7 @@ import edu.dartmouth.cs.together.backend.data.UserDataSource;
 
 /**
  * Created by TuanMacAir on 3/2/16.
+ * get all joiners of a event
  */
 public class GetJoinerServlet extends HttpServlet {
     @Override

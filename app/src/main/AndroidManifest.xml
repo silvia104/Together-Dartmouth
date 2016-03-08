@@ -31,7 +31,7 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/icon"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme" >
@@ -50,7 +50,7 @@
 
         <activity
             android:name=".MainActivity"
-            android:label="@string/title_activity_main"
+            android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -95,7 +95,6 @@
         </receiver>
         <service android:name=".cloud.GcmIntentService" />
         <service android:name=".cloud.PostEventIntentService" />
-        <service android:name=".cloud.DeleteServerRecordIntentService" />
         <service android:name=".cloud.GcmRegisterIntentService"/>
         <service android:name=".cloud.JoinQuitEventIntentService"/>
         <service android:name=".cloud.GetJoinerIntentService"/>

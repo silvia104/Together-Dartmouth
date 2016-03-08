@@ -18,6 +18,7 @@ import java.util.List;
 
 /**
  * Created by TuanMacAir on 3/1/16.
+ * DB operaitons of users
  */
 public class UserDataSource {
     private static SQLiteDatabase mDB = null;

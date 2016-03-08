@@ -51,6 +51,7 @@ public class UploadPicIntentService extends BaseIntentSerice {
         }
     }
 
+    // get the blob url for uploading the image
     public String getUrl(long userId)  throws IOException {
         Map<String, String> params = new HashMap<>();
         params.put("myFile", userId+".jpg");
@@ -69,6 +70,8 @@ public class UploadPicIntentService extends BaseIntentSerice {
         bitMap.compress(Bitmap.CompressFormat.JPEG, 100, outStream);
         outStream.flush();
         byte[] bytes = outStream.toByteArray();
+
+        // return the downloadable url of the image.
         String json = ServerUtilities.postImage(uploadUrl, bytes,  userId);
         if (json.length()>0) {
             json = json.substring(0, json.length() - 1);

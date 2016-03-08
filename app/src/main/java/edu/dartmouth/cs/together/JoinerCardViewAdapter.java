@@ -22,6 +22,7 @@ import edu.dartmouth.cs.together.utils.Helper;
 
 /**
  * Created by TuanMacAir on 2/27/16.
+ * Recycler view adapter for joiners
  */
 public class JoinerCardViewAdapter extends RecyclerView.Adapter<JoinerCardViewAdapter.JoinerCardViewHolder> {
         private final LayoutInflater mLayoutInflater;

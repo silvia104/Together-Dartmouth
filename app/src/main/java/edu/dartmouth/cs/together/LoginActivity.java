@@ -358,7 +358,7 @@ public class LoginActivity extends AppCompatActivity {
 
 
     }
-
+// get confirmation code
     class GetCodeAysncTask extends AsyncTask<String,Void,Boolean>{
 
         @Override

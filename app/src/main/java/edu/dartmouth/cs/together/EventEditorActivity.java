@@ -44,6 +44,8 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
+// activity to to edit event
+
 public class EventEditorActivity extends BaseEventActivity implements DatePickerDialog.OnDateSetListener,
         TimePickerDialog.OnTimeSetListener {
 
@@ -88,9 +90,7 @@ public class EventEditorActivity extends BaseEventActivity implements DatePicker
             mLocationTv.setText(mLatLng.toString());
             mLocationTv.setTag("");
         }
-        //TODO: to remove
-        if (savedInstanceState == null) {
-        }else {
+        if (savedInstanceState != null) {
             restoreValues(savedInstanceState);
         }
 
@@ -162,6 +162,8 @@ public class EventEditorActivity extends BaseEventActivity implements DatePicker
         }
 
     }
+
+    // save status of the activity
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -350,6 +352,7 @@ public class EventEditorActivity extends BaseEventActivity implements DatePicker
         });
     }
 
+    // get location info from place finder
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == PLACE_PICKER_REQUEST) {
             if (resultCode == RESULT_OK) {
@@ -435,6 +438,7 @@ public class EventEditorActivity extends BaseEventActivity implements DatePicker
         return tag.equalsIgnoreCase(getString(R.string.empty_tag));
     }
 
+    // check event info and save it
     private boolean saveEvent() {
         if (isTextViewEmpty(mCategoryTv)) {
             showToast("Please select a category");
@@ -500,6 +504,7 @@ public class EventEditorActivity extends BaseEventActivity implements DatePicker
     }
 
 
+    // add or delete event aysnc task
     class EventOperationAsyncTask extends AsyncTask<Event,Void,Long>{
         @Override
         protected Long doInBackground(Event... events) {
@@ -516,11 +521,7 @@ public class EventEditorActivity extends BaseEventActivity implements DatePicker
                 i.putExtra(Globals.ACTION_KEY, action);
                 i.putExtra(Event.ID_KEY,event.getEventId());
                 getApplication().startService(i);
-            }/*
-            List<Event> list = db.queryEvents();
-            for (Event e: list){
-                Log.d(this.getClass().getName(), e.getLongDesc());
-            }*/
+            }
             return local_id;
         }
     }

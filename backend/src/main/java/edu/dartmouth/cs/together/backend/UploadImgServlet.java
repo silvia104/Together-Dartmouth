@@ -2,6 +2,7 @@ package edu.dartmouth.cs.together.backend;
 
 /**
  * Created by TuanMacAir on 3/5/16.
+ * get blob sent by client
  */
 import java.io.IOException;
 import java.io.PrintWriter;

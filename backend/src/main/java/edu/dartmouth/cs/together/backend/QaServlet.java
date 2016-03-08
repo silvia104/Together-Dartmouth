@@ -25,6 +25,7 @@ import edu.dartmouth.cs.together.backend.data.UserDataSource;
 
 /**
  * Created by TuanMacAir on 3/2/16.
+ * handles qa opersion sent by client
  */
 public class QaServlet extends HttpServlet {
     private static int Add = 0;
