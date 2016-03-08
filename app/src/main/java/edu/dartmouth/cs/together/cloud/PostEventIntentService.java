@@ -54,6 +54,7 @@ public class PostEventIntentService extends BaseIntentSerice {
                 json.put(Event.OWNER_KEY, event.getOwner());
                 json.put(Event.LIMIT_KEY, event.getLimit());
                 json.put(Event.LONG_DESC_KEY, event.getLongDesc());
+                json.put(Event.JOINER_COUNT_KEY,event.getmJoinerCount());
                 params.put("json", json.toString());
             }
             try{

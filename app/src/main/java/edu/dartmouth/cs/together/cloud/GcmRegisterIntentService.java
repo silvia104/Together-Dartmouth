@@ -39,11 +39,11 @@ public class GcmRegisterIntentService extends BaseIntentSerice {
                             new AndroidJsonFactory(), null)
                             // Need setRootUrl
                             .setRootUrl(Globals.SERVER_ADDR + "/_ah/api/")
-                           /* .setGoogleClientRequestInitializer(new GoogleClientRequestInitializer() {
+                            .setGoogleClientRequestInitializer(new GoogleClientRequestInitializer() {
                             @Override
                             public void initialize(AbstractGoogleClientRequest<?> abstractGoogleClientRequest) throws IOException {
                                 abstractGoogleClientRequest.setDisableGZipContent(true);
-                            }})*/;
+                            }});
 
             // end of optional local run code
             regService = builder.build();

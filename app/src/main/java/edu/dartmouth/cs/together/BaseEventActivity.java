@@ -28,6 +28,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
@@ -80,6 +81,7 @@ public class BaseEventActivity extends BasePopoutActivity implements
     @Bind(R.id.addQuestion) ImageButton mAddQuestion;
     @Bind(R.id.joinBtn) ImageButton mJoinBtn;
     @Bind(R.id.editLocationDescBtn) ImageButton mEditLocBtn;
+    @Bind(R.id.categoryIcon) ImageView mCategoryIcon;
     protected BottomSheetBehavior mBtmShtBehavior;
     protected int mCategoryIdx = -1;
     protected LatLng mLatLng;
@@ -201,6 +203,7 @@ public class BaseEventActivity extends BasePopoutActivity implements
         mLimitCount.setText("Jointer Number Limit: " + mLimitNum);
         mLimit.setProgress(mLimitNum);
         mLatLng = event.getLatLng();
+        mCategoryIcon.setImageResource(Globals.categoriIcons[event.getCategoryIdx()]);
     }
 
     protected void disableLimitSeekbar() {

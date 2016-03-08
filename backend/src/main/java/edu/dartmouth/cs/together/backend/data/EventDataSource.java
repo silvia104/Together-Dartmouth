@@ -40,17 +40,25 @@ public class EventDataSource {
             return false;
         }
         Entity entity = new Entity(Event.Event_ENTITY_NAME, getKey());
-        setEntityFromEvent(entity,event);
+        setEntityFromEvent(entity, event);
         mDatastore.put(entity);
         return true;
     }
 
-    public static boolean update(Event event) {
+    public static boolean update(Event event, boolean isFromUser) {
         Entity entity = queryById(event.getEventId());
         if (entity == null){
             return false;
         }
         setEntityFromEvent(entity,event);
+
+        if (isFromUser) {
+            Entity ori = queryById(event.getEventId());
+            if (ori != null) {
+                entity.setProperty(Event.JOINER_COUNT_KEY,
+                        ori.getProperty(Event.JOINER_COUNT_KEY));
+            }
+        }
         mDatastore.put(entity);
         return true;
     }
@@ -113,7 +121,7 @@ public class EventDataSource {
         event.setDuration(((Long) entity.getProperty(Event.DURATION_KEY)).intValue());
         event.setLimit(((Long) entity.getProperty(Event.LIMIT_KEY)).intValue());
         event.setOwnerId((Long) entity.getProperty(Event.OWNER_KEY));
-        event.setJoinerCount(((Long) entity.getProperty(Event.JOINER_COUNT_KEY)).intValue());
+        event.setJoinerCount(((Long)entity.getProperty(Event.JOINER_COUNT_KEY)).intValue());
         return event;
     }
 

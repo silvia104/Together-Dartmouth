@@ -1,7 +1,9 @@
 package edu.dartmouth.cs.together;
 
 
+import android.content.BroadcastReceiver;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.support.v4.app.LoaderManager;
 import android.content.Context;
 import android.support.v4.content.Loader;
@@ -32,6 +34,7 @@ public class MyEventsAsInitiator extends ListFragment implements
     private EventDataSource mDB;
     private initiatedEventsAdapter mAdapter;
     private Context mContext;
+    private BroadcastReceiver mDeletionReceiver;
 
 
 
@@ -85,6 +88,18 @@ public class MyEventsAsInitiator extends ListFragment implements
 //            getLoaderManager().initLoader(0, null, this).forceLoad();
 //        }
 //    }
+    @Override
+    public void onResume(){
+        super.onResume();
+        mDeletionReceiver = new DeletionReceiver();
+        getActivity().registerReceiver(mDeletionReceiver, new IntentFilter(Globals.DELETE_EVENT));
+    }
+
+    @Override
+    public void onPause(){
+        super.onPause();
+        getActivity().unregisterReceiver(mDeletionReceiver);
+    }
 
     @Override
     public void onLoaderReset(Loader<List<Event>> loader) {
@@ -122,48 +137,75 @@ public class MyEventsAsInitiator extends ListFragment implements
         }
 
         @Override
-        public void dismiss(){
+        public void dismiss() {
+
         }
 
         @Override
-        public String lineOneText(Event e) {
-            return e.getShortdesc();
+        public long getid(Event event) {
+            return event.getEventId();
         }
 
         @Override
-        public String lineTwoText(Event e) {
-            String location = e.getLocation();
-            int linebreak = location.indexOf('\n');
-            if (linebreak>0) {
-                return location.substring(0, linebreak);
-            }else {
-                return location;
+        public String lineOneText(Event event) {
+//            return e.getShortdesc();
+            return event.getLocation();
+        }
+        @Override
+        public String lineTwoText(Event event) {
+            return event.getTime();
+        }
+
+        @Override
+        public int setImage(Event event) {
+            return Globals.categoriIcons[event.getCategoryIdx()];
+        }
+
+        @Override
+        public String lineTreText(Event event) {
+            return "Duration" + event.getDuration();
+        }
+        @Override
+        public String lineFouText(Event event) {
+            return event.getShortdesc();
+        }
+        @Override
+        public String lineFivText(Event event) {
+            return "Joined Number";
+        }
+        @Override
+        public String lineSixText(Event event) {
+            return event.getmJoinerCount() + "/" + event.getLimit();
+        }
+
+    }
+
+    private class DeletionReceiver extends BroadcastReceiver implements
+           LoaderManager.LoaderCallbacks<List<Event>> {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(intent.getAction() == Globals.DELETE_EVENT)
+            getLoaderManager().restartLoader(0, null, this).forceLoad();
+        }
+
+        @Override
+        public Loader<List<Event>> onCreateLoader(int id, Bundle args) {
+            return new initiatedEventsLoader(getActivity());
+        }
+
+        @Override
+        public void onLoadFinished(Loader<List<Event>> loader, List<Event> data) {
+            if(data == null){
+                data = new ArrayList<>();
             }
+            mInitiatedEventsList.clear();
+            mInitiatedEventsList.addAll(data);
+            mAdapter.notifyDataSetChanged();
         }
 
         @Override
-        public long getid(Event e){return e.getEventId();}
+        public void onLoaderReset(Loader<List<Event>> loader) {
 
-        @Override
-        public String lineTreText(Event e) {
-            return e.getDate()+"  "+e.getTime();
-        }
-
-        @Override
-        public String lineFouText(Event e){return "Duration:  "+e.getDuration() + " Hours";
-        }
-        @Override
-        public String lineFivText(Event e) {
-            return "Joiner Count";
-        }
-        @Override
-        public String lineSixText(Event e) {
-            return e.getmJoinerCount()+"/"+e.getLimit();
-        }
-
-        @Override
-        public int setImage(Event e){
-            return Globals.categoriIcons[e.getCategoryIdx()];
         }
     }
 }

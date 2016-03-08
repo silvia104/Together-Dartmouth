@@ -65,7 +65,7 @@ public class EventServlet extends HttpServlet {
                     boolean ret = EventJoinerDataSource.add(eventId, userId);
                     if(ret) {
                         newEvent.increaseJoiner(1);
-                        EventDataSource.update(newEvent);
+                        EventDataSource.update(newEvent,false);
                         PrintWriter writer = resp.getWriter();
                         writer.print(newEvent.getJoinerCount() + "");
                         writer.flush();
@@ -96,7 +96,7 @@ public class EventServlet extends HttpServlet {
                     User newUser = UserDataSource.getUserFromEntity(userEntity);
 
                     newEvent.increaseJoiner(-1);
-                    EventDataSource.update(newEvent);
+                    EventDataSource.update(newEvent,false);
                     PrintWriter writer = resp.getWriter();
                     writer.print(newEvent.getJoinerCount() + "");
                     writer.flush();
@@ -123,7 +123,7 @@ public class EventServlet extends HttpServlet {
                         msg.sendMessage(deviceList, "Event Added:" + event.getEventId());
                     }
                 } else if (actionString.equals(Globals.ACTION_UPDATE)) {
-                    boolean ret = EventDataSource.update(event);
+                    boolean ret = EventDataSource.update(event, true);
                     if(ret) {
                         //userList.add(event.getOwner());
                         userList.addAll(EventJoinerDataSource.entitiesToUserId(

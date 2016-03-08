@@ -20,6 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AdapterView;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.Toast;
@@ -174,9 +175,9 @@ public class EventMapFragment extends Fragment implements OnMapReadyCallback {
 
     public void dafaultFilter(){
         Calendar c = Calendar.getInstance();
-        int time=MainActivity.filterTime;
-        int dist=MainActivity.filterDist;
-        List<Integer> filtint=null;
+        int time=Globals.FILTER_TIME;
+        int dist=Globals.FILTER_DISTANCE;
+        List<Integer> filtint=Globals.FILTER_INTEREST;
         List<Event> filter=new ArrayList<Event>();
         for(int i=0;i<values.size();i++){
             Event tmp=values.get(i);
@@ -185,15 +186,14 @@ public class EventMapFragment extends Fragment implements OnMapReadyCallback {
             eventlocat.setLatitude(tmp.getLatLng().latitude);
             eventlocat.setLongitude(tmp.getLatLng().longitude);
             Location dartmouth= new Location("");
-            dartmouth.setLatitude(edu.dartmouth.cs.together.utils.Globals.DARTMOUTH_GPS.latitude);
+            dartmouth.setLatitude(Globals.DARTMOUTH_GPS.latitude);
             dartmouth.setLongitude(Globals.DARTMOUTH_GPS.longitude);
             float distdif=eventlocat.distanceTo(dartmouth);
             if(distdif<dist*1609){
                 Calendar curtime=Calendar.getInstance();
                 int timedif=tmp.getcalender().get(Calendar.DAY_OF_YEAR) -curtime.get(Calendar.DAY_OF_YEAR);
-                if(timedif<time){
-//                    if(filtint.contains(tmp.getEventId())){
-                    if(true){
+                if(timedif<=time){
+                    if(filtint.contains(tmp.getCategoryIdx())) {
                         filter.add(tmp);
                     }
                 }
@@ -257,6 +257,7 @@ public class EventMapFragment extends Fragment implements OnMapReadyCallback {
 
         @Override
         public void dismiss(){
+            mpopup.dismiss();
         }
 
         @Override

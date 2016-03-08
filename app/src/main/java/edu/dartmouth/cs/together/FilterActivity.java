@@ -2,7 +2,6 @@ package edu.dartmouth.cs.together;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -19,10 +18,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 
-import com.google.android.gms.appindexing.Action;
-import com.google.android.gms.appindexing.AppIndex;
 import edu.dartmouth.cs.together.utils.Globals;
-import edu.dartmouth.cs.together.utils.Helper;
 
 import java.util.ArrayList;
 
@@ -43,7 +39,7 @@ public class FilterActivity extends AppCompatActivity
     private int mSelectedDistanceRange = 0;
     private ArrayList<Integer> selectedInterest;
     private final int CLEAR_ALL_FILTER = 0;
-
+    private boolean mIsFromOptions;
 
 
     @Override
@@ -65,9 +61,9 @@ public class FilterActivity extends AppCompatActivity
         mDistanceRangeSeekBar.setOnSeekBarChangeListener(this);
         // if the filter is set by the user, don't load shared preference
         // get shared preference for default distance, time and catefory
-        if(Globals.FILTER_TIME == -1 && Globals.FILTER_DISTANCE == -1 && Globals.FILTER_INTEREST == null) {
-            setDefaultFromSharedPref();
-        }
+//        setDefaultFromSharedPref();
+        setInitialValues();
+
     }
 
     private void setList() {
@@ -109,20 +105,35 @@ public class FilterActivity extends AppCompatActivity
         );
     }
 
+    private void setInitialValues(){
+        Intent intent = getIntent();
+        mIsFromOptions = intent.getBooleanExtra(Globals.FILTER_FROM_OPTION,false);
+        if (!mIsFromOptions){
+            setDefaultFromSharedPref();
+        } else{
+            setWidgets(Globals.FILTER_TIME, Globals.FILTER_DISTANCE, Globals.FILTER_INTEREST);
+        }
+    }
+
     private void setDefaultFromSharedPref() {
         SharedPreferences sharedPreferences = getSharedPreferences(
-                Globals.KEY_SHARED_PREFERENCE_FILE, MODE_PRIVATE);
-        int time = sharedPreferences.getInt(Globals.KEY_TIME_RANGE, 0);
-        int distance = sharedPreferences.getInt(Globals.KEY_DISTANCE_RANGE, 0);
+                getPackageName(), MODE_PRIVATE);
+        int time = sharedPreferences.getInt(Globals.KEY_TIME_RANGE, 4);
+        int distance = sharedPreferences.getInt(Globals.KEY_DISTANCE_RANGE, 50);
         String[] interest = sharedPreferences.getString(Globals.KEY_INTEREST_CATEGORY, " ")
                 .split(" ");
-
         setWidgets(time, distance, interest);
 
     }
 
     private void setWidgets(int time, int distance, String[] interest){
-        mTimeRangeSpinner.setSelection(time);
+        int spinnerPos  = 0;
+        for(int i=0; i<Globals.timeRangesInteger.length; i++){
+            if(Globals.timeRangesInteger[i] == time){
+                spinnerPos = i;
+            }
+        }
+        mTimeRangeSpinner.setSelection(spinnerPos);
         mDistanceTextView.setText("In " + distance + " Miles");
         mDistanceRangeSeekBar.setProgress(distance);
         if(interest.length>0 && interest[0] != "") {
@@ -130,36 +141,80 @@ public class FilterActivity extends AppCompatActivity
                 mInterestList.setItemChecked(Integer.valueOf(str), true);
             }
         }
+    }
+
+    //set widgets from global values
+    private void setWidgets(int time, int distance, ArrayList<Integer> interest){
+        int spinnerPos  = 0;
+        for(int i=0; i<Globals.timeRangesInteger.length; i++){
+            if(Globals.timeRangesInteger[i] == time){
+                spinnerPos = i;
+            }
+        }
+        mTimeRangeSpinner.setSelection(spinnerPos);
+        mDistanceTextView.setText("In " + distance + " Miles");
+        mDistanceRangeSeekBar.setProgress(distance);
+        for (Integer i : interest) {
+            mInterestList.setItemChecked(i, true);
+        }
 
     }
 
     public void onApplyClicked(View view) {
 
-        Intent intent = new Intent();
-        Bundle extras = new Bundle();
+        //Intent intent = new Intent();
+       // Bundle extras = new Bundle();
 
 
         //send parameters to calling activity
         // int for days, int for distance in meters
         // integer arraylist for interest category
+        /*
         extras.putInt(Globals.KEY_TIME_RANGE,
                 Globals.timeRangesInteger[mSelectedTimeRange]);
         extras.putInt(Globals.KEY_DISTANCE_RANGE,
-                Helper.MileToMeters(mSelectedDistanceRange));
+                Helper.MileToMeters(mSelectedDistanceRange));*/
         ArrayList<Integer> interest = new ArrayList<>();
         SparseBooleanArray checkedItemPositions = mInterestList.getCheckedItemPositions();
         int itemCount = mInterestList.getCount();
-        for(int i=0; i<itemCount; i++){
-            if(checkedItemPositions.get(i)){
+        for (int i = 0; i < itemCount; i++) {
+            if (checkedItemPositions.get(i)) {
                 interest.add(i);
             }
         }
+        if(mIsFromOptions) {
+
+            Globals.FILTER_TIME = Globals.timeRangesInteger[mSelectedTimeRange];
+            Globals.FILTER_DISTANCE =mSelectedDistanceRange;
+            Globals.FILTER_INTEREST.clear();
+            Globals.FILTER_INTEREST.addAll(interest);
+            Intent itt = new Intent("update");
+            sendBroadcast(itt);
+        } else {
+
+            SharedPreferences.Editor editor = getSharedPreferences(
+                    getPackageName(),MODE_PRIVATE).edit();
+
+            editor.putInt(Globals.KEY_TIME_RANGE, Globals.timeRangesInteger[mSelectedTimeRange]);
+            editor.putInt(Globals.KEY_DISTANCE_RANGE, mSelectedDistanceRange);
+            String categories = "";
+            for(Integer i:interest){
+                categories = categories + i + " ";
+            }
+
+            editor.putString(Globals.KEY_INTEREST_CATEGORY, categories);
+            editor.commit();
+        }
+
+        /*
         extras.putIntegerArrayList(Globals.KEY_INTEREST_CATEGORY, interest);
         intent.putExtras(extras);
 
         FilterActivity.this.setResult(RESULT_OK, intent);
-        FilterActivity.this.finish();
+        */
+        finish();
     }
+
 
     public void onCancelClicked(View view) {
         finish();

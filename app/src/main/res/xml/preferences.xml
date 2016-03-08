@@ -1,82 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<android.support.v7.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
 
-    <PreferenceCategory
+    <android.support.v7.preference.PreferenceCategory
         android:key = "pref_key_preference"
         android:title = "Preference">
-        <Preference
+        <android.support.v7.preference.Preference
             android:key = "default_filter"
             android:title= "Default Filter"
             android:summary="Set Default Time/Distance Range and Interest Category">
             <intent android:action="android.intent.action.VIEW"
                 android:targetPackage="edu.dartmouth.cs.together"
                 android:targetClass="edu.dartmouth.cs.together.FilterActivity" />
-        </Preference>
+        </android.support.v7.preference.Preference>
 
-    </PreferenceCategory>
-
-
-
-    <PreferenceCategory
-        android:title="Notification"
-        android:key = "pref_key_notification">
-        <SwitchPreference
-            android:title="New Friend Joined"
-            android:key = "new_people"/>
-
-        <SwitchPreference
-            android:title="Friend Quited"
-            android:key = "quit_people"/>
-
-        <SwitchPreference
-            android:title="Event Changed"
-            android:key = "event_change"/>
-
-        <SwitchPreference
-            android:title="Event Canceled"
-            android:key = "event_cancel"/>
-
-        <SwitchPreference
-            android:title="New Question"
-            android:key = "new_q"/>
-
-        <SwitchPreference
-            android:title="New Answer"
-            android:key = "new_a"/>
-
-    </PreferenceCategory>
-
-    <PreferenceCategory
-        android:key = "pref_key_preference"
-        android:title = "Preference">
-        <Preference
-            android:key = "default_filter"
-            android:title= "Default Filter"
-            android:summary="Set Default Time/Distance Range and Interest Category">
-            <intent android:action="android.intent.action.VIEW"
-                android:targetPackage="edu.dartmouth.cs.together"
-                android:targetClass="edu.dartmouth.cs.together.FilterActivity" />
-        </Preference>
+    </android.support.v7.preference.PreferenceCategory>
 
 
-    </PreferenceCategory>
 
 
-    <PreferenceCategory
+
+
+
+
+    <android.support.v7.preference.PreferenceCategory
         android:key = "pref_key_account"
         android:title="Account">
-        <Preference
+        <android.support.v7.preference.Preference
             android:key=" pref_key_profile"
             android:title="Profile"
             android:summary="Long click to change to profile photo">
             <intent android:action="android.intent.action.VIEW"
                 android:targetPackage="edu.dartmouth.cs.together"
                 android:targetClass="edu.dartmouth.cs.together.ProfileActivity"/>
-        </Preference>
-
-    </PreferenceCategory>
+        </android.support.v7.preference.Preference>
 
 
+    </android.support.v7.preference.PreferenceCategory>
 
-</PreferenceScreen>
+
+
+</android.support.v7.preference.PreferenceScreen>

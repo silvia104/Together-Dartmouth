@@ -38,12 +38,13 @@ public class MainActivity extends AppCompatActivity
     private final int GET_RESULT_SUCCESS = -1;
     public static int filterTime;
     public static int filterDist;
-    public static List<Integer> CateFilter = new ArrayList<>();
+    public static List<Integer> CateFilter;
     private static final String List_FRAGMENT_STATE_KEY = "saved_List";
     private static final String CUR_FRAG_KEY = "cur_frag";
 
     private static final  String FILTER_TIME_KEY="filter_time";
     private static final  String FILTER_DISTANCE_KEY="filter_dist";
+    private ImageButton mSwitch;
 
     private SharedPreferences mSharedPreference;
     @Override
@@ -65,6 +66,7 @@ public class MainActivity extends AppCompatActivity
         filterTime=Globals.FILTER_TIME;
         filterDist=Globals.FILTER_DISTANCE;
         CateFilter=Globals.FILTER_INTEREST;
+        currentFragment = R.id.nav_recommended_events;
 
         if (savedInstanceState != null) {
             isListFragment = savedInstanceState
@@ -73,6 +75,7 @@ public class MainActivity extends AppCompatActivity
             filterDist=savedInstanceState.getInt(FILTER_DISTANCE_KEY);
             currentFragment = savedInstanceState.getInt(CUR_FRAG_KEY);
         }
+        mSwitch = (ImageButton) findViewById(R.id.fab_image_button2);
 
         startFragment();
 
@@ -87,7 +90,6 @@ public class MainActivity extends AppCompatActivity
         });
         */
         ImageButton addFab = (ImageButton) findViewById(R.id.fab_image_button);
-        ImageButton addFabswitch = (ImageButton) findViewById(R.id.fab_image_button2);
         addFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -97,7 +99,7 @@ public class MainActivity extends AppCompatActivity
 
         final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 
-        addFabswitch.setOnClickListener(new View.OnClickListener() {
+        mSwitch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 isListFragment=!isListFragment;
@@ -187,7 +189,9 @@ public class MainActivity extends AppCompatActivity
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             Intent intent = new Intent(this, FilterActivity.class);
-            startActivityForResult(intent,Globals.SETTING_FILTER);
+            intent.putExtra(Globals.FILTER_FROM_OPTION,true);
+           // startActivityForResult(intent,Globals.SETTING_FILTER);
+            startActivity(intent);
             return true;
         }
         if (id == R.id.action_logout) {
@@ -216,7 +220,7 @@ public class MainActivity extends AppCompatActivity
             }
         }
     }
-
+/*
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data)
     {
@@ -234,7 +238,7 @@ public class MainActivity extends AppCompatActivity
                 sendBroadcast(itt);
             }
         }
-    }
+    }*/
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
@@ -244,13 +248,14 @@ public class MainActivity extends AppCompatActivity
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         Fragment fragment = null;
-        currentFragment = id;
+//        currentFragment = id;
         switch (id){
             case R.id.nav_my_events:
                 fragment = new MyEventsFragment();
                 transaction.replace(
                         R.id.main_content_frame, fragment, "MY_EVENTS"
                 );
+                mSwitch.setVisibility(View.GONE);
                 break;
 
             case R.id.nav_message:
@@ -258,12 +263,16 @@ public class MainActivity extends AppCompatActivity
                 transaction.replace(
                         R.id.main_content_frame, fragment, "MESSAGES"
                 );
+                mSwitch.setVisibility(View.GONE);
+
                 break;
             case R.id.nav_settings:
                 fragment = new SettingsFragment();
                 transaction.replace(
                         R.id.main_content_frame, fragment, "SETTINGS"
                 );
+                mSwitch.setVisibility(View.GONE);
+
                 break;
 
             case R.id.nav_recommended_events:
@@ -272,6 +281,7 @@ public class MainActivity extends AppCompatActivity
                 transaction.replace(
                         R.id.main_content_frame, fragment, "EVENT_LIST_FRAG"
                 );
+                mSwitch.setVisibility(View.VISIBLE);
 
                 break;
         }
@@ -295,6 +305,7 @@ public class MainActivity extends AppCompatActivity
         FragmentManager manager = getSupportFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
         if (currentFragment == R.id.nav_recommended_events) {
+            mSwitch.setVisibility(View.VISIBLE);
 
             if (!isListFragment) {
                 EventMapFragment efrag = new EventMapFragment();
@@ -309,17 +320,23 @@ public class MainActivity extends AppCompatActivity
                     transaction.replace(
                             R.id.main_content_frame, new MyEventsFragment(), "MY_EVENTS"
                     );
+                    mSwitch.setVisibility(View.GONE);
+
                     break;
 
                 case R.id.nav_message:
                     transaction.replace(
                             R.id.main_content_frame, new MessageCenterFragment(), "MESSAGES"
                     );
+                    mSwitch.setVisibility(View.GONE);
+
                     break;
                 case R.id.nav_settings:
                     transaction.replace(
                             R.id.main_content_frame, new SettingsFragment(), "SETTINGS"
                     );
+                    mSwitch.setVisibility(View.GONE);
+
                     break;
             }
 

@@ -38,6 +38,7 @@ public class NewUserServlet extends HttpServlet {
             throws IOException, ServletException {
         String action = req.getParameter("action");
         String email = req.getParameter("mail");
+        String rate = req.getParameter("rate");
         try {
             if (action.equals("code")) {
                 PrintWriter out = resp.getWriter();

@@ -106,13 +106,13 @@ public class MessageDataSource {
         message.setMsgTime(cursor.getLong(MessageTable.COLUMNS.TIME.index()));
         message.setIsRead(cursor.getInt(MessageTable.COLUMNS.IS_READ.index()) > 0);
 
-        message.setEventId(cursor.getInt(MessageTable.COLUMNS.EVENT_ID.index()));
+        message.setEventId(cursor.getLong(MessageTable.COLUMNS.EVENT_ID.index()));
         message.setEventShortDesc(cursor.getString(MessageTable.COLUMNS.EVENT_SHORT_DESC.index()));
 
-        message.setUserId(cursor.getInt(MessageTable.COLUMNS.USER_ID.index()));
+        message.setUserId(cursor.getLong(MessageTable.COLUMNS.USER_ID.index()));
         message.setUserName(cursor.getString(MessageTable.COLUMNS.USER_NAME.index()));
 
-        message.setQaId(cursor.getInt(MessageTable.COLUMNS.QA_ID.index()));
+        message.setQaId(cursor.getLong(MessageTable.COLUMNS.QA_ID.index()));
         message.setQuestion(cursor.getString(MessageTable.COLUMNS.QUESTION.index()));
         message.setAnswer(cursor.getString(MessageTable.COLUMNS.ANSWER.index()));
 

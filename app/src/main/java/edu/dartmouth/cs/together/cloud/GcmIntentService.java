@@ -87,7 +87,6 @@ public class GcmIntentService extends BaseIntentSerice {
 
                     MessageDataSource mDB = new MessageDataSource(getApplicationContext());
                     showNotification(messageToInsert.getMsgContent());
-                    mVibrator.vibrate(300);
                     mDB.insertMessage(messageToInsert);
                 }
 
@@ -104,13 +103,13 @@ public class GcmIntentService extends BaseIntentSerice {
             while(i<msgFields.length) {
                 switch (i) {
                     case 1:
-                        msg.setEventId(Long.valueOf(msgFields[1].trim()));
+                        msg.setEventId(Long.parseLong(msgFields[1].trim()));
                         break;
                     case 2:
                         msg.setEventShortDesc(msgFields[2]);
                         break;
                     case 3:
-                        msg.setUserId(Long.valueOf(msgFields[3].trim()));
+                        msg.setUserId(Long.parseLong(msgFields[3].trim()));
                         break;
                     case 4:
                         msg.setUserName(msgFields[4]);
@@ -123,13 +122,13 @@ public class GcmIntentService extends BaseIntentSerice {
             while (i < msgFields.length) {
                 switch (i) {
                     case 1:
-                        msg.setEventId(Long.valueOf(msgFields[1].trim()));
+                        msg.setEventId(Long.parseLong(msgFields[1].trim()));
                         break;
                     case 2:
                         msg.setEventShortDesc(msgFields[2]);
                         break;
                     case 3:
-                        msg.setQaId(Long.valueOf(msgFields[3].trim()));
+                        msg.setQaId(Long.parseLong(msgFields[3].trim()));
                         break;
                     case 4:
                         msg.setQuestion(msgFields[4]);
@@ -154,6 +153,7 @@ public class GcmIntentService extends BaseIntentSerice {
         Notification notification = new Notification.Builder(this)
                 .setContentTitle("Together: New Message")
                 .setContentText(text)
+                .setVibrate(new long[]{300})
                 .setSmallIcon(R.drawable.ic_menu_messages)
                 .setContentIntent(pi).build();
 

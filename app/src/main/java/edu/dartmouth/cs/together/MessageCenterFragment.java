@@ -26,6 +26,8 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.google.appengine.labs.repackaged.com.google.common.collect.Lists;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -208,7 +210,7 @@ public class MessageCenterFragment extends ListFragment
         @Override
         public List<Message> loadInBackground() {
             //return mDB.getAllRecords();
-            return mDB.getCurrentUserRecords();
+            return Lists.reverse(mDB.getCurrentUserRecords());
         }
 
     }

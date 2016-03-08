@@ -56,8 +56,7 @@ public class UploadPicIntentService extends BaseIntentSerice {
         params.put("myFile", userId+".jpg");
         String res = ServerUtilities.post(Globals.SERVER_ADDR + "/geturl", params);
         if (res.length()>0) {
-            String newres = res.replace("http://TuanMacAirs-MacBook-Air.local:8080", Globals.SERVER_ADDR);
-            return newres.substring(0, newres.length() - 1);
+            return res.substring(0, res.length() - 1);
         }
         return "";
     }
