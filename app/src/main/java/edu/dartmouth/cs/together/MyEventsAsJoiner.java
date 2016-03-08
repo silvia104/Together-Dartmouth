@@ -20,11 +20,11 @@ import java.util.List;
 import edu.dartmouth.cs.together.data.Event;
 import edu.dartmouth.cs.together.data.EventDataSource;
 import edu.dartmouth.cs.together.utils.Globals;
+/*
+* Joined events are listed here
+* Events Detail page will pop up if user clicks an item
+*/
 
-
-/**
- * A simple {@link Fragment} subclass.
- */
 public class MyEventsAsJoiner extends ListFragment
     implements  LoaderManager.LoaderCallbacks<List<Event>>{
 
@@ -50,7 +50,6 @@ public class MyEventsAsJoiner extends ListFragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_my_events_as_joiner, container, false);
     }
 
@@ -75,6 +74,10 @@ public class MyEventsAsJoiner extends ListFragment
     }
 
     @Override
+    //Due to the attribute of view pager fragment
+    //onResume is called when previous page is showed
+    //A workaround is to call this function and load data
+    //when the fragment is brought to view.
     public void setUserVisibleHint(boolean isVisible){
         super.setUserVisibleHint(isVisible);
         if(isVisible){
@@ -82,7 +85,6 @@ public class MyEventsAsJoiner extends ListFragment
             mAdapter.notifyDataSetChanged();
             getLoaderManager().initLoader(0, null, this).forceLoad();
         }
-
     }
 
     @Override
@@ -146,7 +148,6 @@ public class MyEventsAsJoiner extends ListFragment
                 return location;
             }
         }
-
         @Override
         public long getid(Event e){return e.getEventId();}
 
@@ -154,7 +155,6 @@ public class MyEventsAsJoiner extends ListFragment
         public String lineTreText(Event e) {
             return e.getDate()+"  "+e.getTime();
         }
-
         @Override
         public String lineFouText(Event e){return "Duration:  "+e.getDuration() + " Hours";
         }

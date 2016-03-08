@@ -1,23 +1,14 @@
 package edu.dartmouth.cs.together;
 
-
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
-import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
-import android.support.v7.preference.SwitchPreferenceCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,8 +28,14 @@ import edu.dartmouth.cs.together.utils.Globals;
 
 
 /**
- * A simple {@link Fragment} subclass.
+ * Message Center Fragment
+ * The user receives message here when:
+ * joined event are modified by the initiator
+ * other users joined or quit initiated events
+ * A new question about an initiated event is posted
+ * Or a question of the user is answered
  */
+
 public class MessageCenterFragment extends ListFragment
         implements LoaderManager.LoaderCallbacks<List<Message>>{
 
@@ -47,8 +44,6 @@ public class MessageCenterFragment extends ListFragment
     private msgRowAdapter mAdapter;
     private List<Message> mMessageList = new ArrayList<>();;
     private static MessageDataSource mDB;
-    private SharedPreferences mSharedPreference;
-    private boolean[] mReceiveMessageType = new boolean[6];
 
 
     public MessageCenterFragment() {
@@ -69,27 +64,12 @@ public class MessageCenterFragment extends ListFragment
         setListAdapter(mAdapter);
         mDB = new MessageDataSource(mContext);
         setRetainInstance(true);
-        //TODO: MODIFIED FINALS IN GLOBALS
-        mSharedPreference = mContext.getSharedPreferences(mContext.getPackageName(), Context.MODE_PRIVATE);
-        mReceiveMessageType[Globals.MESSAGE_TYPE_NEW_JOIN] = mSharedPreference.getBoolean(
-                Globals.KEY_SHARED_PREF_NOTE_NEW_PEOPLE, false);
-        mReceiveMessageType[Globals.MESSAGE_TYPE_EVENT_QUIT] = mSharedPreference.getBoolean(
-                Globals.KEY_SHARED_PREF_NOTE_QUIT_PEOPLE,false);
-        mReceiveMessageType[Globals.MESSAGE_TYPE_EVENT_CHANGE] = mSharedPreference.getBoolean(
-                Globals.KEY_SHARED_PREF_NOTE_EVENT_CHANGE,false);
-        mReceiveMessageType[Globals.MESSAGE_TYPE_EVENT_CANCEL] = mSharedPreference.getBoolean(
-                Globals.KEY_SHARED_PREF_NOTE_EVENT_CANCEL,false);
-        mReceiveMessageType[Globals.MESSAGE_TYPE_NEW_QUESTION] = mSharedPreference.getBoolean(
-                Globals.KEY_SHARED_PREF_NOTE_NEW_Q,false);
-        mReceiveMessageType[Globals.MESSAGE_TYPE_NEW_ANSWER] = mSharedPreference.getBoolean(
-                Globals.KEY_SHARED_PREF_NOTE_NEW_A,false);
     }
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState){
-            //setRetainInstance(true);
             if (savedInstanceState == null) {
                 getLoaderManager().initLoader(0, null, this).forceLoad();
             }
@@ -100,8 +80,6 @@ public class MessageCenterFragment extends ListFragment
     public void onListItemClick(ListView l, View v, int position, long id) {
             Message message = (Message) mAdapter.getItem(position);
             if(message.getMsgType() == Globals.MESSAGE_TYPE_NEW_QUESTION) {
-//                ArrayList<String> stringList = getStringList(message);
-//                long[] idList = getIdList(message);
                 Bundle extras = new Bundle();
                 extras.putString("question", message.getQuestion());
                 extras.putString("eventDesc", message.getEventShortDesc());
@@ -112,10 +90,13 @@ public class MessageCenterFragment extends ListFragment
                 DialogFragment replyDialog = QuestionReplyDialogFragment.newInstance(extras);
                 replyDialog.show(getChildFragmentManager(), "ReplyQuestion");
             }
-            //set isRead to true;
+
+            //If the message is not read:
+            // set isRead to true, update the database, and set the icon to invisible
             if(!message.getIsRead()) {
                 message.setIsRead(true);
-                //update database
+
+                //update database in background
                 UpdateNewRecordTask updateTask = new UpdateNewRecordTask();
                 updateTask.doInBackground(message);
                 ImageView blob = (ImageView) v.findViewById(R.id.message_type);
@@ -148,7 +129,8 @@ public class MessageCenterFragment extends ListFragment
                 eventName = (TextView) convertView.findViewById(R.id.message_event);
                 msgType.setTag(position);
             }
-            //set the image view invisible only if it's the same position
+
+            //If the message is not read, set different icons according to message type
             if (!message.getIsRead() && (int)msgType.getTag() == position) {
                 eventName.setTypeface(null, Typeface.BOLD);
                 if (message.getMsgType() == Globals.MESSAGE_TYPE_NEW_QUESTION
@@ -168,7 +150,6 @@ public class MessageCenterFragment extends ListFragment
                 }
 
             }
-
             String time = message.getDateTimeString("dd/MM hh:mm");
             msgTime.setText(time);
             eventBrief.setText(message.getMsgContent());
@@ -176,13 +157,6 @@ public class MessageCenterFragment extends ListFragment
             return convertView;
         }
     }
-
-
-
-
-
-
-
 
     class UpdateNewRecordTask extends AsyncTask<Message, Message, Long> {
 
@@ -209,7 +183,8 @@ public class MessageCenterFragment extends ListFragment
         // get all records in background as loader
         @Override
         public List<Message> loadInBackground() {
-            //return mDB.getAllRecords();
+
+            //reverse the list the latest message is showed on the top
             return Lists.reverse(mDB.getCurrentUserRecords());
         }
 

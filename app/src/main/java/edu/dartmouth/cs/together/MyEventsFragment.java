@@ -31,6 +31,10 @@ import edu.dartmouth.cs.together.utils.Globals;
 import edu.dartmouth.cs.together.view.ActionTabsViewPagerAdapter;
 import edu.dartmouth.cs.together.view.SlidingTabLayout;
 
+/*
+* Events initiated and joined by the user are showed here
+* Implemented with view pager
+*/
 
 public class MyEventsFragment extends Fragment {
 
@@ -63,16 +67,18 @@ public class MyEventsFragment extends Fragment {
         mContext = getActivity();
         dataSource = new EventDataSource(mContext);
 
+        //If the activity is created, download data from server
+        //Two tables are updated: joinedEventTable and MyOwnEventTable
+        //Controlled by boolean value in shared preference, data will not
+        //be downloaded again if onPause hasn't taken place
         SharedPreferences sharedPrefs = mContext.getSharedPreferences(
                 mContext.getPackageName(), Context.MODE_PRIVATE );
         if(! sharedPrefs.getBoolean(Globals.FIRST_LOAD_ALL_EVENTS_KEY,false)){
             updateData();
-            //mofified shared preference, set boolean to not first time of loading data
             SharedPreferences.Editor editor = sharedPrefs.edit();
             editor.putBoolean(Globals.FIRST_LOAD_ALL_EVENTS_KEY, true);
             editor.commit();
         }
-//        setRetainInstance(true);
     }
 
     @Override
@@ -92,39 +98,14 @@ public class MyEventsFragment extends Fragment {
         fragmentList.add(asJoinerFragment);
         mViewPageAdapter =new ActionTabsViewPagerAdapter(getChildFragmentManager(),
                 fragmentList);
-
-
         mViewPager.setAdapter(mViewPageAdapter);
-
-//        mViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-//           @Override
-//           public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-//
-//           }
-//
-//           @Override
-//           public void onPageSelected(int position) {
-//               Fragment fragment = ((ActionTabsViewPagerAdapter)mViewPager.getAdapter()).getFragment(position);
-//
-//               if (position ==1 && fragment != null)
-//               {
-//                   fragment.onResume();
-//               }
-//           }
-//
-//           @Override
-//           public void onPageScrollStateChanged(int state) {
-//
-//           }
-//       }
-//
-//        );
         mSlidingTabLayout.setDistributeEvenly(true);
         mSlidingTabLayout.setViewPager(mViewPager);
         return view;
     }
 
 
+    //Update data in different tables in background with Asynctask
     private void updateData(){
         new AsyncTask<Void, Void, List<Event>>() {
             @Override
@@ -157,6 +138,7 @@ public class MyEventsFragment extends Fragment {
         }.execute();
     }
 
+    //Parse JSONArray to events and insert events in corresponding tables
     private void insertEvent(JSONArray jsonArray, int eventType) {
         values.clear();
         for(int i=0;i<jsonArray.length();i++) {

@@ -29,8 +29,12 @@ import edu.dartmouth.cs.together.utils.Globals;
 
 
 /**
- * A simple {@link Fragment} subclass.
+ * If user clicks a message that is a new question,
+ * this dialog will pop up and the user can answer the question here.
+ * After the question is answered and the user click "Reply",
+ * QAIntentService will be launched.
  */
+
 public class QuestionReplyDialogFragment extends DialogFragment {
 
     private TextView mEventText;
@@ -43,7 +47,6 @@ public class QuestionReplyDialogFragment extends DialogFragment {
 
     public QuestionReplyDialogFragment() {
         // Required empty public constructor
-
     }
 
     public static QuestionReplyDialogFragment newInstance(Bundle extras) {
@@ -60,6 +63,10 @@ public class QuestionReplyDialogFragment extends DialogFragment {
         final Activity parent = getActivity();
         AlertDialog.Builder builder = new AlertDialog.Builder(parent);
         LayoutInflater inflater = parent.getLayoutInflater();
+
+        // extras from MessageCenterFragment containing question,
+        // event description, time, event id question id
+        // event id and question id are used to sent message
         final Bundle extras = getArguments().getBundle("extras");
 
         eventDesc = extras.getString("eventDesc");
@@ -89,14 +96,11 @@ public class QuestionReplyDialogFragment extends DialogFragment {
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        //save draft in shared preference
                         QuestionReplyDialogFragment.this.getDialog().cancel();
                     }
                 });
 
         return builder.create();
-
-
     }
 
     class AnswerOperationAsyncTask extends AsyncTask<Bundle,Void,Void> {

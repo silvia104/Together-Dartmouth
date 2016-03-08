@@ -25,8 +25,10 @@ import edu.dartmouth.cs.together.utils.Globals;
 
 
 /**
- * A simple {@link Fragment} subclass.
+ * Events initiated by the user are listed here
+ * Click an item then Event Editor page is popped up.
  */
+
 public class MyEventsAsInitiator extends ListFragment implements
         LoaderManager.LoaderCallbacks<List<Event>>{
 
@@ -56,12 +58,9 @@ public class MyEventsAsInitiator extends ListFragment implements
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view =  inflater.inflate(R.layout.fragment_my_events_as_starter, container, false);
         return view;
     }
-
-
 
     @Override
     public Loader<List<Event>> onCreateLoader(int id, Bundle args) {
@@ -78,17 +77,9 @@ public class MyEventsAsInitiator extends ListFragment implements
         mAdapter.notifyDataSetChanged();
     }
 
-
-//    @Override
-//    public void setUserVisibleHint(boolean isVisible){
-//        super.setUserVisibleHint(isVisible);
-//        if(isVisible){
-//            mInitiatedEventsList.clear();
-//            mAdapter.notifyDataSetChanged();
-//            getLoaderManager().initLoader(0, null, this).forceLoad();
-//        }
-//    }
     @Override
+    //Register deletion broadcast listener
+    //So when a event is deleted the list is refreshed immediately
     public void onResume(){
         super.onResume();
         mDeletionReceiver = new DeletionReceiver();
@@ -114,7 +105,6 @@ public class MyEventsAsInitiator extends ListFragment implements
             mDB = new EventDataSource(context);
         }
 
-        // get all records in background as loader
         @Override
         public List<Event> loadInBackground() {
             return mDB.queryOwnedEvent(EventDataSource.MY_OWN_EVENT, Globals.currentUser.getId());
@@ -179,6 +169,7 @@ public class MyEventsAsInitiator extends ListFragment implements
         }
 
     }
+
 
     private class DeletionReceiver extends BroadcastReceiver implements
            LoaderManager.LoaderCallbacks<List<Event>> {

@@ -2,7 +2,12 @@ package edu.dartmouth.cs.together.data;
 
 /**
  * Created by TuanMacAir on 3/1/16.
+<<<<<<< HEAD
  * table to store event joined by user
+=======
+ * Updated from the server when the app is first launched
+ * and when the current user have joined new events
+>>>>>>> origin/Final
  */
 public class JoinedEventTable extends BaseEventTable {
 
