@@ -115,6 +115,16 @@ public class EventListFragment extends ListFragment implements LoaderManager.Loa
         }
 
         @Override
+        public int setImage(Event event) {
+            return 0;
+        }
+
+        @Override
+        public void dismiss() {
+
+        }
+
+        @Override
         public long getid(Event e){return e.getEventId();}
 
         @Override

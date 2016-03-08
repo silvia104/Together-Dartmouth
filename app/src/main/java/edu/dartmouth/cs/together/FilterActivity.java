@@ -107,18 +107,10 @@ public class FilterActivity extends AppCompatActivity
 
     private void setInitialValues(){
         Intent intent = getIntent();
-<<<<<<< HEAD
-        if((intent.getAction() != null && intent.getAction().equals("android.intent.action.VIEW"))||
-        (Globals.FILTER_TIME == 14 && Globals.FILTER_DISTANCE == 50 && Globals.FILTER_INTEREST.size()==20)){
-            setDefaultFromSharedPref();
-        }
-        else{
-=======
         mIsFromOptions = intent.getBooleanExtra(Globals.FILTER_FROM_OPTION,false);
         if (!mIsFromOptions){
             setDefaultFromSharedPref();
         } else{
->>>>>>> Final
             setWidgets(Globals.FILTER_TIME, Globals.FILTER_DISTANCE, Globals.FILTER_INTEREST);
         }
     }
