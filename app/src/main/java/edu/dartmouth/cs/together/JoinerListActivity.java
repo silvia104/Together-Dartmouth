@@ -34,6 +34,8 @@ public class JoinerListActivity extends BasePopoutActivity implements
     private long mEventId;
     private JoinerCardViewAdapter mAdapter;
     private boolean mRefreshed = false;
+    private long mOwnerId;
+    private int cateIdx;
 
 
     @Override
@@ -43,10 +45,12 @@ public class JoinerListActivity extends BasePopoutActivity implements
         ButterKnife.bind(this);
         Intent i = getIntent();
         mEventId = i.getLongExtra(Event.ID_KEY,-1);
+        mOwnerId = i.getLongExtra(User.ID_KEY,-1);
+        cateIdx = i.getIntExtra("cate", 0);
         mJoinerRecVew.setVisibility(View.GONE);
         mProgress.setVisibility(View.VISIBLE);
         mJoinerRecVew.setHasFixedSize(true);
-        mAdapter = new JoinerCardViewAdapter(this,mJoiners);
+        mAdapter = new JoinerCardViewAdapter(this,mJoiners,cateIdx);
         mJoinerRecVew.setLayoutManager(new LinearLayoutManager(this));
 
         mJoinerRecVew.setAdapter(mAdapter);
@@ -73,7 +77,7 @@ public class JoinerListActivity extends BasePopoutActivity implements
 
     @Override
     public Loader<List<User>> onCreateLoader(int id, Bundle args) {
-        return new JoinerLoader(this, mEventId);
+        return new JoinerLoader(this, mEventId, mOwnerId);
     }
 
     @Override
@@ -82,7 +86,7 @@ public class JoinerListActivity extends BasePopoutActivity implements
         mAdapter.updateAdapter(mJoiners);
         mProgress.setVisibility(View.GONE);
         mJoinerRecVew.setVisibility(View.VISIBLE);
-        if (data.size() == 0 || !mRefreshed){
+        if (data.size() == 0 && !mRefreshed){
             downloadJoiners();
         }
     }
@@ -104,16 +108,22 @@ public class JoinerListActivity extends BasePopoutActivity implements
     static class JoinerLoader extends AsyncTaskLoader<List<User>>{
         private Context mContext;
         private long mEventId;
-
-        public JoinerLoader(Context context, long eventId) {
+        private long mUserId;
+        public JoinerLoader(Context context, long eventId, long userId) {
             super(context);
             mContext = context;
             mEventId = eventId;
+            mUserId = userId;
         }
 
         @Override
         public List<User> loadInBackground() {
-            return new UserDataSource(mContext).queryJoiners(mEventId);
+            List<User> users =  new UserDataSource(mContext).queryJoiners(mEventId);
+            User owner =new UserDataSource(mContext).queryUserById(mUserId);
+            if (owner!=null){
+                users.add(0,owner);
+            }
+            return users;
         }
     }
 

@@ -8,7 +8,7 @@ public class UserTable {
     public enum COLUMNS{
         ID (0,"_idx"," integer primary key autoincrement not null"),
         EMAIL(1,"email"," string not null"),
-        RATE(2,"rate"," real"),
+        RATE(2,"rate"," string not null"),
         PHOTO_URL(3,"photo_url"," string"),
         USER_ID(4,"user_id"," integer unique not null"),
         PHOTO(5,"photo"," blob");

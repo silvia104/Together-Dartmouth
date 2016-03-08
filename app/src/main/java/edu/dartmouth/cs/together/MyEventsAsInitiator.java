@@ -1,7 +1,9 @@
 package edu.dartmouth.cs.together;
 
 
+import android.content.BroadcastReceiver;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.support.v4.app.LoaderManager;
 import android.content.Context;
 import android.support.v4.content.Loader;
@@ -32,6 +34,7 @@ public class MyEventsAsInitiator extends ListFragment implements
     private EventDataSource mDB;
     private initiatedEventsAdapter mAdapter;
     private Context mContext;
+    private BroadcastReceiver mDeletionReceiver;
 
 
 
@@ -85,6 +88,18 @@ public class MyEventsAsInitiator extends ListFragment implements
 //            getLoaderManager().initLoader(0, null, this).forceLoad();
 //        }
 //    }
+    @Override
+    public void onResume(){
+        super.onResume();
+        mDeletionReceiver = new DeletionReceiver();
+        getActivity().registerReceiver(mDeletionReceiver, new IntentFilter(Globals.DELETE_EVENT));
+    }
+
+    @Override
+    public void onPause(){
+        super.onPause();
+        getActivity().unregisterReceiver(mDeletionReceiver);
+    }
 
     @Override
     public void onLoaderReset(Loader<List<Event>> loader) {
@@ -122,6 +137,11 @@ public class MyEventsAsInitiator extends ListFragment implements
         }
 
         @Override
+        public void dismiss() {
+
+        }
+
+        @Override
         public long getid(Event event) {
             return event.getEventId();
         }
@@ -135,6 +155,12 @@ public class MyEventsAsInitiator extends ListFragment implements
         public String lineTwoText(Event event) {
             return event.getTime();
         }
+
+        @Override
+        public int setImage(Event event) {
+            return Globals.categoriIcons[event.getCategoryIdx()];
+        }
+
         @Override
         public String lineTreText(Event event) {
             return "Duration" + event.getDuration();
@@ -152,5 +178,34 @@ public class MyEventsAsInitiator extends ListFragment implements
             return event.getmJoinerCount() + "/" + event.getLimit();
         }
 
+    }
+
+    private class DeletionReceiver extends BroadcastReceiver implements
+           LoaderManager.LoaderCallbacks<List<Event>> {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(intent.getAction() == Globals.DELETE_EVENT)
+            getLoaderManager().restartLoader(0, null, this).forceLoad();
+        }
+
+        @Override
+        public Loader<List<Event>> onCreateLoader(int id, Bundle args) {
+            return new initiatedEventsLoader(getActivity());
+        }
+
+        @Override
+        public void onLoadFinished(Loader<List<Event>> loader, List<Event> data) {
+            if(data == null){
+                data = new ArrayList<>();
+            }
+            mInitiatedEventsList.clear();
+            mInitiatedEventsList.addAll(data);
+            mAdapter.notifyDataSetChanged();
+        }
+
+        @Override
+        public void onLoaderReset(Loader<List<Event>> loader) {
+
+        }
     }
 }

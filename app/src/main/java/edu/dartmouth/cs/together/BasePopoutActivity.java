@@ -38,7 +38,7 @@ public class BasePopoutActivity extends AppCompatActivity{
         Toolbar toolbar= (Toolbar)findViewById(R.id.toolbar);
         if (toolbar != null){
             setSupportActionBar(toolbar);
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setTitle(title);
         }
     }

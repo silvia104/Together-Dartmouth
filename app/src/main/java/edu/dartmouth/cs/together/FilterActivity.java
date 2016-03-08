@@ -2,7 +2,6 @@ package edu.dartmouth.cs.together;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -19,10 +18,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 
-import com.google.android.gms.appindexing.Action;
-import com.google.android.gms.appindexing.AppIndex;
 import edu.dartmouth.cs.together.utils.Globals;
-import edu.dartmouth.cs.together.utils.Helper;
 
 import java.util.ArrayList;
 
@@ -43,7 +39,7 @@ public class FilterActivity extends AppCompatActivity
     private int mSelectedDistanceRange = 0;
     private ArrayList<Integer> selectedInterest;
     private final int CLEAR_ALL_FILTER = 0;
-
+    private boolean mIsFromOptions;
 
 
     @Override
@@ -111,11 +107,18 @@ public class FilterActivity extends AppCompatActivity
 
     private void setInitialValues(){
         Intent intent = getIntent();
+<<<<<<< HEAD
         if((intent.getAction() != null && intent.getAction().equals("android.intent.action.VIEW"))||
         (Globals.FILTER_TIME == 14 && Globals.FILTER_DISTANCE == 50 && Globals.FILTER_INTEREST.size()==20)){
             setDefaultFromSharedPref();
         }
         else{
+=======
+        mIsFromOptions = intent.getBooleanExtra(Globals.FILTER_FROM_OPTION,false);
+        if (!mIsFromOptions){
+            setDefaultFromSharedPref();
+        } else{
+>>>>>>> Final
             setWidgets(Globals.FILTER_TIME, Globals.FILTER_DISTANCE, Globals.FILTER_INTEREST);
         }
     }
@@ -132,7 +135,13 @@ public class FilterActivity extends AppCompatActivity
     }
 
     private void setWidgets(int time, int distance, String[] interest){
-        mTimeRangeSpinner.setSelection(time);
+        int spinnerPos  = 0;
+        for(int i=0; i<Globals.timeRangesInteger.length; i++){
+            if(Globals.timeRangesInteger[i] == time){
+                spinnerPos = i;
+            }
+        }
+        mTimeRangeSpinner.setSelection(spinnerPos);
         mDistanceTextView.setText("In " + distance + " Miles");
         mDistanceRangeSeekBar.setProgress(distance);
         if(interest.length>0 && interest[0] != "") {
@@ -161,31 +170,59 @@ public class FilterActivity extends AppCompatActivity
 
     public void onApplyClicked(View view) {
 
-        Intent intent = new Intent();
-        Bundle extras = new Bundle();
+        //Intent intent = new Intent();
+       // Bundle extras = new Bundle();
 
 
         //send parameters to calling activity
         // int for days, int for distance in meters
         // integer arraylist for interest category
+        /*
         extras.putInt(Globals.KEY_TIME_RANGE,
                 Globals.timeRangesInteger[mSelectedTimeRange]);
         extras.putInt(Globals.KEY_DISTANCE_RANGE,
-                Helper.MileToMeters(mSelectedDistanceRange));
+                Helper.MileToMeters(mSelectedDistanceRange));*/
         ArrayList<Integer> interest = new ArrayList<>();
         SparseBooleanArray checkedItemPositions = mInterestList.getCheckedItemPositions();
         int itemCount = mInterestList.getCount();
-        for(int i=0; i<itemCount; i++){
-            if(checkedItemPositions.get(i)){
+        for (int i = 0; i < itemCount; i++) {
+            if (checkedItemPositions.get(i)) {
                 interest.add(i);
             }
         }
+        if(mIsFromOptions) {
+
+            Globals.FILTER_TIME = Globals.timeRangesInteger[mSelectedTimeRange];
+            Globals.FILTER_DISTANCE =mSelectedDistanceRange;
+            Globals.FILTER_INTEREST.clear();
+            Globals.FILTER_INTEREST.addAll(interest);
+            Intent itt = new Intent("update");
+            sendBroadcast(itt);
+        } else {
+
+            SharedPreferences.Editor editor = getSharedPreferences(
+                    getPackageName(),MODE_PRIVATE).edit();
+
+            editor.putInt(Globals.KEY_TIME_RANGE, Globals.timeRangesInteger[mSelectedTimeRange]);
+            editor.putInt(Globals.KEY_DISTANCE_RANGE, mSelectedDistanceRange);
+            String categories = "";
+            for(Integer i:interest){
+                categories = categories + i + " ";
+            }
+
+            editor.putString(Globals.KEY_INTEREST_CATEGORY, categories);
+            editor.commit();
+        }
+
+        /*
         extras.putIntegerArrayList(Globals.KEY_INTEREST_CATEGORY, interest);
         intent.putExtras(extras);
 
         FilterActivity.this.setResult(RESULT_OK, intent);
-        FilterActivity.this.finish();
+        */
+        finish();
     }
+
 
     public void onCancelClicked(View view) {
         finish();

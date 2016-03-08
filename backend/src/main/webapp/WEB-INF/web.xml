@@ -68,6 +68,15 @@
     </servlet>
 
     <servlet>
+        <servlet-name>rate</servlet-name>
+        <servlet-class>edu.dartmouth.cs.together.backend.RatingServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>rate</servlet-name>
+        <url-pattern>/rate.do</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
         <servlet-name>Upload</servlet-name>
         <servlet-class>edu.dartmouth.cs.together.backend.UploadImgServlet</servlet-class>
     </servlet>

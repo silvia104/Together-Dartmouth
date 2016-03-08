@@ -148,7 +148,7 @@ public class EventDetailActivity extends BaseEventActivity {
     public void onLoadFinished(Loader<List<Qa>> loader, List<Qa> data) {
         super.onLoadFinished(loader, data);
         mQaAdapter.updateData(data);
-        if (data.size()==0 || !mRefreshed){
+        if (data.size()==0 && !mRefreshed){
             Intent i = new Intent(getApplicationContext(),
                     QaIntentService.class);
             i.putExtra(Event.ID_KEY,mEventId);

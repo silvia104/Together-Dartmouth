@@ -118,7 +118,7 @@ public class UserDataSource {
         User user = new User();
         user.setId(cursor.getLong(UserTable.COLUMNS.USER_ID.index()));
         user.setAccount(cursor.getString(UserTable.COLUMNS.EMAIL.index()));
-        user.setRate(cursor.getDouble(UserTable.COLUMNS.RATE.index()));
+        user.setRate(cursor.getString(UserTable.COLUMNS.RATE.index()));
         user.setPhotoUrl(cursor.getString(UserTable.COLUMNS.PHOTO_URL.index()));
         return user;
     }
@@ -127,6 +127,7 @@ public class UserDataSource {
         ContentValues values = new ContentValues();
         values.put(UserTable.COLUMNS.USER_ID.colName(), user.getId());
         values.put(UserTable.COLUMNS.EMAIL.colName(), user.getAccount());
+        values.put(UserTable.COLUMNS.RATE.colName(), user.getRate());
         values.put(UserTable.COLUMNS.PHOTO_URL.colName(), user.getPhotoUrl());
         return values;
     }

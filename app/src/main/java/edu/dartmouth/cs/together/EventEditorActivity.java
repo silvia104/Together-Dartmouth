@@ -421,6 +421,7 @@ public class EventEditorActivity extends BaseEventActivity implements DatePicker
                 public void onClick(View v) {
                     mCategoryIdx = index;
                     mCategoryTv.setText(Globals.categories.get(index));
+                    mCategoryIcon.setImageResource(Globals.categoriIcons[index]);
                     mCategoryRecView.setVisibility(View.GONE);
                     mCategoryTv.setTag("");
 
@@ -481,7 +482,7 @@ public class EventEditorActivity extends BaseEventActivity implements DatePicker
     private void showConfirmDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(getString(R.string.confirmDeleteEvent))
-                .setPositiveButton(getString(R.string.OK), new DialogInterface.OnClickListener() {
+                .setPositiveButton(getString(R.string.DELETE), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         action = Globals.ACTION_DELETE;

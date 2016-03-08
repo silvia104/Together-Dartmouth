@@ -1,10 +1,16 @@
 package edu.dartmouth.cs.together;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.ActivityNotFoundException;
+import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -15,7 +21,10 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,20 +32,29 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 import com.soundcloud.android.crop.Crop;
+
+import org.w3c.dom.Text;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 import edu.dartmouth.cs.together.cloud.ServerUtilities;
 import edu.dartmouth.cs.together.cloud.UploadPicIntentService;
+import edu.dartmouth.cs.together.data.Event;
 import edu.dartmouth.cs.together.data.User;
 import edu.dartmouth.cs.together.data.UserDataSource;
+import edu.dartmouth.cs.together.data.UserTable;
 import edu.dartmouth.cs.together.utils.Globals;
 
 public class ProfileActivity extends AppCompatActivity {
 
     private TextView mEmail;
-
+    private TextView mName;
     private Uri mImageCaptureUri;
     private CircleImageView mProfileImageView;
     private boolean isTakenFromCamera;
@@ -44,10 +62,15 @@ public class ProfileActivity extends AppCompatActivity {
     public static final int REQUEST_CODE_TAKE_FROM_CAMERA = 0;
     public static final int REQUEST_CODE_SELECT_FROM_GALLERY = 1;
     private static final String CAMERA_CLICKED_KEY = "cameraClicked";
+    private static Float ratestar;
+    private static int cateIdx;
+    private UserDataSource userdata;
+    RatingBar myRating;
 
     private long mUserId ;
     private String mUserEmail;
     private String mUserName;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,8 +78,10 @@ public class ProfileActivity extends AppCompatActivity {
         setContentView(R.layout.activity_profile);
         mProfileImageView = (CircleImageView) findViewById(R.id.profile_image);
         mProfileImageView.setImageResource(R.drawable.default_profile_pic);
+        myRating = (RatingBar)findViewById(R.id.ratingbar);
         Intent i = getIntent();
         mUserId = i.getLongExtra(User.ID_KEY, Globals.currentUser.getId());
+        userdata=new UserDataSource(getApplicationContext());
 
          if(savedInstanceState != null) {
              mImageCaptureUri = savedInstanceState
@@ -83,15 +108,42 @@ public class ProfileActivity extends AppCompatActivity {
              mUserEmail = i.getStringExtra(User.ACCOUNT_KEY);
              mUserName = i.getStringExtra(User.NAME_KEY);
              new LoadPicAsyncTask(false).execute(mUserId);
-             findViewById(R.id.profile_save_button).setVisibility(View.GONE);
-             findViewById(R.id.profile_cancel_button).setVisibility(View.GONE);
+             //findViewById(R.id.profile_save_button).setVisibility(View.GONE);
+             //findViewById(R.id.profile_cancel_button).setVisibility(View.GONE);
          }
-
-        mEmail = (EditText) findViewById(R.id.profile_email);
+        ratestar = i.getFloatExtra(User.RATE_KEY, 0);
+        cateIdx=i.getIntExtra("cate", 0);
+        TextView rateTitle = (TextView) findViewById(R.id.profile_rate_title);
+        rateTitle.setText(rateTitle.getText().toString() + Globals.categories.get(cateIdx));
+        myRating.setRating(ratestar);
+        mName = (TextView) findViewById(R.id.profile_name);
+        mName.setText(mUserName);
+        mEmail = (TextView) findViewById(R.id.profile_email);
         mEmail.setText(mUserEmail);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+    }
+
+    private void showRateDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        View v = this.getLayoutInflater().inflate(R.layout.rate, null);
+        builder.setMessage(getString(R.string.confirmRateEvent))
+                .setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                })
+                .setPositiveButton(getString(R.string.OK), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        RatingBar rate = (RatingBar)((Dialog)dialog).findViewById(R.id.myratingbar);
+                        float ratescore=rate.getRating();
+                        rate(ratescore);
+                    }
+                });
+        builder.setView(v);
+        builder.create().show();
     }
 
     @Override
@@ -105,6 +157,7 @@ public class ProfileActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_refresh){
             new LoadPicAsyncTask(true).execute(mUserId);
+
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -262,6 +315,56 @@ public class ProfileActivity extends AppCompatActivity {
 
     public void OnCancelClicked(View view){
         finish();
+    }
+
+    public void OnRateClicked(View view){
+//        Intent i = new Intent(getApplicationContext(), JoinQuitEventIntentService.class);
+//        i.putExtra(User.ID_KEY, mUserId);
+//        i.putExtra(Globals.ACTION_RATE,2.0);
+//        getApplication().startService(i);
+        showRateDialog();
+
+    }
+
+    private void rate(final float score){
+        new AsyncTask<Void, Void, Integer>() {
+            Map<String, String> params = new HashMap<String, String>();
+            String updatedrate=null;
+            // Get history and upload it to the server.
+            @Override
+            protected Integer doInBackground(Void... arg0) {
+                try {
+                    params.put("id", Long.toString(mUserId));
+                    params.put("cate",Integer.toString(cateIdx));
+                    params.put("rate", Float.toString(score));
+                    updatedrate=ServerUtilities.post(Globals.SERVER_ADDR + "/rate.do", params);
+                    ContentValues values = new ContentValues();
+                    values.put(UserTable.COLUMNS.RATE.colName(), updatedrate);
+                    userdata.updateUser(mUserId, values);
+//                    myRating.setRating(getrate(updatedrate,cateIdx));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                return 1;
+            }
+            @Override
+            protected void onPostExecute(Integer i) {
+                if(updatedrate!=null)
+                myRating.setRating(getrate(updatedrate,cateIdx));
+            }
+        }.execute();
+    }
+    public float getrate(String rate, int index){
+        String s[] = rate.split(",");
+        List<Integer> number=new ArrayList<Integer>();
+        List<Float>ratenum=new ArrayList<Float>();
+        for(int i=0;i<s.length/2;i++){
+            number.add(Integer.parseInt(s[i]));
+        }
+        for(int i=s.length/2;i<s.length;i++){
+            ratenum.add(Float.parseFloat(s[i]));
+        }
+        return ratenum.get(index);
     }
 
     class LoadPicAsyncTask extends AsyncTask<Long, Void, Bitmap> {

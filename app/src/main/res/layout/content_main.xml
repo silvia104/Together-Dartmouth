@@ -42,7 +42,10 @@
         android:layout_alignParentEnd="true"
         android:layout_marginRight="@dimen/fab_margin"
         android:background="@drawable/fab_shape"
-        android:src="@drawable/ic_add_white_24dp"
+        android:src="@drawable/eye"
+        android:padding="5dp"
+        android:scaleType="fitCenter"
         android:tint="@android:color/white"
-        android:layout_above="@+id/fab_image_button" />
+        android:layout_above="@+id/fab_image_button"
+        android:visibility="invisible"/>
 </RelativeLayout>

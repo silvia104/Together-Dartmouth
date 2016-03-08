@@ -285,7 +285,7 @@ public class LoginActivity extends AppCompatActivity {
                     json.put(User.ID_KEY, mUser.getId());
                     json.put(User.PASSWORD_KEY, mUser.getPassword());
                     json.put(User.DEVICE_KEY, Globals.DEVICE_ID);
-                    json.put(User.RATE_KEY, 0.0);
+                    json.put(User.RATE_KEY, Globals.DEFAULT_RATING);
                     json.put(User.ACCOUNT_KEY, mUser.getAccount());
                     String uploadState = "";
                     try {
@@ -366,6 +366,7 @@ public class LoginActivity extends AppCompatActivity {
             String code="";
             Map<String, String> params = new HashMap<>();
             params.put("action",Globals.ACTION_CODE);
+            params.put("rate",Globals.DEFAULT_RATING);
             params.put("mail",emails[0]);
             try {
                 code = ServerUtilities.post(Globals.SERVER_ADDR + "/adduser.do", params);

@@ -80,6 +80,8 @@
     <string name="ui_profile_photo_picker_title">Photo</string>
     <string name="dialog_fragment_tag_photo_picker">photo_picker_dialog_fragment</string>
     <string name="title_activity_profile">Profile</string>
+    <string name="confirmRateEvent">Please rate the person</string>
+    <string name="DELETE">delete</string>
     <string-array name="ui_profile_photo_picker_items">
         <item>Take picture from camera</item>
         <item>Choose pictore from gallery</item>

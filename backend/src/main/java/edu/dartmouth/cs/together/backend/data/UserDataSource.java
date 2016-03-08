@@ -175,7 +175,7 @@ public class UserDataSource  {
         user.setId((Long) entity.getProperty(User.ID_KEY));
         user.setAccount((String) entity.getProperty(User.ACCOUNT_KEY));
         user.setPassword((String) entity.getProperty(User.PASSWORD_KEY));
-        user.setRate((Double) entity.getProperty(User.RATE_KEY));
+        user.setRate((String) entity.getProperty(User.RATE_KEY));
         user.setDevice((String) entity.getProperty(User.DEVICE_KEY));
         user.setPhotoUrl((String) entity.getProperty(User.PHOTO_URL_KEY));
         return user;

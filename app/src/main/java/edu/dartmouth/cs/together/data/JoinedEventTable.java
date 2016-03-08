@@ -9,6 +9,7 @@ public class JoinedEventTable extends BaseEventTable {
     public static final String TABLE_CREATE_COMMAND = "create table "
             + JoinedEventTable.TABLE_NAME + "("
             + COLUMNS.createCommand().replace("unique", "") + ", "
-            + UserTable.COLUMNS.USER_ID.colName() + " integer not null"
+            + UserTable.COLUMNS.USER_ID.colName() + " integer not null, "
+            + " unique (" + COLUMNS.EVENT_ID.colName()  + "," +UserTable.COLUMNS.USER_ID.colName()  +")"
             +");";
 }

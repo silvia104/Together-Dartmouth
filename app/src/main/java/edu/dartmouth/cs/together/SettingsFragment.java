@@ -10,9 +10,12 @@ import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.preference.PreferenceManager;
 import android.support.v7.preference.SwitchPreferenceCompat;
+<<<<<<< HEAD
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+=======
+>>>>>>> Final
 
 import java.util.ArrayList;
 import edu.dartmouth.cs.together.utils.Globals;
@@ -26,8 +29,9 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     private Context mContext;
     private final int REQUEST_DEFAULT_FILTER = 0;
     private final int GET_RESULT_SUCCESS = -1;
-    private SharedPreferences sharedPreferences;
+    private SharedPreferences mSharedPreferences;
     private SharedPreferences.Editor mEditor;
+
 
     public SettingsFragment() {
         // Required empty public constructor
@@ -39,7 +43,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         mContext = getActivity();
         addPreferencesFromResource(R.xml.preferences);
         PreferenceManager prefManager = getPreferenceManager();
-        sharedPreferences = mContext.getSharedPreferences(mContext.getPackageName(), Context.MODE_PRIVATE);
+        mSharedPreferences = mContext.getSharedPreferences(mContext.getPackageName(), Context.MODE_PRIVATE);
 
 
 
@@ -48,6 +52,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 Intent intent = preference.getIntent();
+<<<<<<< HEAD
                 startActivityForResult(intent, REQUEST_DEFAULT_FILTER);
                 return true;
             }
@@ -120,10 +125,15 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 mEditor = sharedPreferences.edit();
                 mEditor.putBoolean(Globals.KEY_SHARED_PREF_NOTE_NEW_Q, switched);
                 mEditor.commit();
+=======
+                intent.putExtra(Globals.FILTER_FROM_OPTION,false);
+                startActivity(intent);
+>>>>>>> Final
                 return true;
             }
         });
 
+<<<<<<< HEAD
         SwitchPreferenceCompat newA = (SwitchPreferenceCompat) findPreference("new_a");
         newA.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
@@ -138,6 +148,8 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             }
         });
 
+=======
+>>>>>>> Final
     }
 
 
@@ -154,6 +166,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
             if(requestCode == REQUEST_DEFAULT_FILTER){
                 if(resultCode == GET_RESULT_SUCCESS) {
+<<<<<<< HEAD
                     if (data!=null ) {
                         Bundle extras = data.getExtras();
                         int timeRange = (int)extras.get(Globals.KEY_TIME_RANGE);
@@ -161,28 +174,48 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                         ArrayList<Integer> selectedInterest = extras.getIntegerArrayList(Globals.KEY_INTEREST_CATEGORY);
                         writeSharedPreference(timeRange, distanceRange, selectedInterest);
                     }
-
+=======
+                            if (data!=null ) {
+                                Bundle extras = data.getExtras();
+                                Globals.FILTER_TIME = (int)extras.get(Globals.KEY_TIME_RANGE);
+                                Globals.FILTER_DISTANCE = (int) extras.get(Globals.KEY_DISTANCE_RANGE);
+                                Globals.FILTER_INTEREST = (ArrayList<Integer>) (extras.get(Globals.KEY_INTEREST_CATEGORY));
+                            }
+                }
             }
-        }
+
+
+>>>>>>> Final
+
     }
 
-    private void writeSharedPreference(int time, int distance, ArrayList<Integer> interests){
 
+<<<<<<< HEAD
 
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.clear();
+=======
+>>>>>>> Final
 
-        editor.putInt(Globals.KEY_TIME_RANGE, time);
-        editor.putInt(Globals.KEY_DISTANCE_RANGE, distance);
-        String interest = "";
-        for(Integer i:interests){
-            interest = interest + i + " ";
+    private void setGlobalsBySharedPref(){
+//        SharedPreferences mSharedPreferences = getSharedPreferences(getPackageName(), MODE_PRIVATE);
+        //set up filter preference
+        if(Globals.FILTER_TIME == -1){
+            Globals.FILTER_TIME = mSharedPreferences.getInt(Globals.KEY_TIME_RANGE, 14);
+        }
+        if(Globals.FILTER_DISTANCE == -1){
+            Globals.FILTER_DISTANCE = mSharedPreferences.getInt(Globals.KEY_DISTANCE_RANGE, 50);
+        }
+        if(Globals.FILTER_INTEREST == null){
+            Globals.FILTER_INTEREST = new ArrayList<>();
+            for(int i = 0 ; i< Globals.categories.size();i++){
+                Globals.FILTER_INTEREST.add(i);
+            }
         }
 
-        editor.putString(Globals.KEY_INTEREST_CATEGORY, interest);
-        editor.commit();
 
     }
+
 
 
 //    public View onCreateView(LayoutInflater inflater, ViewGroup container,

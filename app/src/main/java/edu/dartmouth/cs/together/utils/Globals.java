@@ -28,19 +28,24 @@ public class Globals {
     public static final String ACTION_CODE = "code";
     public static final String LOGIN_STATUS_KEY ="login_status" ;
     public static final String FIRST_LOAD_ALL_EVENTS_KEY = "first_load_all_events";
+    public static final String FILTER_FROM_OPTION = "filter_from_option";
     public static String[] sports = {"Soccer","Skiing","Cycling","Jogging","Hiking",
             "Tennis","Dancing","Gym","Basketball","Swimming","Billiard"};
     public static String[] life = {"Movie","Party","Shopping","Dining", "Travel", "Study",
             "Music", "Pet", "Other"};
+    public static String DEFAULT_RATING="0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0";
     public static Integer[] categoriIcons={R.drawable.soccer, R.drawable.skiing,R.drawable.bicycle,
             R.drawable.running,R.drawable.hiking,R.drawable.tennis,R.drawable.dancing,R.drawable.gym,
             R.drawable.basketball,R.drawable.swimming,R.drawable.billard,R.drawable.movie,
-            R.drawable.party,R.drawable.shopping,R.drawable.dining,R.drawable.travel,R.drawable.study};
+            R.drawable.party,R.drawable.shopping,R.drawable.dining,R.drawable.travel,R.drawable.study,
+            R.drawable.music,R.drawable.pet,R.drawable.other};
     public static List<String> categories = new ArrayList<>();
-    public static LatLng DARTMOUTH_GPS = new LatLng(43.726034, -72.142917);
+    public static LatLng DARTMOUTH_GPS = new LatLng(43.70444059999999, -72.2886934);
     public static double RADIUS_50MILES = 80467.2;
 
-    public static String SERVER_ADDR = "http://10.31.34.68:8080";
+    //public static String SERVER_ADDR = "http://10.31.124.33:8080";
+    public static String SERVER_ADDR = "https://together-1234.appspot.com";
+
     public static String DEVICE_ID;
     public static User currentUser;
     public static final String ACTION_ADD = "add";

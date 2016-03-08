@@ -27,7 +27,7 @@ public class User {
 
     private long mId;
     private String mEmail;
-    private double mRate;
+    private String mRate;
     private String mPhotoKey;
     private String mPassword;
     private String mDeviceId;
@@ -38,7 +38,7 @@ public class User {
     public User(JSONObject json) throws JSONException{
         mId = json.getLong(ID_KEY);
         mEmail = json.getString(ACCOUNT_KEY);
-        mRate = json.getLong(RATE_KEY);
+        mRate = json.getString(RATE_KEY);
         mPassword = json.getString(PASSWORD_KEY);
         mDeviceId = json.getString(DEVICE_KEY);
     }
@@ -74,7 +74,7 @@ public class User {
         mPassword = password;
     }
 
-    public void setRate(double i) {
+    public void setRate(String i) {
         mRate = i;
     }
 
@@ -84,7 +84,7 @@ public class User {
     public String getPassword(){
         return mPassword;
     }
-    public double getRate(){
+    public String getRate(){
         return mRate;
     }
 

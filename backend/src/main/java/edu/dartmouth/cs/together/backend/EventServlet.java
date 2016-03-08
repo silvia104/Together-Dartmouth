@@ -54,7 +54,8 @@ public class EventServlet extends HttpServlet {
                 long userId = jsonObject.getLong(User.ID_KEY);
                 Entity entity = EventDataSource.queryById(eventId);
                 Entity userEntity = UserDataSource.queryById(userId);
-                if (noEvent(entity,eventId,resp)|| noEvent(userEntity, userId, resp)) return;
+                if (noEvent(entity,eventId,resp)|| noEvent(userEntity, userId, resp)
+                || userId == (long)entity.getProperty(Event.OWNER_KEY)) return;
 
                 //get event and user from entity
                 Event newEvent = EventDataSource.getEventFromEntity(entity);
@@ -64,7 +65,7 @@ public class EventServlet extends HttpServlet {
                     boolean ret = EventJoinerDataSource.add(eventId, userId);
                     if(ret) {
                         newEvent.increaseJoiner(1);
-                        EventDataSource.update(newEvent);
+                        EventDataSource.update(newEvent,false);
                         PrintWriter writer = resp.getWriter();
                         writer.print(newEvent.getJoinerCount() + "");
                         writer.flush();
@@ -95,7 +96,7 @@ public class EventServlet extends HttpServlet {
                     User newUser = UserDataSource.getUserFromEntity(userEntity);
 
                     newEvent.increaseJoiner(-1);
-                    EventDataSource.update(newEvent);
+                    EventDataSource.update(newEvent,false);
                     PrintWriter writer = resp.getWriter();
                     writer.print(newEvent.getJoinerCount() + "");
                     writer.flush();
@@ -117,14 +118,14 @@ public class EventServlet extends HttpServlet {
                 if (actionString.equals(Globals.ACTION_ADD)) {
                     boolean ret = EventDataSource.add(event);
                     if(ret) {
-                        userList.add(event.getOwner());
+                        //userList.add(event.getOwner());
                         deviceList = UserDataSource.queryDeviceByUserId(userList);
                         msg.sendMessage(deviceList, "Event Added:" + event.getEventId());
                     }
                 } else if (actionString.equals(Globals.ACTION_UPDATE)) {
-                    boolean ret = EventDataSource.update(event);
+                    boolean ret = EventDataSource.update(event, true);
                     if(ret) {
-                        userList.add(event.getOwner());
+                        //userList.add(event.getOwner());
                         userList.addAll(EventJoinerDataSource.entitiesToUserId(
                                 EventJoinerDataSource.queryByEventId(event.getEventId())));
                         deviceList = UserDataSource.queryDeviceByUserId(userList);
@@ -135,7 +136,7 @@ public class EventServlet extends HttpServlet {
                     }
                 }else if (actionString.equals(Globals.ACTION_DELETE)) {
                     long eventId = event.getEventId();
-                    userList.add(event.getOwner());
+                    //userList.add(event.getOwner());
                     userList.addAll(EventJoinerDataSource.entitiesToUserId(
                             EventJoinerDataSource.queryByEventId(eventId)));
                     deviceList = UserDataSource.queryDeviceByUserId(userList);

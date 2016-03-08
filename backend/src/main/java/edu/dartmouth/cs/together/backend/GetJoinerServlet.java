@@ -35,6 +35,7 @@ public class GetJoinerServlet extends HttpServlet {
         PrintWriter out = resp.getWriter();
 
         if (entity!=null) {
+            userIds.add(0, (Long)entity.getProperty(Event.OWNER_KEY));
             List<User> userList = UserDataSource.queryByIdList(userIds);
             JSONArray userJsonArray = new JSONArray();
             for (User user : userList) {

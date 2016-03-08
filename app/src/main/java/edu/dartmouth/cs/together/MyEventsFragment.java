@@ -158,6 +158,7 @@ public class MyEventsFragment extends Fragment {
     }
 
     private void insertEvent(JSONArray jsonArray, int eventType) {
+        values.clear();
         for(int i=0;i<jsonArray.length();i++) {
             try {
                 JSONObject jobj = jsonArray.getJSONObject(i);
