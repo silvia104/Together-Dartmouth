@@ -47,15 +47,15 @@ public class GcmIntentService extends BaseIntentSerice {
         // in your BroadcastReceiver.
         String messageType = gcm.getMessageType(intent);
 
-        if (extras != null && !extras.isEmpty()) {  // has effect of unparcelling Bundle
-            // Since we're not using two way messaging, this is all we really to check for
+        if (extras != null && !extras.isEmpty()) {
+        // has effect of unparcelling Bundle
+        // Since we're not using two way messaging, this is all we really to check for
             if (GoogleCloudMessaging.MESSAGE_TYPE_MESSAGE.equals(messageType)) {
                 Logger.getLogger("GCM_RECEIVED").log(Level.INFO, extras.toString());
                 String message = extras.getString("message");
 
                 //setup type and event
-
-
+                //Messages to be showed in message center are split by Globals.SPLITTER
                 String[] msgFields = message.split(Globals.SPLITER);
                 if(msgFields.length>1) {
                     Message messageToInsert = setupMessage(msgFields);
@@ -64,7 +64,6 @@ public class GcmIntentService extends BaseIntentSerice {
                     messageToInsert.setIsRead(false);
 
                     if (msgFields[0].startsWith("Event Delete")) {
-//                    String[] parts = message.split(":");
                         long id = Long.parseLong(msgFields[1].trim());
                         EventDataSource db = new EventDataSource(getApplicationContext());
                         db.deleteEvent(EventDataSource.ALL_EVENT, id);
@@ -96,6 +95,7 @@ public class GcmIntentService extends BaseIntentSerice {
         GcmBroadcastReceiver.completeWakefulIntent(intent);
     }
 
+    //Construct message object with different filds of received message
     private Message setupMessage( String[] msgFields){
         Message msg = new Message();
         if(msgFields[0].startsWith("Event")){
@@ -159,10 +159,9 @@ public class GcmIntentService extends BaseIntentSerice {
 
         mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
-        notification.flags =  notification.FLAG_AUTO_CANCEL;
         // clear the notice when user clicks on it
-//        notification.flags = notification.flags
-//                | Notification.FLAG_ONGOING_EVENT;
+        notification.flags =  notification.FLAG_AUTO_CANCEL;
+
 
         mNotificationManager.notify(0, notification);
 

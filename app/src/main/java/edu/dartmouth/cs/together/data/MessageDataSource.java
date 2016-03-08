@@ -17,7 +17,6 @@ import edu.dartmouth.cs.together.utils.Globals;
  * Created by foxmac on 16/3/2.
  */
 public class MessageDataSource {
-    //only two manipulations: add and delete
     private static SQLiteDatabase mDB = null;
     private DBHelper mDBHelper;
 
@@ -59,7 +58,8 @@ public class MessageDataSource {
                 MessageTable.COLUMNS.ID.colName() + " = " + id, null);
     }
 
-
+    //Only message belong to current user are retrieved
+    //If a different user logged in the app, they cannot see others' message
     public List<Message> getCurrentUserRecords() {
         open();
         List<Message> records = new ArrayList<>();
@@ -79,7 +79,6 @@ public class MessageDataSource {
         // Make sure to close the cursor
         cursor.close();
         return records;
-
     }
 
     public long updateIsRead(long id, Message message){
@@ -93,7 +92,6 @@ public class MessageDataSource {
         }catch (SQLiteException e){
             e.printStackTrace();
         }
-        //close();
         if (updated>0) return id;
         else return -1;
     }

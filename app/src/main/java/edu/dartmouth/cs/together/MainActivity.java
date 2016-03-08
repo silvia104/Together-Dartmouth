@@ -78,17 +78,6 @@ public class MainActivity extends AppCompatActivity
         mSwitch = (ImageButton) findViewById(R.id.fab_image_button2);
 
         startFragment();
-
-        /*
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View edu.dartmouth.cs.together.view) {
-                Snackbar.make(edu.dartmouth.cs.together.view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-        */
         ImageButton addFab = (ImageButton) findViewById(R.id.fab_image_button);
         addFab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -172,10 +161,8 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         getMenuInflater().inflate(R.menu.logout, menu);
-
         return true;
     }
 
@@ -220,25 +207,6 @@ public class MainActivity extends AppCompatActivity
             }
         }
     }
-/*
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data)
-    {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if(requestCode == Globals.SETTING_FILTER){
-            if(resultCode == GET_RESULT_SUCCESS) {
-                if (data!=null ) {
-                    Bundle extras = data.getExtras();
-                    filterTime = (int)extras.get(Globals.KEY_TIME_RANGE);
-                    filterDist = (int) extras.get(Globals.KEY_DISTANCE_RANGE);
-                    String selectedInterest = extras.getString(Globals.KEY_INTEREST_CATEGORY);
-                }
-                Intent itt = new Intent("update");
-                sendBroadcast(itt);
-            }
-        }
-    }*/
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
@@ -248,7 +216,6 @@ public class MainActivity extends AppCompatActivity
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         Fragment fragment = null;
-//        currentFragment = id;
         switch (id){
             case R.id.nav_my_events:
                 fragment = new MyEventsFragment();

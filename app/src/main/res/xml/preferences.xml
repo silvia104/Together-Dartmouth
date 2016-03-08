@@ -17,12 +17,6 @@
     </android.support.v7.preference.PreferenceCategory>
 
 
-
-
-
-
-
-
     <android.support.v7.preference.PreferenceCategory
         android:key = "pref_key_account"
         android:title="Account">

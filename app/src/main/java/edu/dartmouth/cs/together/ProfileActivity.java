@@ -9,8 +9,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -21,9 +19,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -40,16 +35,27 @@ import java.util.Map;
 
 import com.soundcloud.android.crop.Crop;
 
-import org.w3c.dom.Text;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import edu.dartmouth.cs.together.cloud.ServerUtilities;
 import edu.dartmouth.cs.together.cloud.UploadPicIntentService;
-import edu.dartmouth.cs.together.data.Event;
 import edu.dartmouth.cs.together.data.User;
 import edu.dartmouth.cs.together.data.UserDataSource;
 import edu.dartmouth.cs.together.data.UserTable;
 import edu.dartmouth.cs.together.utils.Globals;
+
+/*
+ * Profile Activity
+ * User can check name and Email address here
+ * Long click the image view can change the profile photo
+ * Due to Google App Store error the image can't be uploaded
+ * So the save profile button is now hided.
+ * Will be implemented in the future.
+ * Rating is also showed in this page.
+ * Click "Rate" button and a rating dialog will be launched
+ * Click the refresh button on right top then the rating and the image will be refreshed
+*/
+
 
 public class ProfileActivity extends AppCompatActivity {
 
@@ -108,8 +114,6 @@ public class ProfileActivity extends AppCompatActivity {
              mUserEmail = i.getStringExtra(User.ACCOUNT_KEY);
              mUserName = i.getStringExtra(User.NAME_KEY);
              new LoadPicAsyncTask(false).execute(mUserId);
-             //findViewById(R.id.profile_save_button).setVisibility(View.GONE);
-             //findViewById(R.id.profile_cancel_button).setVisibility(View.GONE);
          }
         ratestar = i.getFloatExtra(User.RATE_KEY, 0);
         cateIdx=i.getIntExtra("cate", 0);
@@ -124,6 +128,7 @@ public class ProfileActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
     }
+
 
     private void showRateDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -153,11 +158,12 @@ public class ProfileActivity extends AppCompatActivity {
         return true;
     }
 
+
     @Override
+    //Download the profile image photo when refreshing button on menu is clicked
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_refresh){
             new LoadPicAsyncTask(true).execute(mUserId);
-
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -182,7 +188,6 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void saveSnap() {
-
         // Commit all the changes into preference file
         // Save profile image into internal storage.
         mProfileImageView.buildDrawingCache();
@@ -208,9 +213,6 @@ public class ProfileActivity extends AppCompatActivity {
     private void handleCrop(int resultCode, Intent result) {
         if (resultCode == RESULT_OK) {
             mProfileImageView.setImageURI(Crop.getOutput(result));
-
-
-//            mImageCaptureUri = Crop.getOutput(result);
         } else if (resultCode == Crop.RESULT_ERROR) {
             Toast.makeText(this, Crop.getError(result).getMessage(), Toast.LENGTH_SHORT).show();
         }
@@ -233,8 +235,7 @@ public class ProfileActivity extends AppCompatActivity {
                 // Construct an intent with action
                 // MediaStore.ACTION_IMAGE_CAPTURE
                 intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                // Construct temporary image path and name to save the taken
-                // photo
+                // Construct temporary image path and name to save the taken photo
                 mImageCaptureUri = Uri.fromFile(new File(Environment
                         .getExternalStorageDirectory(), "tmp_"
                         + String.valueOf(System.currentTimeMillis()) + ".jpg"));
@@ -244,8 +245,6 @@ public class ProfileActivity extends AppCompatActivity {
                 try {
                     // Start a camera capturing activity
                     // REQUEST_CODE_TAKE_FROM_CAMERA is an integer tag you
-                    // defined to identify the activity in onActivityResult()
-                    // when it returns
                     startActivityForResult(intent, REQUEST_CODE_TAKE_FROM_CAMERA);
                 } catch (ActivityNotFoundException e) {
                     e.printStackTrace();
@@ -257,7 +256,6 @@ public class ProfileActivity extends AppCompatActivity {
 
                 intent = new Intent(Intent.ACTION_PICK,
                         MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-
                 try{
                     startActivityForResult(intent, REQUEST_CODE_SELECT_FROM_GALLERY);
                 }catch (ActivityNotFoundException e){
@@ -300,13 +298,12 @@ public class ProfileActivity extends AppCompatActivity {
                         f.delete();
                     mImageCaptureUri = Crop.getOutput(data);
                     mProfileImageView.setImageURI(mImageCaptureUri);
-
                 }
-
                 break;
         }
     }
 
+    //save the image both localled and remotely
     public void OnSaveClicked(View view){
         saveSnap();
         startService(new Intent(getApplicationContext(), UploadPicIntentService.class));
@@ -318,14 +315,10 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     public void OnRateClicked(View view){
-//        Intent i = new Intent(getApplicationContext(), JoinQuitEventIntentService.class);
-//        i.putExtra(User.ID_KEY, mUserId);
-//        i.putExtra(Globals.ACTION_RATE,2.0);
-//        getApplication().startService(i);
         showRateDialog();
-
     }
 
+    //Anonymous AsyncTask is executed to upload rating to the server
     private void rate(final float score){
         new AsyncTask<Void, Void, Integer>() {
             Map<String, String> params = new HashMap<String, String>();
@@ -341,7 +334,6 @@ public class ProfileActivity extends AppCompatActivity {
                     ContentValues values = new ContentValues();
                     values.put(UserTable.COLUMNS.RATE.colName(), updatedrate);
                     userdata.updateUser(mUserId, values);
-//                    myRating.setRating(getrate(updatedrate,cateIdx));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -354,6 +346,7 @@ public class ProfileActivity extends AppCompatActivity {
             }
         }.execute();
     }
+
     public float getrate(String rate, int index){
         String s[] = rate.split(",");
         List<Integer> number=new ArrayList<Integer>();
@@ -367,6 +360,7 @@ public class ProfileActivity extends AppCompatActivity {
         return ratenum.get(index);
     }
 
+    //Download the user image from server
     class LoadPicAsyncTask extends AsyncTask<Long, Void, Bitmap> {
         private boolean mIsRefresh;
         public LoadPicAsyncTask(boolean isRefresh){
@@ -388,7 +382,6 @@ public class ProfileActivity extends AppCompatActivity {
             } else {
                 return downloadBitmap(user);
             }
-
         }
 
         private Bitmap downloadBitmap(User user){
